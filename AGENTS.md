@@ -21,9 +21,11 @@ Brand language clarification — when supporting copy refers to **MOVE**, that m
 - `/` — landing page with hero, events, trusted-by, category tiles, experiences grid, founder, testimonials, contact
 - `/dance` `/yoga` `/weddings` `/corporate` — pillar marketing pages (deep sell, FAQ, how-it-works)
 - `/privacy-policy` `/terms-and-conditions` — DPDP Act 2023 compliant. No `/refund-policy` (site collects only enquiries; no payments processed here).
+- `/blog` — index, category-filterable. `/blog/[slug]` — articles (SSG from Sanity). `/blog/rss.xml` — RSS 2.0 feed for AI crawlers + readers.
+- `/author/[slug]` — author profile (E-E-A-T anchor).
 - `/sitemap.xml` `/robots.txt` `/opengraph-image` — generated
 
-12 static routes + 2 dynamic (`/studio/[[...tool]]`, `/api/revalidate`).
+Static + SSG routes scale with CMS content. Two dynamic: `/studio/[[...tool]]`, `/api/revalidate`. The `/blog` index is also rendered at request time because it reads `searchParams.category`, but its data is still cached via tags.
 
 ## Stack
 
@@ -228,6 +230,8 @@ Schemas live in `sanity/schemas/`:
 - `event` — collection (upcoming events / workshops; tagged by pillar so per-pillar pages can filter)
 - `testimonial` — collection (per-pillar quotes; optional `pillars[]` tag for filtering)
 - `brand` — collection (trusted-by strip; logo upload OR render-enum fallback + optional websiteUrl)
+- `blogPost` — collection (cornerstone articles + supporting posts; Portable Text body with custom figure / callout / ctaCard / internalLink types; required excerpt + hero + author + category; optional FAQ drives FAQPage JSON-LD; SEO overrides optional)
+- `author` — collection (currently just Amisha; name, slug, role, short bio + long bio, photo, credentials chips, social links — drives the E-E-A-T author block + `/author/[slug]` route)
 
 Reads:
 - `sanity/lib/client.ts` — public read client (CDN-cached, published-only perspective)
@@ -235,6 +239,7 @@ Reads:
 - `sanity/lib/queries.ts` — GROQ queries with `defineQuery`. Image fragment keeps the full image object (asset ref, hotspot, crop) so the URL builder can apply transforms — DON'T resolve `asset->url` directly in GROQ
 - `sanity/lib/events.ts` — `getUpcomingEvents()` + `getEventsForPillar()` with cache tags
 - `sanity/lib/site-data.ts` — `getEffectiveContact()` + `getEffectiveFounder()` + `getEffectiveTestimonials()` + `getEffectiveTestimonialForPillar()`
+- `sanity/lib/blog.ts` — `getAllBlogPosts()` + `getBlogPostBySlug()` + `getBlogPostsByCategory()` + `getBlogPostsForPillar()` + `getAutoRelatedBlogPosts()` + `getAuthorBySlug()` + `getAll*Slugs()`. Plus image-URL helpers (`blogCardImageUrl`, `blogHeroImageUrl`, `authorImageUrl`) and `readingTimeFor()` (auto-calc from Portable Text word count, editor override-able).
 
 Every fetcher uses **CMS-first, static fallback**: empty/missing CMS values fall back to the static defaults in `lib/content.ts` so the site never blanks out during editor onboarding.
 
@@ -248,6 +253,37 @@ Server-side fetch flow:
 Cache invalidation: `app/api/revalidate/route.ts` (Route Handler) verifies the Sanity webhook signature, then calls `revalidateTag(tag, { expire: 0 })` for each affected tag. `{ expire: 0 }` is the [officially documented](https://nextjs.org/docs/app/api-reference/functions/revalidateTag) Next.js 16 pattern for webhook-triggered immediate cache expiry — the next visitor after the webhook fires sees fresh data. Don't use `updateTag` here: it's Server-Action-only (a `"use server"` wrapper module does NOT grant Server-Action context when called from a Route Handler — throws `"updateTag can only be called from within a Server Action"`). Don't use `revalidateTag(tag, 'max')` here either: that's stale-while-revalidate (delayed update). Don't use `revalidatePath`: it clears the route HTML cache but leaves the tagged fetch data cache hot, so the next render reuses the stale Sanity response.
 
 Configure a GROQ webhook in Sanity manage UI pointing at `/api/revalidate` with the same secret as `SANITY_REVALIDATE_SECRET`. Filter: `_type in ["event","testimonial","founderProfile","siteSettings","brand"]`. Projection: `{ _type, _id }`.
+
+### Blog routes
+
+- **`app/blog/page.tsx`** — index. Server component. Reads `?category=` from `searchParams` to filter the grid; renders the full list when unset.
+- **`app/blog/[slug]/page.tsx`** — article. `generateStaticParams` pulls every published slug from Sanity at build time, so each article ships as static HTML and ISR-regenerates on webhook publish. Anatomy: breadcrumb · category eyebrow · H1 · excerpt · author inline · published date + reading time · hero image · Portable Text body · FAQ accordion (only when post has FAQ) · pillar CTA · author bio card · related strip · "all articles" link.
+- **`app/blog/rss.xml/route.ts`** — RSS 2.0 feed, last 30 posts, 1h cache, no observability dance because it's an inert read.
+- **`app/author/[slug]/page.tsx`** — author profile. Hero portrait + bio + credentials chips + optional long-bio Portable Text + grid of posts authored. Person JSON-LD.
+
+### Portable Text custom blocks
+
+The `body` field in `blogPost` is Portable Text with custom block + mark types:
+
+- **`figure`** — inline image with required `alt` + optional `caption`. Renders via `<MediaFrame>` with the asset's natural aspect ratio.
+- **`callout`** — tonal note. `tone: 'note' | 'tip' | 'warning'`. Body is nested Portable Text (single-block-level — no nested headings).
+- **`ctaCard`** — inline conversion card with heading, body, label, and href (internal or external).
+- **`link`** mark — external URL. Auto-opens in new tab with `rel="noopener noreferrer"`.
+- **`internalLink`** mark — site-internal path (e.g. `/yoga`, `/blog/what-is-yoga-nidra`). Renders via `next/link`.
+
+The renderer lives in `components/blog/portable-text.tsx`. To add a new block type: register it in the schema's `body.of[]`, then add a matching `types.<typeName>` component to the renderer. Keep the component pure — no client-only state.
+
+### SEO + JSON-LD
+
+- `blogPostMetadata(post)` in `lib/seo.ts` builds the `Metadata` object for an article (Article OG, canonical, noindex when set in CMS, OG image from `seo.ogImage` override or hero).
+- `blogPostJsonLd(post)` emits `BlogPosting` + `BreadcrumbList` (plus `FAQPage` when `post.faq.length > 0`) under a single `@graph` document.
+- Author profile route emits `Person` JSON-LD with social `sameAs` links.
+- Sitemap auto-includes every published post + author profile.
+- RSS feed mounted at `/blog/rss.xml` helps AI crawlers (Perplexity, ChatGPT) discover content faster than sitemap-only.
+
+### Pillar reinforcement
+
+`components/blog/blog-strip.tsx` renders 3 related posts on every pillar page (between FAQ and CTA). Posts surface based on `relatedPillar` field OR matching `category`. Section hides entirely when no posts match.
 
 When adding a new schema:
 1. Add the schema file in `sanity/schemas/`

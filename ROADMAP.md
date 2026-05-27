@@ -180,7 +180,8 @@ Last updated: 2026-05-27
 
 ### Phase C — Growth surface (~1 week)
 
-- [ ] Blog scaffold + first 3 posts
+- [x] Blog scaffold — schemas, routes, Portable Text renderer, FAQ accordion, related strip, pillar CTA card, author profile, RSS feed, sitemap inclusion, BlogPosting + BreadcrumbList + FAQPage JSON-LD, pillar BlogStrip integration, webhook tag map. See **`docs/BLOG-SEO-PLAN.md`** for the 10-article content plan + keyword strategy.
+- [ ] Write + publish the 10 cornerstone articles (paced 2/week, see plan)
 - [ ] Vercel Analytics + Speed Insights
 - [ ] Newsletter wiring (Resend Audiences)
 - [ ] Cal.com embed for discovery call

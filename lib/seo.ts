@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { CONTACT, FOUNDER, PILLARS, SITE, type PillarSlug } from "@/lib/content";
+import type { BlogPostFull } from "@/sanity/lib/blog";
+import { blogHeroImageUrl } from "@/sanity/lib/blog";
 
 export function buildJsonLd() {
   return {
@@ -130,3 +132,105 @@ export function pillarMetadata(slug: PillarSlug): Metadata {
     },
   };
 }
+
+// ──────────────────────────────────────────────────────────────────────
+// Blog helpers
+// ──────────────────────────────────────────────────────────────────────
+
+/** Build the metadata object for a single blog post. */
+export function blogPostMetadata(post: BlogPostFull): Metadata {
+  const url = `${SITE.url}/blog/${post.slug}`;
+  const title = post.seo?.title || `${post.title} · ${SITE.name}`;
+  const description = post.seo?.description || post.excerpt;
+  const ogImageSrc =
+    blogHeroImageUrl(post.seo?.ogImage ?? null) ||
+    blogHeroImageUrl(post.heroImage);
+
+  return {
+    title,
+    description,
+    alternates: { canonical: url },
+    ...(post.seo?.noindex ? { robots: { index: false, follow: false } } : {}),
+    openGraph: {
+      type: "article",
+      url,
+      siteName: SITE.name,
+      title,
+      description,
+      locale: "en_IN",
+      publishedTime: post.publishedAt,
+      modifiedTime: post.updatedAt ?? post.publishedAt,
+      authors: post.author?.name ? [post.author.name] : undefined,
+      tags: post.tags ?? undefined,
+      images: ogImageSrc
+        ? [
+            {
+              url: ogImageSrc,
+              alt: post.heroImage?.alt || post.title,
+            },
+          ]
+        : undefined,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ogImageSrc ? [ogImageSrc] : undefined,
+    },
+  };
+}
+
+/** BlogPosting + BreadcrumbList JSON-LD. Optionally FAQPage when faq
+ *  is non-empty — caller wraps in @graph or emits as separate scripts. */
+export function blogPostJsonLd(post: BlogPostFull, opts: { wordCount?: number } = {}) {
+  const url = `${SITE.url}/blog/${post.slug}`;
+  const heroSrc = blogHeroImageUrl(post.heroImage);
+  const graph: object[] = [
+    {
+      "@type": "BlogPosting",
+      "@id": `${url}#article`,
+      headline: post.title,
+      description: post.excerpt,
+      url,
+      mainEntityOfPage: url,
+      image: heroSrc ? [heroSrc] : undefined,
+      datePublished: post.publishedAt,
+      dateModified: post.updatedAt ?? post.publishedAt,
+      author: post.author
+        ? {
+            "@type": "Person",
+            "@id": `${SITE.url}/author/${post.author.slug}#person`,
+            name: post.author.name,
+            url: `${SITE.url}/author/${post.author.slug}`,
+          }
+        : { "@id": `${SITE.url}#org` },
+      publisher: { "@id": `${SITE.url}#org` },
+      articleSection: post.category,
+      keywords: post.tags?.join(", "),
+      wordCount: opts.wordCount,
+      inLanguage: "en-IN",
+    },
+    {
+      "@type": "BreadcrumbList",
+      itemListElement: [
+        { "@type": "ListItem", position: 1, name: "Home", item: SITE.url },
+        { "@type": "ListItem", position: 2, name: "Blog", item: `${SITE.url}/blog` },
+        { "@type": "ListItem", position: 3, name: post.title, item: url },
+      ],
+    },
+  ];
+  if (post.faq?.length) {
+    graph.push({
+      "@type": "FAQPage",
+      "@id": `${url}#faq`,
+      mainEntity: post.faq.map((qa) => ({
+        "@type": "Question",
+        name: qa.question,
+        acceptedAnswer: { "@type": "Answer", text: qa.answer },
+      })),
+    });
+  }
+  return { "@context": "https://schema.org", "@graph": graph };
+}
+
+

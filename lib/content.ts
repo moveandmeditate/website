@@ -375,6 +375,7 @@ export const FOOTER = {
         { label: "About Amisha", href: "/#founder" },
         { label: "Upcoming Events", href: "/#events" },
         { label: "Reviews", href: "/#testimonials" },
+        { label: "Blog", href: "/blog" },
         { label: "Dance FAQ", href: "/dance#pillar-faq-heading" },
         { label: "Yoga FAQ", href: "/yoga#pillar-faq-heading" },
         { label: "Contact", href: "/#contact" },

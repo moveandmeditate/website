@@ -1,4 +1,6 @@
 import type { SchemaTypeDefinition } from "sanity";
+import { authorSchema } from "./author";
+import { blogPostSchema } from "./blogPost";
 import { brandSchema } from "./brand";
 import { eventSchema } from "./event";
 import { testimonialSchema } from "./testimonial";
@@ -13,4 +15,6 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   eventSchema,
   testimonialSchema,
   brandSchema,
+  blogPostSchema,
+  authorSchema,
 ];

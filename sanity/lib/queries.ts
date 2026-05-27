@@ -131,3 +131,145 @@ export const siteSettingsQuery = defineQuery(`
     calBookingUrl, tagline
   }
 `);
+
+// ────────────────────────────────────────────────────────────────────────
+// Blog
+// ────────────────────────────────────────────────────────────────────────
+
+/** Reusable card projection — kept lean so list endpoints don't pay
+ *  to ship the full body. */
+const BLOG_CARD_FRAGMENT = /* groq */ `
+  _id,
+  title,
+  "slug": slug.current,
+  excerpt,
+  category,
+  tags,
+  publishedAt,
+  updatedAt,
+  readingTime,
+  heroImage{ ${IMAGE_FRAGMENT} },
+  author->{
+    _id,
+    name,
+    "slug": slug.current,
+    role,
+    photo{ ${IMAGE_FRAGMENT} }
+  }
+`;
+
+/** All published blog posts (index, paginated client-side or by query). */
+export const allBlogPostsQuery = defineQuery(`
+  *[_type == "blogPost" && published == true]
+    | order(publishedAt desc) {
+    ${BLOG_CARD_FRAGMENT}
+  }
+`);
+
+/** Filter by category for the category-tabbed index. */
+export const blogPostsByCategoryQuery = defineQuery(`
+  *[_type == "blogPost" && published == true && category == $category]
+    | order(publishedAt desc) {
+    ${BLOG_CARD_FRAGMENT}
+  }
+`);
+
+/** Slug list for `generateStaticParams`. */
+export const allBlogSlugsQuery = defineQuery(`
+  *[_type == "blogPost" && published == true && defined(slug.current)] {
+    "slug": slug.current
+  }
+`);
+
+/** Single post by slug. Body is included; references to author + related
+ *  posts are projected as their card payloads. */
+export const blogPostBySlugQuery = defineQuery(`
+  *[_type == "blogPost" && slug.current == $slug && published == true] [0] {
+    _id,
+    title,
+    "slug": slug.current,
+    excerpt,
+    category,
+    tags,
+    publishedAt,
+    updatedAt,
+    readingTime,
+    relatedPillar,
+    heroImage{ ${IMAGE_FRAGMENT} },
+    body[]{
+      ...,
+      _type == "figure" => { ${IMAGE_FRAGMENT} },
+      markDefs[]{ ... }
+    },
+    faq[]{ question, answer },
+    seo{
+      title,
+      description,
+      ogImage{ ${IMAGE_FRAGMENT} },
+      noindex
+    },
+    author->{
+      _id,
+      name,
+      "slug": slug.current,
+      role,
+      bio,
+      credentials,
+      social,
+      photo{ ${IMAGE_FRAGMENT} }
+    },
+    "manualRelated": relatedPosts[]->{ ${BLOG_CARD_FRAGMENT} }
+  }
+`);
+
+/** Auto-related fallback: same category, exclude self, prefer
+ *  most-recent. Caller swaps in `manualRelated` from the post when
+ *  present. */
+export const autoRelatedBlogPostsQuery = defineQuery(`
+  *[_type == "blogPost"
+    && published == true
+    && category == $category
+    && slug.current != $excludeSlug
+  ] | order(publishedAt desc) [0...3] {
+    ${BLOG_CARD_FRAGMENT}
+  }
+`);
+
+/** Posts attached to a pillar via `relatedPillar` OR matching category.
+ *  Used by the pillar pages' "From the blog" strip. */
+export const blogPostsForPillarQuery = defineQuery(`
+  *[_type == "blogPost"
+    && published == true
+    && (relatedPillar == $pillar || category == $pillar)
+  ] | order(publishedAt desc) [0...$limit] {
+    ${BLOG_CARD_FRAGMENT}
+  }
+`);
+
+/** Author profile by slug, plus their published posts. */
+export const authorBySlugQuery = defineQuery(`
+  *[_type == "author" && slug.current == $slug] [0] {
+    _id,
+    name,
+    "slug": slug.current,
+    role,
+    bio,
+    longBio,
+    credentials,
+    social,
+    photo{ ${IMAGE_FRAGMENT} },
+    "posts": *[_type == "blogPost"
+      && published == true
+      && references(^._id)
+    ] | order(publishedAt desc) {
+      ${BLOG_CARD_FRAGMENT}
+    }
+  }
+`);
+
+/** Slug list for /author/[slug] generateStaticParams. */
+export const allAuthorSlugsQuery = defineQuery(`
+  *[_type == "author" && defined(slug.current)] {
+    "slug": slug.current
+  }
+`);

@@ -9,6 +9,7 @@ import { PillarTestimonial } from "@/components/pillar/pillar-testimonial";
 import { PillarEvents } from "@/components/pillar/pillar-events";
 import { PillarFaq } from "@/components/pillar/pillar-faq";
 import { PillarCta } from "@/components/pillar/pillar-cta";
+import { BlogStrip } from "@/components/blog/blog-strip";
 import type { Pillar } from "@/lib/content";
 import { getEffectiveContact } from "@/sanity/lib/site-data";
 
@@ -42,6 +43,7 @@ export async function PillarPage({ pillar }: { pillar: Pillar }) {
         <PillarTestimonial pillar={pillar} />
         {showEvents && <PillarEvents pillar={pillar.slug} />}
         <PillarFaq pillar={pillar} />
+        <BlogStrip pillar={pillar.slug} />
         <PillarCta pillar={pillar} contact={contact} />
       </main>
       <SiteFooter contact={contact} />

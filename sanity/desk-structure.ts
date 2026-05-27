@@ -35,6 +35,9 @@ export const structure = (S: StructureBuilder) =>
       S.documentTypeListItem("event").title("Events"),
       S.documentTypeListItem("testimonial").title("Testimonials"),
       S.documentTypeListItem("brand").title("Trusted-by brands"),
+      S.divider(),
+      S.documentTypeListItem("blogPost").title("Blog posts"),
+      S.documentTypeListItem("author").title("Authors"),
     ]);
 
 /** Used by `document.actions` in sanity.config.ts to strip create/delete
