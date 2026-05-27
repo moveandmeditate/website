@@ -1,5 +1,4 @@
 import {
-  ArrowRight,
   Music2,
   Flower2,
   Wind,
@@ -37,12 +36,6 @@ export function Experiences() {
           <p className="mt-5 max-w-[28ch] text-[13px] leading-[1.85] text-muted">
             Holistic experiences designed to move your body, calm your mind and elevate your everyday life.
           </p>
-          <a
-            href="#contact"
-            className="mt-6 inline-flex items-center gap-2 text-[11px] tracking-[0.24em] font-medium border-b border-ink pb-1 hover:text-gold-dk hover:border-gold-dk transition-colors"
-          >
-            VIEW ALL <ArrowRight className="size-3" aria-hidden />
-          </a>
         </div>
 
         <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 lg:border-l lg:border-line">
