@@ -1,18 +1,14 @@
 "use client";
 
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { LayoutGroup, motion, useReducedMotion } from "motion/react";
 import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Logo } from "@/components/logo";
 import { CONTACT, NAV_ITEMS, SITE } from "@/lib/content";
 import { cn } from "@/lib/utils";
-
-// useLayoutEffect on the server warns about "no-op". Swap for useEffect during
-// SSR so we don't get the dev-tools warning; the visual difference is one
-// extra frame of indicator positioning on hydration which the user won't see.
-const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 /** Resolve the link href for `BOOK DISCOVERY CALL`. On `/` we scroll to the
  *  contact anchor. On any sub-page we route home with the same anchor so the
@@ -21,19 +17,13 @@ function bookHref(pathname: string) {
   return pathname === "/" ? "#contact" : "/#contact";
 }
 
-type IndicatorState = { x: number; w: number; visible: boolean };
-
 export function SiteHeader() {
   const headerRef = useRef<HTMLElement>(null);
-  const navRef = useRef<HTMLElement>(null);
-  const linkRefs = useRef<Map<string, HTMLAnchorElement | null>>(new Map());
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  // Start hidden so the indicator fades + slides into position on first paint
-  // instead of popping in at x=0.
-  const [indicator, setIndicator] = useState<IndicatorState>({ x: 0, w: 0, visible: false });
   const pathname = usePathname();
   const discoveryHref = bookHref(pathname);
+  const reducedMotion = useReducedMotion();
 
   // Sync the rendered header height to --header-h so scroll-margin-top is accurate.
   useEffect(() => {
@@ -54,40 +44,6 @@ export function SiteHeader() {
       window.removeEventListener("resize", setVar);
     };
   }, []);
-
-  // Slide the underline indicator under the active nav link.
-  useIsoLayoutEffect(() => {
-    const measure = () => {
-      const activeItem = NAV_ITEMS.find((item) => item.href === pathname);
-      const nav = navRef.current;
-      if (!activeItem || !nav) {
-        setIndicator((s) => ({ ...s, visible: false }));
-        return;
-      }
-      const link = linkRefs.current.get(activeItem.href);
-      if (!link) {
-        setIndicator((s) => ({ ...s, visible: false }));
-        return;
-      }
-      const navRect = nav.getBoundingClientRect();
-      const linkRect = link.getBoundingClientRect();
-      setIndicator({
-        x: linkRect.left - navRect.left,
-        w: linkRect.width,
-        visible: true,
-      });
-    };
-    measure();
-    // Re-measure on resize so the indicator stays under the link when the
-    // viewport rewraps. Fonts can also reflow on load — re-measure after a
-    // microtask to catch that case.
-    const id = window.setTimeout(measure, 100);
-    window.addEventListener("resize", measure);
-    return () => {
-      window.clearTimeout(id);
-      window.removeEventListener("resize", measure);
-    };
-  }, [pathname]);
 
   // Subtle backdrop after a small scroll.
   useEffect(() => {
@@ -122,44 +78,37 @@ export function SiteHeader() {
           <Logo size={56} className="text-ink hidden lg:block" />
         </Link>
 
-        <nav
-          ref={navRef}
-          aria-label="Primary"
-          className="hidden lg:flex flex-1 justify-center gap-9 relative"
-        >
-          {NAV_ITEMS.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                ref={(el) => {
-                  linkRefs.current.set(item.href, el);
-                }}
-                className={cn(
-                  "relative text-[11px] font-medium tracking-[0.22em] transition-colors py-2",
-                  isActive ? "text-ink" : "text-ink-2 hover:text-ink"
-                )}
-                aria-current={isActive ? "page" : undefined}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
-          {/* Single underline that slides between active nav items. The width
-             + translateX animate together so the line "morphs" from one link
-             to the next on route change. */}
-          <span
-            aria-hidden
-            className={cn(
-              "pointer-events-none absolute bottom-0 left-0 h-px bg-ink will-change-transform transition-[transform,width,opacity] duration-[450ms] ease-[cubic-bezier(0.22,1,0.36,1)]",
-              indicator.visible ? "opacity-100" : "opacity-0"
-            )}
-            style={{
-              width: indicator.w,
-              transform: `translateX(${indicator.x}px)`,
-            }}
-          />
+        <nav aria-label="Primary" className="hidden lg:flex flex-1 justify-center gap-9">
+          <LayoutGroup id="primary-nav">
+            {NAV_ITEMS.map((item) => {
+              const isActive = pathname === item.href;
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "relative text-[11px] font-medium tracking-[0.22em] transition-colors py-2",
+                    isActive ? "text-ink" : "text-ink-2 hover:text-ink"
+                  )}
+                  aria-current={isActive ? "page" : undefined}
+                >
+                  {item.label}
+                  {isActive && (
+                    <motion.span
+                      layoutId="nav-indicator"
+                      aria-hidden
+                      className="pointer-events-none absolute left-0 right-0 -bottom-0.5 h-px bg-ink"
+                      transition={
+                        reducedMotion
+                          ? { duration: 0 }
+                          : { type: "spring", stiffness: 380, damping: 32, mass: 0.6 }
+                      }
+                    />
+                  )}
+                </Link>
+              );
+            })}
+          </LayoutGroup>
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
