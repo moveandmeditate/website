@@ -81,7 +81,7 @@ export function Hero() {
         />
       </div>
 
-      <div className="container-page relative z-10 flex min-h-[88svh] md:min-h-[760px] flex-col items-center justify-center pt-28 pb-24 text-center hero-stack">
+      <div className="container-page relative z-10 flex min-h-[100svh] md:min-h-[78vh] xl:min-h-[76vh] 2xl:min-h-[72vh] flex-col items-center justify-center pt-24 pb-12 md:pt-20 md:pb-10 text-center hero-stack">
         <Logo
           size={84}
           className="text-ink mb-5 hero-item"
