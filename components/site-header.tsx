@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Logo } from "@/components/logo";
-import { NAV_ITEMS, SITE } from "@/lib/content";
+import { CONTACT, NAV_ITEMS, SITE } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
 const SECTION_IDS = NAV_ITEMS.filter((item) => item.href.startsWith("#") && item.href !== "#top").map(
@@ -171,7 +171,9 @@ export function SiteHeader() {
                   BOOK DISCOVERY CALL
                 </a>
                 <a
-                  href="#contact"
+                  href={CONTACT.whatsappCommunityUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
                   onClick={() => setOpen(false)}
                   className="inline-flex h-12 items-center justify-center border border-ink text-ink tracking-[0.18em] text-[11px] font-medium hover:bg-ink hover:text-bg transition-colors"
                 >

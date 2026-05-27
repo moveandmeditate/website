@@ -19,7 +19,7 @@ Last updated: 2026-05-27
 
 ### Header
 
-- [ ] Mobile sheet `JOIN WHATSAPP COMMUNITY` button currently scrolls to `#contact` — point it at `CONTACT.whatsappCommunityUrl` instead
+- [x] Mobile sheet `JOIN WHATSAPP COMMUNITY` button currently scrolls to `#contact` — point it at `CONTACT.whatsappCommunityUrl` instead — _placeholder URL until Amisha confirms the real invite link_
 - [ ] Confirm whether `BOOK DISCOVERY CALL` should keep scrolling to the contact form or open a Cal.com / Calendly slot picker
 - [ ] Decide: keep nav as 5 anchor links (HOME / MOVE / MEDITATE / EVENTS / ABOUT) or add real sub-pages
 
@@ -156,7 +156,7 @@ Last updated: 2026-05-27
 
 ### Phase A — Wire the basics (~1 day, no new infra)
 
-- [ ] Fix mobile WhatsApp button bug
+- [x] Fix mobile WhatsApp button bug
 - [ ] Hook contact form to Google Apps Script + Sheet
 - [ ] Set real domain + email + DNS
 - [ ] Real WhatsApp invite + social URLs
