@@ -38,11 +38,10 @@ export const CONTACT = {
 };
 
 export const NAV_ITEMS = [
-  { label: "HOME", href: "#top" },
-  { label: "MOVE", href: "#move" },
-  { label: "MEDITATE", href: "#meditate" },
-  { label: "EVENTS", href: "#events" },
-  { label: "ABOUT", href: "#founder" },
+  { label: "DANCE", href: "/dance" },
+  { label: "YOGA", href: "/yoga" },
+  { label: "WEDDINGS", href: "/weddings" },
+  { label: "CORPORATE", href: "/corporate" },
 ] as const;
 
 export type HeroSlide = {
@@ -90,8 +89,8 @@ export const HERO = {
   word2: "MEDITATE",
   tagline: "MOVEMENT IS MEDICINE · STILLNESS IS POWER",
   subTagline: "DANCE THAT MOVES YOU · YOGA THAT GROUNDS YOU",
-  primaryCta: { label: "EXPLORE DANCE", href: "#move" },
-  secondaryCta: { label: "EXPLORE YOGA", href: "#meditate" },
+  primaryCta: { label: "EXPLORE DANCE", href: "/dance" },
+  secondaryCta: { label: "EXPLORE YOGA", href: "/yoga" },
   // Set href to a real YouTube/Vimeo URL to enable the "Watch Our Story" link.
   // Leave as "" or "#" to hide it (it's filtered out at render time in <Hero />).
   watchStory: { label: "WATCH OUR STORY", href: "" }, // TODO: real video URL
@@ -101,6 +100,8 @@ export const HERO = {
   },
 };
 
+export type PillarSlug = "dance" | "yoga" | "weddings" | "corporate";
+
 export type EventItem = {
   id: string;
   day: string;
@@ -109,6 +110,8 @@ export type EventItem = {
   location: string;
   href: string;
   image: { src: string; alt: string };
+  /** Pillar pages this event should surface on. Empty = home only. */
+  pillars: PillarSlug[];
 };
 
 export const EVENTS: EventItem[] = [
@@ -120,6 +123,7 @@ export const EVENTS: EventItem[] = [
     location: "Bangalore",
     href: "#contact",
     image: { src: "/images/event-garba.webp", alt: "Garba dance celebration" },
+    pillars: ["dance"],
   },
   {
     id: "breathwork-sound",
@@ -129,6 +133,7 @@ export const EVENTS: EventItem[] = [
     location: "Bangalore",
     href: "#contact",
     image: { src: "/images/event-breathwork.webp", alt: "Breathwork circle with sound bowls" },
+    pillars: ["yoga"],
   },
   {
     id: "couple-dance",
@@ -138,6 +143,7 @@ export const EVENTS: EventItem[] = [
     location: "Bangalore",
     href: "#contact",
     image: { src: "/images/event-couple-dance.webp", alt: "Couple practising dance choreography" },
+    pillars: ["dance", "weddings"],
   },
   {
     id: "yoga-nidra",
@@ -147,8 +153,14 @@ export const EVENTS: EventItem[] = [
     location: "Online",
     href: "#contact",
     image: { src: "/images/event-yoga-nidra.webp", alt: "Yoga Nidra relaxation practice" },
+    pillars: ["yoga"],
   },
 ];
+
+/** Returns at most `limit` events that should appear on the given pillar page. */
+export function eventsForPillar(slug: PillarSlug, limit = 3): EventItem[] {
+  return EVENTS.filter((e) => e.pillars.includes(slug)).slice(0, limit);
+}
 
 export type Brand = {
   name: string;
@@ -182,7 +194,7 @@ export const TILES: Tile[] = [
     eyebrow: "DANCE",
     title: "MOVE",
     tags: ["ENERGY", "EXPRESSION", "COMMUNITY"],
-    href: "#contact",
+    href: "/dance",
     image: { src: "/images/tile-move.webp", alt: "A dancer expressing through movement" },
   },
   {
@@ -190,7 +202,7 @@ export const TILES: Tile[] = [
     eyebrow: "YOGA",
     title: "MEDITATE",
     tags: ["STILLNESS", "AWARENESS", "TRANSFORMATION"],
-    href: "#contact",
+    href: "/yoga",
     image: { src: "/images/tile-meditate.webp", alt: "A woman in seated meditation" },
   },
   {
@@ -198,7 +210,7 @@ export const TILES: Tile[] = [
     eyebrow: "OCCASIONS",
     title: "WEDDINGS",
     tags: ["YOUR STORY", "BEAUTIFULLY", "CHOREOGRAPHED"],
-    href: "#contact",
+    href: "/weddings",
     image: { src: "/images/tile-weddings.webp", alt: "Couple in a candle-lit sangeet" },
   },
   {
@@ -206,7 +218,7 @@ export const TILES: Tile[] = [
     eyebrow: "TEAMS",
     title: "CORPORATE",
     tags: ["FOCUS", "RESILIENCE", "TEAM CHEMISTRY"],
-    href: "#contact",
+    href: "/corporate",
     image: { src: "/images/tile-corporate.webp", alt: "A corporate wellness session in a sunlit studio" },
   },
   {
@@ -214,7 +226,7 @@ export const TILES: Tile[] = [
     eyebrow: "JOURNEYS",
     title: "RETREATS",
     tags: ["NATURE", "REST", "TRANSFORMATION"],
-    href: "#contact",
+    href: "/#contact",
     image: { src: "/images/tile-retreats.webp", alt: "A wellness retreat at golden hour in the Himalayan foothills" },
   },
 ];
@@ -356,42 +368,322 @@ export const FOOTER = {
     "A global movement community creating experiences that inspire transformation through movement and stillness.",
   columns: [
     {
-      heading: "MOVE",
+      heading: "DISCOVER",
       links: [
-        { label: "Dance Classes", href: "#move" },
-        { label: "Folk", href: "#move" },
-        { label: "Couple Dance", href: "#move" },
-        { label: "Kids", href: "#move" },
+        { label: "Dance", href: "/dance" },
+        { label: "Yoga", href: "/yoga" },
+        { label: "Weddings", href: "/weddings" },
+        { label: "Corporate", href: "/corporate" },
+        { label: "Retreats", href: "/#contact" },
       ],
     },
     {
-      heading: "MEDITATE",
+      heading: "EXPERIENCES",
       links: [
-        { label: "Yoga", href: "#meditate" },
-        { label: "Breathwork", href: "#meditate" },
-        { label: "Sound Healing", href: "#meditate" },
-        { label: "Yoga Nidra", href: "#meditate" },
-      ],
-    },
-    {
-      heading: "WEDDINGS",
-      links: [
-        { label: "Sangeet Choreography", href: "#contact" },
-        { label: "Couple Dance", href: "#contact" },
-        { label: "Family Performances", href: "#contact" },
-        { label: "Destination Weddings", href: "#contact" },
+        { label: "Dance Classes", href: "/dance#offerings" },
+        { label: "Yoga Classes", href: "/yoga#offerings" },
+        { label: "Sangeet Choreography", href: "/weddings#offerings" },
+        { label: "Corporate Wellness", href: "/corporate#offerings" },
+        { label: "Online Sessions", href: "/#experiences" },
       ],
     },
     {
       heading: "COMPANY",
       links: [
-        { label: "About", href: "#founder" },
-        { label: "Reviews", href: "#testimonials" },
-        { label: "Contact", href: "#contact" },
+        { label: "About", href: "/#founder" },
+        { label: "Events", href: "/#events" },
+        { label: "Reviews", href: "/#testimonials" },
+        { label: "Contact", href: "/#contact" },
+      ],
+    },
+    {
+      heading: "LEGAL",
+      links: [
         { label: "Privacy Policy", href: "/privacy-policy" },
         { label: "Terms & Conditions", href: "/terms-and-conditions" },
         { label: "Refund Policy", href: "/refund-policy" },
       ],
     },
   ],
+};
+
+// =========================================================================
+// PILLAR PAGES  (/dance · /yoga · /weddings · /corporate)
+// =========================================================================
+
+export type Offering = {
+  title: string;
+  blurb: string;
+  ctaLabel?: string;
+};
+
+export type Pillar = {
+  slug: PillarSlug;
+  nav: string;
+  eyebrow: string;
+  title: string;
+  /** One-line italic line under the hero title. */
+  tagline: string;
+  /** Long description for `<meta name=description>` + JSON-LD `description`. */
+  seoDescription: string;
+  heroImage: { src: string; alt: string };
+  intro: {
+    title: string;
+    paragraphs: string[];
+    bullets: string[];
+  };
+  offerings: Offering[];
+  /** 3–5 images shown in the gallery strip. */
+  gallery: { src: string; alt: string }[];
+  testimonialId: Testimonial["id"];
+  cta: {
+    title: string;
+    subtitle: string;
+  };
+};
+
+export const PILLARS: Record<PillarSlug, Pillar> = {
+  dance: {
+    slug: "dance",
+    nav: "DANCE",
+    eyebrow: "MOVEMENT",
+    title: "Dance",
+    tagline: "Energy. Expression. Community.",
+    seoDescription:
+      "Bangalore dance classes with Amisha — classical, contemporary, Bollywood and folk, plus sangeet and couple choreography. Private + group sessions, online or in-studio.",
+    heroImage: {
+      src: "/images/hero-dancer.webp",
+      alt: "A dancer mid-leap in a sunlit studio",
+    },
+    intro: {
+      title: "Movement that feels like coming home.",
+      paragraphs: [
+        "Dance with Move & Meditate is a celebration of body, story and rhythm. Whether you're stepping into your first class or warming up for a stage, you'll be guided by Amisha — a practitioner who treats every dancer like the lead of their own story.",
+        "We hold space for joy, expression and the kind of community that lingers long after the music stops.",
+      ],
+      bullets: [
+        "Classical, contemporary, Bollywood + folk in one programme",
+        "Private 1:1 and small-group formats",
+        "Performance prep for weddings, showcases and corporate events",
+        "Online sessions for dancers outside Bangalore",
+      ],
+    },
+    offerings: [
+      {
+        title: "Private Lessons",
+        blurb:
+          "1:1 sessions tailored to your goal — first dance, audition prep, fitness through movement, or just play.",
+      },
+      {
+        title: "Group Classes",
+        blurb:
+          "Weekly small-group classes across Bollywood, contemporary and folk. Begin at any level.",
+      },
+      {
+        title: "Wedding Choreography",
+        blurb:
+          "Sangeet sets, couple dances, family performances and full choreography schedules.",
+      },
+      {
+        title: "Online Drop-Ins",
+        blurb:
+          "Live online sessions on weekends. Record + replay so you never miss a beat.",
+      },
+    ],
+    gallery: [
+      { src: "/images/tile-move.webp", alt: "Expressive contemporary dancer in studio" },
+      { src: "/images/event-garba.webp", alt: "Garba celebration in motion" },
+      { src: "/images/event-couple-dance.webp", alt: "Couple rehearsing choreography" },
+      { src: "/images/hero-dancer.webp", alt: "Sunlit dance studio with arched windows" },
+    ],
+    testimonialId: "neha",
+    cta: {
+      title: "Move with us.",
+      subtitle:
+        "Book a discovery call and we'll help you pick the right format — private, group or wedding-focused.",
+    },
+  },
+
+  yoga: {
+    slug: "yoga",
+    nav: "YOGA",
+    eyebrow: "STILLNESS",
+    title: "Yoga",
+    tagline: "Awareness. Breath. Transformation.",
+    seoDescription:
+      "Yoga with Amisha — vinyasa, restorative, yoga nidra, breathwork and sound healing. Studio classes in Bangalore + live online practice for everyone.",
+    heroImage: {
+      src: "/images/hero-meditator.webp",
+      alt: "A woman seated in meditation in soft natural light",
+    },
+    intro: {
+      title: "Practice that meets you where you are.",
+      paragraphs: [
+        "Yoga with Move & Meditate is grounded, breath-led and unhurried. We blend a classical foundation with thoughtful pacing so the practice feels supportive on every kind of day — from the heaviest to the lightest.",
+        "Beyond the mat, the work continues through breathwork, sound healing and yoga nidra — all designed to release what the day pulls tight.",
+      ],
+      bullets: [
+        "Vinyasa, hatha + restorative classes",
+        "Breathwork and sound healing circles",
+        "Guided yoga nidra deep-rest sessions",
+        "Available on the mat in Bangalore or online from anywhere",
+      ],
+    },
+    offerings: [
+      {
+        title: "Group Yoga Classes",
+        blurb:
+          "Weekly small-group practice. Vinyasa for energy, hatha for grounding, restorative for repair.",
+      },
+      {
+        title: "Private 1:1 Sessions",
+        blurb:
+          "Built around your goals — recovery, flexibility, stress, focus, or returning after a break.",
+      },
+      {
+        title: "Breathwork + Sound Healing",
+        blurb:
+          "Guided breath circles and bronze-bowl sound baths held monthly.",
+      },
+      {
+        title: "Yoga Nidra (Online)",
+        blurb:
+          "45-minute deep-rest sessions live online. Recording available within 24 hours.",
+      },
+    ],
+    gallery: [
+      { src: "/images/tile-meditate.webp", alt: "Seated meditation in a cream studio" },
+      { src: "/images/hero-sound.webp", alt: "Sound healing with a bronze singing bowl" },
+      { src: "/images/event-breathwork.webp", alt: "Breathwork circle in session" },
+      { src: "/images/event-yoga-nidra.webp", alt: "Participants in yoga nidra rest" },
+    ],
+    testimonialId: "priya",
+    cta: {
+      title: "Find your practice.",
+      subtitle:
+        "Tell us how you'd like to feel after a class. We'll point you to the right format.",
+    },
+  },
+
+  weddings: {
+    slug: "weddings",
+    nav: "WEDDINGS",
+    eyebrow: "OCCASIONS",
+    title: "Weddings",
+    tagline: "Your story. Beautifully choreographed.",
+    seoDescription:
+      "Wedding choreography with Amisha — sangeet sets, couple dances, family performances and destination weddings. We design the moments that become the photos.",
+    heroImage: {
+      src: "/images/hero-sangeet.webp",
+      alt: "An Indian couple practising sangeet wedding choreography",
+    },
+    intro: {
+      title: "Choreography that tells your story — not someone else's.",
+      paragraphs: [
+        "We design wedding performances around the couple's personality, the family's energy and the room you're dancing into. From a quiet couple-dance to a full sangeet with multiple sets, every step is rehearsed until it feels effortless.",
+        "We work in Bangalore and travel for destination weddings across India and beyond.",
+      ],
+      bullets: [
+        "Couple dance + first-dance choreography",
+        "Sangeet sets with siblings, friends and family",
+        "Mehendi + haldi entertainment design",
+        "Destination weddings — full travel + rehearsal support",
+      ],
+    },
+    offerings: [
+      {
+        title: "Couple Dance",
+        blurb:
+          "A single, signature dance designed around your song, your style and your love story.",
+      },
+      {
+        title: "Sangeet Choreography",
+        blurb:
+          "Full sangeet design — multiple sets, transitions, family + friends, rehearsal calendar.",
+      },
+      {
+        title: "Family Performances",
+        blurb:
+          "Stage moments for parents, siblings and the friend group who promised to dance.",
+      },
+      {
+        title: "Destination Weddings",
+        blurb:
+          "We travel. Pre-wedding rehearsals + on-site polish included in the package.",
+      },
+    ],
+    gallery: [
+      { src: "/images/tile-weddings.webp", alt: "Couple in a candle-lit sangeet" },
+      { src: "/images/hero-sangeet.webp", alt: "Couple rehearsing sangeet choreography" },
+      { src: "/images/event-couple-dance.webp", alt: "Couple dance workshop" },
+      { src: "/images/tile-move.webp", alt: "Contemporary dancer in a sunlit room" },
+    ],
+    testimonialId: "ananya-rahul",
+    cta: {
+      title: "Let's design your sangeet.",
+      subtitle:
+        "Book a discovery call. We'll talk songs, timeline, family vibe — and walk you through how we'd choreograph it.",
+    },
+  },
+
+  corporate: {
+    slug: "corporate",
+    nav: "CORPORATE",
+    eyebrow: "TEAMS",
+    title: "Corporate",
+    tagline: "Focus. Resilience. Team chemistry.",
+    seoDescription:
+      "Corporate wellness programmes with Amisha — yoga, dance, breathwork and sound healing for teams, offsites and retreats. Bangalore + India-wide.",
+    heroImage: {
+      src: "/images/hero-corporate.webp",
+      alt: "A corporate wellness yoga session in a cream studio",
+    },
+    intro: {
+      title: "Wellness that actually shows up at work.",
+      paragraphs: [
+        "We design corporate programmes that go beyond the one-off lunchtime class. Movement, breath and stillness layered together so teams arrive at meetings more focused, more present and a little more human with each other.",
+        "Formats span weekly on-site sessions, multi-day offsites, retreats and on-demand digital practice.",
+      ],
+      bullets: [
+        "Weekly on-site yoga + movement sessions",
+        "Half-day team workshops (breathwork, sound healing, dance)",
+        "Multi-day retreats + offsites with full programme design",
+        "On-demand digital sessions for distributed teams",
+      ],
+    },
+    offerings: [
+      {
+        title: "Weekly Sessions",
+        blurb:
+          "Recurring on-site yoga, movement or breathwork. We come to your office.",
+      },
+      {
+        title: "Team Workshops",
+        blurb:
+          "Half-day formats — breath, sound, dance — built around team-specific goals.",
+      },
+      {
+        title: "Offsites + Retreats",
+        blurb:
+          "Multi-day programmes for leadership groups + full teams. Bangalore, Goa, the foothills — we design it.",
+      },
+      {
+        title: "Digital Wellness",
+        blurb:
+          "Live + recorded library for distributed teams. Monthly themes, measurable engagement.",
+      },
+    ],
+    gallery: [
+      { src: "/images/tile-corporate.webp", alt: "Group corporate wellness session" },
+      { src: "/images/hero-corporate.webp", alt: "Sunlit corporate yoga studio" },
+      { src: "/images/event-breathwork.webp", alt: "Breathwork circle in a studio" },
+      { src: "/images/event-yoga-nidra.webp", alt: "Participants resting in yoga nidra" },
+    ],
+    testimonialId: "rohit",
+    cta: {
+      title: "Bring wellness to your team.",
+      subtitle:
+        "Book a discovery call. We'll listen to your team's rhythm and design a programme that fits.",
+    },
+  },
 };
