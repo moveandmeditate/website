@@ -2,17 +2,21 @@
  * Sanity → Next.js cache-invalidation webhook.
  *
  * When an editor publishes a change in Studio, Sanity POSTs to this
- * endpoint. We map the affected document `_type` to the routes that
- * consume it and call `revalidatePath()` so the next request rebuilds
- * from fresh data.
+ * endpoint. We map the affected document `_type` to the cache tags
+ * used by the GROQ fetch wrappers in `sanity/lib/site-data.ts` and
+ * `sanity/lib/events.ts`, then call the `invalidateCmsTags` Server
+ * Action so the next request re-fetches from Sanity.
  *
- * Why `revalidatePath` (not `revalidateTag` / `updateTag`)?
- *   - Next.js 16 restricts BOTH `revalidateTag(tag, profile)` and
- *     `updateTag(tag)` to Server-Action contexts. They throw
- *     `"updateTag can only be called from within a Server Action"`
- *     when called from a route handler — which is what this webhook
- *     is. `revalidatePath` still works from route handlers and gives
- *     us per-route granularity, which is enough here.
+ * Why a Server Action wrapper (not a direct `revalidateTag` call)?
+ *   Next.js 16 throws "updateTag can only be called from within a
+ *   Server Action" when cache-invalidation APIs are called from a
+ *   Route Handler. The `"use server"` directive in lib/cms-revalidate.ts
+ *   promotes the invalidation into the right runtime context.
+ *
+ * Why tags (not paths): `revalidatePath` clears the route HTML cache
+ * but leaves the underlying tagged `fetch()` data cache hot — next
+ * render reuses the stale Sanity response. Tag invalidation busts the
+ * right layer.
  *
  * Configuration (in Sanity manage UI → API → GROQ webhooks):
  *   - URL: https://<prod-domain>/api/revalidate
@@ -25,45 +29,23 @@
  * Security: we verify the `sanity-webhook-signature` header against the
  * shared secret. Unsigned / wrong-signature requests get a 401.
  */
-import { revalidatePath } from "next/cache";
 import { type NextRequest, NextResponse } from "next/server";
 import { parseBody } from "next-sanity/webhook";
 
+import { invalidateCmsTags } from "@/lib/cms-revalidate";
 import { revalidateSecret } from "@/sanity/env";
 
-type RevalidationTarget = { path: string; type?: "page" | "layout" };
-
 /**
- * Map document `_type` → the routes that need to refresh.
- *
- * `type: "layout"` revalidates the route segment AND every child route
- * that shares the layout — useful for siteSettings which feeds
- * <SiteHeader>/<SiteFooter>/<MobileCtaBar> across every page.
+ * Map document `_type` → the cache tags used by the GROQ fetch
+ * wrappers. Keep in sync with `next: { tags: [...] }` in
+ * `sanity/lib/site-data.ts` + `sanity/lib/events.ts`.
  */
-const TYPE_TO_PATHS: Record<string, RevalidationTarget[]> = {
-  // Site settings (email/whatsapp/socials/cal URL) is consumed by the
-  // root layout, header, footer, mobile bar, contact section and pillar
-  // CTAs — `layout` revalidation covers the whole tree in one call.
-  siteSettings: [{ path: "/", type: "layout" }],
-  // Founder section + JSON-LD on `/` only.
-  founderProfile: [{ path: "/" }],
-  // Events show on `/` and on the Dance + Yoga pillar pages.
-  event: [
-    { path: "/" },
-    { path: "/dance" },
-    { path: "/yoga" },
-  ],
-  // Testimonials show on `/` and every pillar page (each pillar page
-  // filters by tagged pillar).
-  testimonial: [
-    { path: "/" },
-    { path: "/dance" },
-    { path: "/yoga" },
-    { path: "/weddings" },
-    { path: "/corporate" },
-  ],
-  // Trusted-by strip only renders on `/`.
-  brand: [{ path: "/" }],
+const TYPE_TO_TAGS: Record<string, string[]> = {
+  event: ["events"],
+  testimonial: ["testimonials"],
+  founderProfile: ["founderProfile"],
+  siteSettings: ["siteSettings"],
+  brand: ["brands"],
 };
 
 export async function POST(req: NextRequest) {
@@ -95,28 +77,23 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const targets = TYPE_TO_PATHS[body._type];
-  if (!targets) {
+  const tags = TYPE_TO_TAGS[body._type];
+  if (!tags) {
     // Unknown doc type — not an error, just nothing to invalidate.
     return NextResponse.json({ ok: true, revalidated: [] });
   }
 
-  for (const target of targets) {
-    revalidatePath(target.path, target.type);
-  }
+  await invalidateCmsTags(tags);
 
   // Surface in Vercel logs so we can confirm webhook deliveries when
   // editors report stale content. Cheap, no third-party dependency.
-  const revalidated = targets.map((t) =>
-    t.type ? `${t.path}[${t.type}]` : t.path
-  );
   console.log(
-    `[sanity-webhook] revalidated=${revalidated.join(",")} type=${body._type} id=${body._id ?? "?"}`
+    `[sanity-webhook] revalidated tags=${tags.join(",")} type=${body._type} id=${body._id ?? "?"}`
   );
 
   return NextResponse.json({
     ok: true,
-    revalidated,
+    revalidated: tags,
     type: body._type,
     id: body._id,
   });
