@@ -1,0 +1,878 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Move &amp; Meditate — Client Decisions Needed</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Jost:wght@300;400;500;600&display=swap"
+  rel="stylesheet"
+/>
+<style>
+  :root {
+    --bg: #f6f1ea;
+    --bg-2: #efe8de;
+    --bg-3: #eae2d4;
+    --ink: #1a1a1a;
+    --ink-2: #2b2b2b;
+    --muted: #6b6358;
+    --line: #d9d1c2;
+    --line-2: #c8bfac;
+    --gold: #a08968;
+    --gold-dk: #7d6a4f;
+    --serif: "Cormorant Garamond", "Times New Roman", serif;
+    --sans: "Jost", "Helvetica Neue", Arial, sans-serif;
+  }
+
+  @page {
+    size: A4;
+    margin: 22mm 18mm;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-weight: 300;
+    font-size: 11.5pt;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Cover */
+  .cover {
+    page-break-after: always;
+    min-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    padding: 40mm 20mm;
+  }
+  .cover .stamp {
+    width: 110px; height: 110px; margin: 0 auto 28px;
+    color: var(--ink);
+  }
+  .cover .eyebrow {
+    font-size: 9.5pt;
+    letter-spacing: 4pt;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 24px;
+  }
+  .cover h1 {
+    font-family: var(--serif);
+    font-size: 34pt;
+    line-height: 1.05;
+    letter-spacing: 1pt;
+    margin: 0 0 22px;
+    font-weight: 400;
+  }
+  .cover p.lede {
+    font-size: 11.5pt;
+    color: var(--ink-2);
+    max-width: 110mm;
+    margin: 0 auto 28px;
+    line-height: 1.7;
+  }
+  .cover .meta {
+    margin-top: 40px;
+    font-size: 9.5pt;
+    letter-spacing: 2pt;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* Section headings */
+  section.qsec {
+    page-break-inside: avoid;
+    padding: 0 0 22pt;
+    border-top: 1px solid var(--line);
+    margin-top: 22pt;
+  }
+  section.qsec:first-of-type { border-top: 0; margin-top: 0; }
+  section.qsec h2 {
+    font-family: var(--serif);
+    font-size: 20pt;
+    font-weight: 400;
+    letter-spacing: 0.5pt;
+    margin: 18pt 0 4pt;
+  }
+  section.qsec .sec-eyebrow {
+    font-size: 8.5pt;
+    letter-spacing: 3pt;
+    text-transform: uppercase;
+    color: var(--gold-dk);
+    font-weight: 500;
+    margin-bottom: 4pt;
+  }
+  section.qsec p.sec-lede {
+    color: var(--muted);
+    font-size: 10pt;
+    line-height: 1.65;
+    margin: 0 0 14pt;
+    max-width: 150mm;
+  }
+
+  /* Questions */
+  .q {
+    margin: 10pt 0 14pt;
+    page-break-inside: avoid;
+  }
+  .q .qhead {
+    font-weight: 500;
+    color: var(--ink);
+    font-size: 10.5pt;
+    margin-bottom: 2pt;
+  }
+  .q .qnote {
+    font-size: 9pt;
+    color: var(--muted);
+    line-height: 1.55;
+    margin-bottom: 6pt;
+  }
+  .q .options {
+    margin-top: 4pt;
+    font-size: 10pt;
+  }
+  .q .options label {
+    display: block;
+    padding: 2pt 0;
+    color: var(--ink-2);
+  }
+  .q .options input[type=checkbox],
+  .q .options input[type=radio] {
+    transform: translateY(1px);
+    margin-right: 8pt;
+    accent-color: var(--ink);
+  }
+  .q .answer-lines {
+    margin-top: 6pt;
+  }
+  .q .answer-lines .line {
+    height: 14pt;
+    border-bottom: 0.6pt solid var(--line-2);
+  }
+  .q .answer-inline {
+    height: 16pt;
+    border-bottom: 0.6pt solid var(--line-2);
+    margin-top: 4pt;
+  }
+
+  /* Screenshot blocks */
+  figure.shot {
+    margin: 8pt 0 12pt;
+    padding: 6pt;
+    background: #fff;
+    border: 0.6pt solid var(--line);
+    page-break-inside: avoid;
+  }
+  figure.shot img {
+    width: 100%;
+    display: block;
+  }
+  figure.shot figcaption {
+    margin-top: 4pt;
+    font-size: 8.5pt;
+    letter-spacing: 1.5pt;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  figure.shot.mobile {
+    width: 56%;
+    margin-inline: auto;
+  }
+
+  /* Generic helpers */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8pt;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8pt;
+  }
+
+  .callout {
+    background: var(--bg-3);
+    border-left: 2pt solid var(--gold);
+    padding: 10pt 12pt;
+    margin: 12pt 0;
+    font-size: 10pt;
+    color: var(--ink-2);
+  }
+  .callout strong { color: var(--ink); font-weight: 500; }
+
+  .signoff {
+    margin-top: 30pt;
+    padding-top: 18pt;
+    border-top: 1px solid var(--line);
+  }
+  .signoff h3 {
+    font-family: var(--serif);
+    font-size: 16pt;
+    font-weight: 400;
+    margin: 0 0 8pt;
+  }
+  .signoff .sign-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20pt;
+    margin-top: 14pt;
+  }
+  .signoff .sign-grid .field { font-size: 9.5pt; color: var(--muted); }
+  .signoff .sign-grid .field .line {
+    height: 16pt;
+    border-bottom: 0.8pt solid var(--ink);
+    margin-bottom: 4pt;
+  }
+
+  /* Print niceties */
+  @media print {
+    body { background: var(--bg); }
+    a { color: inherit; text-decoration: none; }
+    .no-print { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ============= COVER ============= -->
+<div class="cover">
+  <svg class="stamp" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="100" r="94" fill="none" stroke="currentColor" stroke-width="2.5" />
+    <circle cx="100" cy="100" r="78" fill="none" stroke="currentColor" stroke-width="1.5" />
+    <circle cx="100" cy="78" r="3" fill="currentColor" />
+    <path d="M 70 132 L 90 92 L 100 108 L 110 92 L 130 132" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="miter" stroke-linecap="round" />
+    <path d="M 68 142 C 80 148 120 148 132 142" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" />
+  </svg>
+  <div class="eyebrow">Move &amp; Meditate · Website Build</div>
+  <h1>Decisions we need from you<br />before we can ship 100%</h1>
+  <p class="lede">
+    A short, no-jargon list of every question we need answered to take the site from
+    its current draft to a launch-ready, fully wired-up version. Mark the boxes,
+    fill the blanks, send back. We will plug the answers in and ship.
+  </p>
+  <div class="meta">Prepared for Amisha · May 2026</div>
+</div>
+
+<!-- ============= INTRO ============= -->
+<section class="qsec">
+  <div class="sec-eyebrow">How this works</div>
+  <h2>Read, choose, scribble.</h2>
+  <p class="sec-lede">
+    Each section below has one or more decisions. Pick from the options (tick the box),
+    fill the blank line, or write your preference in the margin. Screenshots show
+    the exact place on the site each question affects. There are no wrong answers —
+    if you are unsure, write "let's discuss" and we will pick up on a call.
+  </p>
+</section>
+
+<!-- ============= A. IDENTITY & DOMAIN ============= -->
+<section class="qsec">
+  <div class="sec-eyebrow">A · Identity &amp; Domain</div>
+  <h2>What lives on the URL bar and inside our inbox.</h2>
+
+  <div class="q">
+    <div class="qhead">A1. Final domain</div>
+    <div class="qnote">Suggested: <strong>moveandmeditate.in</strong>. Confirm or write your preferred domain. We will set DNS + SSL once registered.</div>
+    <div class="answer-inline"></div>
+  </div>
+
+  <div class="q">
+    <div class="qhead">A2. Primary email inbox</div>
+    <div class="qnote">Goes on the contact section and in legal pages. Suggested: <strong>hello@moveandmeditate.in</strong>.</div>
+    <div class="answer-inline"></div>
+  </div>
+
+  <div class="q">
+    <div class="qhead">A3. Should we include a phone number publicly?</div>
+    <div class="options">
+      <label><input type="checkbox" /> Yes &mdash; write number here:</label>
+    </div>
+    <div class="answer-inline"></div>
+    <div class="options">
+      <label><input type="checkbox" /> No, keep contact email + WhatsApp only.</label>
+    </div>
+  </div>
+
+  <div class="q">
+    <div class="qhead">A4. Business / Studio registered name</div>
+    <div class="qnote">For invoices, refund policy, terms &amp; conditions, and the Grievance Officer block required by the DPDP Act 2023.</div>
+    <div class="answer-inline"></div>
+  </div>
+</section>
+
+<!-- ============= B. NAVIGATION ============= -->
+<section class="qsec">
+  <div class="sec-eyebrow">B · Navigation</div>
+  <h2>The 5 links at the top.</h2>
+  <p class="sec-lede">
+    Today the site is one long scrollable page. The header has 5 anchor links that
+    scroll to sections on the same page. There are no sub-pages yet (no <code>/about</code>,
+    <code>/events</code>, etc.). Confirm if this is the right setup for launch.
+  </p>
+
+  <figure class="shot">
+    <img src="screenshots/desktop-01-hero-and-nav.jpg" alt="Header with 5 nav links" />
+    <figcaption>Current header — HOME · MOVE · MEDITATE · EVENTS · ABOUT</figcaption>
+  </figure>
+
+  <div class="q">
+    <div class="qhead">B1. Keep the 5 anchor links as they are?</div>
+    <div class="options">
+      <label><input type="checkbox" /> Yes &mdash; perfect for v1.</label>
+      <label><input type="checkbox" /> No &mdash; I want sub-pages for one or more of these (write below):</label>
+    </div>
+    <div class="answer-inline"></div>
+  </div>
+
+  <div class="q">
+    <div class="qhead">B2. Add WEDDINGS, CORPORATE or RETREATS to the top nav too?</div>
+    <div class="qnote">They already appear as image tiles further down the page. Adding them to the top nav promotes them more, but the menu becomes busier.</div>
+    <div class="options">
+      <label><input type="checkbox" /> No, keep top nav as is.</label>
+      <label><input type="checkbox" /> Add WEDDINGS to top nav.</label>
+      <label><input type="checkbox" /> Add CORPORATE to top nav.</label>
+      <label><input type="checkbox" /> Add RETREATS to top nav.</label>
+    </div>
+  </div>
+</section>
+
+<!-- ============= C. HERO ============= -->
+<section class="qsec">
+  <div class="sec-eyebrow">C · Hero</div>
+  <h2>First thing every visitor sees.</h2>
+
+  <figure class="shot">
+    <img src="screenshots/desktop-01-hero-and-nav.jpg" alt="Desktop hero" />
+    <figcaption>Desktop hero — dancer left, meditator right, wordmark centred</figcaption>
+  </figure>
+
+  <div class="q">
+    <div class="qhead">C1. Hero photos — keep AI-generated or replace?</div>
+    <div class="qnote">Current photos are AI editorial stock. Looks intentional but isn't you. We strongly recommend swapping in real photos of you / your space before launch.</div>
+    <div class="options">
+      <label><input type="checkbox" /> Keep the AI photos for now.</label>
+      <label><input type="checkbox" /> I'll send real photos by:</label>
+    </div>
+    <div class="answer-inline"></div>
+  </div>
+
+  <div class="q">
+    <div class="qhead">C2. Wordmark + tagline</div>
+    <div class="qnote">Currently: <strong>MOVE AND MEDITATE</strong> · "Movement is medicine · Stillness is power" · "Dance that moves you · Yoga that grounds you".</div>
+    <div class="options">
+      <label><input type="checkbox" /> Keep both lines exactly as is.</label>
+      <label><input type="checkbox" /> Edit them &mdash; new copy below:</label>
+    </div>
+    <div class="answer-lines"><div class="line"></div><div class="line"></div></div>
+  </div>
+
+  <div class="q">
+    <div class="qhead">C3. "Watch Our Story" link is currently hidden.</div>
+    <div class="qnote">If you have a YouTube or Vimeo video introducing the studio, drop the link below and we'll show the play-icon CTA.</div>
+    <div class="answer-inline"></div>
+  </div>
+
+  <div class="q">
+    <div class="qhead">C4. Header CTA — "Book Discovery Call"</div>
+    <div class="qnote">Currently scrolls to the contact form. Better UX: open a Calendly / Cal.com slot picker so visitors book in one click.</div>
+    <div class="options">
+      <label><input type="checkbox" /> Keep "scroll to form" for v1.</label>
+      <label><input type="checkbox" /> Wire to my Cal.com / Calendly link below:</label>
+    </div>
+    <div class="answer-inline"></div>
+  </div>
+</section>
+
+<!-- ============= D. EVENTS ============= -->
+<section class="qsec">
+  <div class="sec-eyebrow">D · Events &amp; Bookings</div>
+  <h2>How people pay you for sessions.</h2>
+
+  <figure class="shot">
+    <img src="screenshots/desktop-02-events.jpg" alt="Events row" />
+    <figcaption>Upcoming Events row — 4 cards directly under the hero</figcaption>
+  </figure>
+
+  <div class="q">
+    <div class="qhead">D1. Where should "BOOK NOW" send the visitor?</div>
+    <div class="qnote">Today each event's BOOK NOW button scrolls to the contact form. The most-likely-correct setup is to send them to your existing District / Insider listing for that specific event.</div>
+    <div class="options">
+      <label><input type="checkbox" /> District / Insider URL per event. I'll send links + event details below or in a spreadsheet.</label>
+      <label><input type="checkbox" /> Keep them all pointing to the contact form for now.</label>
+      <label><input type="checkbox" /> Wire direct payment (Razorpay) for some events &mdash; let's discuss.</label>
+    </div>
+  </div>
+
+  <div class="q">
+    <div class="qhead">D2. Confirm the 4 events shown today (or swap them).</div>
+    <div class="qnote">Currently shown: Garba Intensive (24 May) · Breathwork &amp; Sound Healing Circle (08 Jun) · Couple Dance Workshop (15 Jun) · Yoga Nidra Workshop Online (29 Jun). Real-world dates / titles?</div>
+    <div class="answer-lines">
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+    </div>
+  </div>
+
+  <div class="callout">
+    <strong>Recommendation:</strong> we plug in a free CMS (Sanity) so you can create / edit
+    events yourself. Each event row has title · date · location · image · District URL.
+    No code needed after setup. Tick if interested:
+    <div class="options" style="margin-top:6pt">
+      <label><input type="checkbox" /> Yes, set up Sanity CMS so I can manage events myself.</label>
+    </div>
+  </div>
+</section>
+
+<!-- ============= E. SERVICES & TILES ============= -->
+<section class="qsec">
+  <div class="sec-eyebrow">E · Services &amp; Tiles</div>
+  <h2>What you sell — the 5 pillar tiles.</h2>
+
+  <figure class="shot">
+    <img src="screenshots/desktop-04-tiles.jpg" alt="Tile marquee" />
+    <figcaption>Desktop — tiles scroll right slowly, pause on hover</figcaption>
+  </figure>
+
+  <div class="q">
+    <div class="qhead">E1. Confirm the 5 pillars + the 3-word tag under each.</div>
+    <div class="qnote">
+      MOVE — Energy / Expression / Community.<br />
+      MEDITATE — Stillness / Awareness / Transformation.<br />
+      WEDDINGS — Your story / Beautifully / Choreographed.<br />
+      CORPORATE — Focus / Resilience / Team Chemistry.<br />
+      RETREATS — Nature / Rest / Transformation.<br />
+      Edits or swaps go below.
+    </div>
+    <div class="answer-lines">
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+    </div>
+  </div>
+
+  <div class="q">
+    <div class="qhead">E2. Should each tile link to its own page later?</div>
+    <div class="qnote">For v1 we send every tile click to the contact form. Long-term we can build dedicated landing pages per service.</div>
+    <div class="options">
+      <label><input type="checkbox" /> v1 is fine, leave them pointing to contact.</label>
+      <label><input type="checkbox" /> Yes, plan dedicated pages — priority order:</label>
+    </div>
+    <div class="answer-inline"></div>
+  </div>
+
+  <figure class="shot">
+    <img src="screenshots/desktop-05-experiences.jpg" alt="Experiences grid" />
+    <figcaption>"Experiences That Elevate" — 6 service icons</figcaption>
+  </figure>
+
+  <div class="q">
+    <div class="qhead">E3. Confirm the 6 experiences + the one-line description under each.</div>
+    <div class="qnote">Dance &amp; Folk · Yoga &amp; Movement · Breathwork · Sound Healing · Corporate · Online Sessions. Strikethrough / replace below.</div>
+    <div class="answer-lines">
+      <div class="line"></div>
+      <div class="line"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============= F. TRUSTED BY ============= -->
+<section class="qsec">
+  <div class="sec-eyebrow">F · Trusted By</div>
+  <h2>Brand logos under the events strip.</h2>
+
+  <figure class="shot">
+    <img src="screenshots/desktop-03-trusted-by.jpg" alt="Trusted-by strip" />
+    <figcaption>Google · Infosys · McKinsey · WeWork · Puma · Adobe · Deloitte</figcaption>
+  </figure>
+
+  <div class="q">
+    <div class="qhead">F1. Have you actually worked with these brands?</div>
+    <div class="qnote">We need permission / proof before we can publish each one. Tick only the brands you can verify (invoice / signed engagement / written reference).</div>
+    <div class="options">
+      <label><input type="checkbox" /> Google</label>
+      <label><input type="checkbox" /> Infosys</label>
+      <label><input type="checkbox" /> McKinsey &amp; Company</label>
+      <label><input type="checkbox" /> WeWork</label>
+      <label><input type="checkbox" /> Puma</label>
+      <label><input type="checkbox" /> Adobe</label>
+      <label><input type="checkbox" /> Deloitte</label>
+    </div>
+  </div>
+
+  <div class="q">
+    <div class="qhead">F2. Other brands to add?</div>
+    <div class="answer-lines">
+      <div class="line"></div>
+      <div class="line"></div>
+    </div>
+  </div>
+
+  <div class="q">
+    <div class="qhead">F3. If you cannot back them up, can we remove the section?</div>
+    <div class="options">
+      <label><input type="checkbox" /> Remove "Trusted By" until we have real brands.</label>
+      <label><input type="checkbox" /> Keep it &mdash; I'll send proof for the ones I tick above.</label>
+    </div>
+  </div>
+</section>
+
+<!-- ============= G. FOUNDER ============= -->
+<section class="qsec">
+  <div class="sec-eyebrow">G · Founder Section</div>
+  <h2>Your story, your numbers.</h2>
+
+  <figure class="shot">
+    <img src="screenshots/desktop-06-founder.jpg" alt="Founder section" />
+    <figcaption>Founder portrait + 4 stat tiles</figcaption>
+  </figure>
+
+  <div class="q">
+    <div class="qhead">G1. Founder portrait</div>
+    <div class="options">
+      <label><input type="checkbox" /> Send a real high-resolution portrait by:</label>
+    </div>
+    <div class="answer-inline"></div>
+    <div class="options">
+      <label><input type="checkbox" /> Keep the AI placeholder until I have a session.</label>
+    </div>
+  </div>
+
+  <div class="q">
+    <div class="qhead">G2. Bio copy — read &amp; approve.</div>
+    <div class="qnote">"Move &amp; Meditate was born from a simple belief — that movement can heal, and stillness can transform. Amisha's journey has carried her from stage to studio, from dance floors to mindful spaces…"</div>
+    <div class="options">
+      <label><input type="checkbox" /> Looks good, ship it.</label>
+      <label><input type="checkbox" /> Edits below:</label>
+    </div>
+    <div class="answer-lines">
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+    </div>
+  </div>
+
+  <div class="q">
+    <div class="qhead">G3. The 4 stat numbers — confirm or correct.</div>
+    <div class="qnote">Currently: <strong>1000+</strong> transformed lives · <strong>500+</strong> events &amp; workshops · <strong>50+</strong> cities impacted · <strong>10+</strong> years of practice.</div>
+    <div class="grid-2">
+      <div>
+        <div class="qhead" style="font-size:9pt">Transformed lives</div>
+        <div class="answer-inline"></div>
+      </div>
+      <div>
+        <div class="qhead" style="font-size:9pt">Events &amp; workshops</div>
+        <div class="answer-inline"></div>
+      </div>
+      <div>
+        <div class="qhead" style="font-size:9pt">Cities impacted</div>
+        <div class="answer-inline"></div>
+      </div>
+      <div>
+        <div class="qhead" style="font-size:9pt">Years of practice</div>
+        <div class="answer-inline"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="q">
+    <div class="qhead">G4. Signature line under the bio</div>
+    <div class="qnote">Currently: "Amisha" (handwritten-style) + "Founder · Move &amp; Meditate".</div>
+    <div class="options">
+      <label><input type="checkbox" /> Perfect as is.</label>
+      <label><input type="checkbox" /> Change to:</label>
+    </div>
+    <div class="answer-inline"></div>
+  </div>
+</section>
+
+<!-- ============= H. TESTIMONIALS ============= -->
+<section class="qsec">
+  <div class="sec-eyebrow">H · Testimonials</div>
+  <h2>Real voices, real photos.</h2>
+
+  <figure class="shot">
+    <img src="screenshots/desktop-07-testimonials.jpg" alt="Testimonials" />
+    <figcaption>4 testimonial cards — currently placeholder quotes</figcaption>
+  </figure>
+
+  <div class="q">
+    <div class="qhead">H1. The 4 placeholder quotes will be replaced with real testimonials. Please collect them.</div>
+    <div class="qnote">For each: quote (2–3 lines) + name + context (e.g. "Yoga Member", "Wedding Couple") + a 1:1 headshot if they consent.</div>
+    <div class="options">
+      <label><input type="checkbox" /> I have at least 4 real testimonials ready &mdash; sending by:</label>
+    </div>
+    <div class="answer-inline"></div>
+    <div class="options">
+      <label><input type="checkbox" /> Keep AI placeholder text until I gather real ones (we will mark the section "draft" until then).</label>
+      <label><input type="checkbox" /> Remove the testimonials section entirely until I have real ones.</label>
+    </div>
+  </div>
+
+  <div class="q">
+    <div class="qhead">H2. Show avatars next to each quote?</div>
+    <div class="options">
+      <label><input type="checkbox" /> Yes &mdash; with real client headshots only.</label>
+      <label><input type="checkbox" /> Drop the avatars &mdash; cleaner without.</label>
+    </div>
+  </div>
+</section>
+
+<!-- ============= I. CONTACT & WHATSAPP ============= -->
+<section class="qsec">
+  <div class="sec-eyebrow">I · Contact &amp; WhatsApp</div>
+  <h2>How people reach you.</h2>
+
+  <figure class="shot">
+    <img src="screenshots/desktop-08-contact.jpg" alt="Contact section" />
+    <figcaption>"Let's create something meaningful" + form</figcaption>
+  </figure>
+
+  <div class="q">
+    <div class="qhead">I1. WhatsApp community invite link</div>
+    <div class="qnote">Live link from your WhatsApp group settings (looks like <code>https://chat.whatsapp.com/XXXXX</code>).</div>
+    <div class="answer-inline"></div>
+  </div>
+
+  <div class="q">
+    <div class="qhead">I2. WhatsApp 1:1 chat number (optional)</div>
+    <div class="qnote">For a "Chat with us" link. Include country code, no spaces (e.g. <code>919876543210</code>).</div>
+    <div class="answer-inline"></div>
+  </div>
+
+  <div class="q">
+    <div class="qhead">I3. Where should contact-form submissions land?</div>
+    <div class="qnote">Today the form validates but doesn't send anywhere. Free options below — pick one:</div>
+    <div class="options">
+      <label><input type="checkbox" /> Google Sheet (we wire via Apps Script; all leads land in one sheet, optional email alert to you).</label>
+      <label><input type="checkbox" /> Email me directly via Resend / Mailerlite (each submission becomes an email).</label>
+      <label><input type="checkbox" /> Sanity CMS inbox (if we set up the CMS too).</label>
+    </div>
+  </div>
+
+  <div class="q">
+    <div class="qhead">I4. Auto-reply to the submitter?</div>
+    <div class="qnote">A short thank-you email arrives in their inbox the moment they hit Send.</div>
+    <div class="options">
+      <label><input type="checkbox" /> Yes, set up. Draft your message below.</label>
+      <label><input type="checkbox" /> No auto-reply for now.</label>
+    </div>
+    <div class="answer-lines">
+      <div class="line"></div>
+      <div class="line"></div>
+    </div>
+  </div>
+
+  <div class="q">
+    <div class="qhead">I5. Social handles to put in the footer + contact section</div>
+    <div class="qnote">Leave blank to hide the icon.</div>
+    <div class="grid-2">
+      <div>
+        <div class="qhead" style="font-size:9pt">Instagram URL</div>
+        <div class="answer-inline"></div>
+      </div>
+      <div>
+        <div class="qhead" style="font-size:9pt">YouTube URL</div>
+        <div class="answer-inline"></div>
+      </div>
+      <div>
+        <div class="qhead" style="font-size:9pt">Facebook URL</div>
+        <div class="answer-inline"></div>
+      </div>
+      <div>
+        <div class="qhead" style="font-size:9pt">Any other (LinkedIn / Threads / X)</div>
+        <div class="answer-inline"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============= J. LEGAL (DPDP) ============= -->
+<section class="qsec">
+  <div class="sec-eyebrow">J · Legal &amp; Compliance</div>
+  <h2>DPDP Act 2023 — what we need to publish.</h2>
+  <p class="sec-lede">
+    India's Digital Personal Data Protection Act, 2023 + the IT Rules, 2021 require
+    a named Grievance Officer on the Privacy Policy page. We have drafted the
+    Privacy Policy, Terms &amp; Conditions and Refund Policy templates — they need
+    your details before they're legally publishable.
+  </p>
+
+  <div class="q">
+    <div class="qhead">J1. Grievance Officer name</div>
+    <div class="qnote">Usually the business owner. Can be yourself.</div>
+    <div class="answer-inline"></div>
+  </div>
+  <div class="q">
+    <div class="qhead">J2. Grievance Officer email</div>
+    <div class="answer-inline"></div>
+  </div>
+  <div class="q">
+    <div class="qhead">J3. Business postal address (for the privacy + terms pages)</div>
+    <div class="answer-lines">
+      <div class="line"></div>
+      <div class="line"></div>
+    </div>
+  </div>
+  <div class="q">
+    <div class="qhead">J4. Refund window for events &amp; workshops</div>
+    <div class="qnote">Default in the draft: full refund &gt;14 days before, 50% refund 7–14 days before, no refund within 7 days. Adjust below.</div>
+    <div class="answer-lines">
+      <div class="line"></div>
+      <div class="line"></div>
+    </div>
+  </div>
+  <div class="q">
+    <div class="qhead">J5. Do you want a lawyer to review before publish?</div>
+    <div class="options">
+      <label><input type="checkbox" /> Yes — recommended. I'll send legal to my counsel.</label>
+      <label><input type="checkbox" /> Publish as is — I'll iterate later.</label>
+    </div>
+  </div>
+</section>
+
+<!-- ============= K. NEWSLETTER & MARKETING ============= -->
+<section class="qsec">
+  <div class="sec-eyebrow">K · Newsletter &amp; Marketing</div>
+  <h2>The email subscribe box in the footer.</h2>
+
+  <figure class="shot">
+    <img src="screenshots/desktop-09-footer.jpg" alt="Footer" />
+    <figcaption>Footer — newsletter subscribe + social icons + legal links</figcaption>
+  </figure>
+
+  <div class="q">
+    <div class="qhead">K1. Run a newsletter?</div>
+    <div class="options">
+      <label><input type="checkbox" /> Yes — wire to Mailerlite / Resend Audiences (free up to 1k contacts).</label>
+      <label><input type="checkbox" /> Not for now — remove the subscribe box from the footer.</label>
+    </div>
+  </div>
+
+  <div class="q">
+    <div class="qhead">K2. Cadence + content if K1 is yes</div>
+    <div class="qnote">e.g. monthly events digest · seasonal retreat announcements · blog post round-ups.</div>
+    <div class="answer-lines">
+      <div class="line"></div>
+      <div class="line"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============= L. MOBILE ============= -->
+<section class="qsec">
+  <div class="sec-eyebrow">L · Mobile</div>
+  <h2>What it looks like on a phone.</h2>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:10pt;">
+    <figure class="shot mobile" style="width:auto">
+      <img src="screenshots/mobile-01-hero.jpg" alt="Mobile hero" />
+      <figcaption>Mobile hero</figcaption>
+    </figure>
+    <figure class="shot mobile" style="width:auto">
+      <img src="screenshots/mobile-02-nav-open.jpg" alt="Mobile menu open" />
+      <figcaption>Mobile menu — sheet open</figcaption>
+    </figure>
+    <figure class="shot mobile" style="width:auto">
+      <img src="screenshots/mobile-03-tiles-stack.jpg" alt="Mobile tiles" />
+      <figcaption>Mobile tiles — vertical stack</figcaption>
+    </figure>
+    <figure class="shot mobile" style="width:auto">
+      <img src="screenshots/mobile-04-contact.jpg" alt="Mobile contact" />
+      <figcaption>Mobile contact section</figcaption>
+    </figure>
+  </div>
+
+  <div class="q">
+    <div class="qhead">L1. Mobile experience looks good?</div>
+    <div class="options">
+      <label><input type="checkbox" /> Yes &mdash; ship.</label>
+      <label><input type="checkbox" /> Concerns &mdash; flag below:</label>
+    </div>
+    <div class="answer-lines">
+      <div class="line"></div>
+      <div class="line"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============= M. ANALYTICS & TRACKING ============= -->
+<section class="qsec">
+  <div class="sec-eyebrow">M · Analytics &amp; Tracking</div>
+  <h2>Knowing what's working.</h2>
+
+  <div class="q">
+    <div class="qhead">M1. Enable Vercel Web Analytics?</div>
+    <div class="qnote">Free, GDPR-friendly, no cookies. Tells us page views, top traffic sources, mobile vs desktop. Recommended.</div>
+    <div class="options">
+      <label><input type="checkbox" /> Yes, switch it on at launch.</label>
+      <label><input type="checkbox" /> Hold off for now.</label>
+    </div>
+  </div>
+
+  <div class="q">
+    <div class="qhead">M2. Google Analytics 4 / Meta Pixel?</div>
+    <div class="qnote">Only needed if you plan to run paid ads (Google / Instagram). Triggers a cookie consent banner per privacy law.</div>
+    <div class="options">
+      <label><input type="checkbox" /> Add GA4 — tracking ID:</label>
+    </div>
+    <div class="answer-inline"></div>
+    <div class="options">
+      <label><input type="checkbox" /> Add Meta Pixel — pixel ID:</label>
+    </div>
+    <div class="answer-inline"></div>
+    <div class="options">
+      <label><input type="checkbox" /> Neither for now.</label>
+    </div>
+  </div>
+</section>
+
+<!-- ============= N. OPEN / OTHER ============= -->
+<section class="qsec">
+  <div class="sec-eyebrow">N · Open</div>
+  <h2>Anything else?</h2>
+  <p class="sec-lede">Anything you'd like to add, remove, or rework that we haven't asked about — go for it.</p>
+  <div class="q">
+    <div class="answer-lines">
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+      <div class="line"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============= SIGN-OFF ============= -->
+<section class="qsec signoff">
+  <div class="sec-eyebrow">Sign-off</div>
+  <h3>Once we have your answers we will ship within a few working days.</h3>
+  <p class="sec-lede">
+    Email this back (PDF, photos of the marked-up pages, or a typed reply quoting
+    the section letters) — whichever is fastest. We'll come back with a "you're
+    100% done" walkthrough.
+  </p>
+  <div class="sign-grid">
+    <div class="field">
+      <div class="line"></div>
+      Amisha — signature &amp; date
+    </div>
+    <div class="field">
+      <div class="line"></div>
+      Email back to: <strong>hello@moveandmeditate.in</strong>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>

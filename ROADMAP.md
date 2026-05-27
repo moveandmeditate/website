@@ -185,7 +185,11 @@ Last updated: 2026-05-27
 
 ---
 
-## 4. Already shipped (reference)
+## 4. Client deliverables
+
+- [x] Send `client-deliverables/Move-and-Meditate-Client-Questions.pdf` to Amisha — 23-page branded questionnaire covering every open decision (domain, nav, hero, events, tiles, founder, testimonials, contact, legal, mobile, analytics). Edit `questionnaire.html` if scope shifts; see `client-deliverables/README.md` for regen steps.
+
+## 5. Already shipped (reference)
 
 For posterity, here's what's done as of the initial build. **Do not re-do.**
 
