@@ -53,20 +53,26 @@ export const blogPostSchema = defineType({
     }),
     defineField({
       name: "heroImage",
-      title: "Hero image",
-      description: "Landscape, ~1600x900. Used at top of article + as OG fallback.",
+      title: "Hero image (optional)",
+      description:
+        "Landscape, ~1600x900. Optional — the article renders cleanly without one, and Amisha can add or replace this later. Used as the OG share image when present.",
       type: "image",
       options: { hotspot: true },
       fields: [
         defineField({
           name: "alt",
           title: "Alt text",
+          description: "Required when the image is set; helps screen readers and SEO.",
           type: "string",
-          validation: (r) => r.required(),
+          validation: (r) =>
+            r.custom((value, ctx) => {
+              const parent = (ctx.parent ?? {}) as { asset?: unknown };
+              if (parent.asset && !value) return "Alt text is required when an image is uploaded.";
+              return true;
+            }),
         }),
         defineField({ name: "caption", title: "Caption (optional)", type: "string" }),
       ],
-      validation: (r) => r.required(),
     }),
     defineField({
       name: "author",
