@@ -41,10 +41,8 @@ export const metadata: Metadata = {
     title: `${SITE.name} — ${SITE.tagline}`,
     description: SITE.description,
   },
-  icons: {
-    icon: "/logo.svg",
-    apple: "/logo.svg",
-  },
+  // Next.js auto-detects app/icon.png and app/apple-icon.png — no need to set
+  // these explicitly. Kept the section out so the route-level files win.
 };
 
 export const viewport: Viewport = {

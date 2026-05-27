@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { Mail, MapPin, Clock, MessageCircle } from "lucide-react";
 import { Logo } from "@/components/logo";
 import {
   FacebookIcon,
@@ -19,9 +20,8 @@ const SOCIALS = [
   { label: "WhatsApp Community", href: CONTACT.whatsappCommunityUrl, Icon: WhatsAppIcon },
 ] as const;
 
-/** Returns the pathname portion of a href so we can match `/dance` against
- *  `/dance#offerings` for active state. Falls back to the whole href when it's
- *  a pure anchor or doesn't start with `/`. */
+/** Returns the pathname portion of an href so `/dance` matches both `/dance`
+ *  and `/dance#offerings`. Pure anchors and non-routes pass through. */
 function pathnameOf(href: string): string {
   if (!href.startsWith("/")) return href;
   const hashIndex = href.indexOf("#");
@@ -34,14 +34,30 @@ export function SiteFooter() {
 
   return (
     <footer className="bg-bg border-t border-line">
+      {/* RIBBON — wordmark + tagline, separates the page body from the footer body */}
+      <div className="container-page py-10 lg:py-12 border-b border-line">
+        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-4">
+          <h2 className="font-serif text-[clamp(2.25rem,5vw,3.4rem)] leading-none tracking-[0.06em] text-ink">
+            {FOOTER.ribbon.wordmark}
+          </h2>
+          <p className="text-[12.5px] tracking-[0.32em] uppercase text-muted">
+            {FOOTER.ribbon.tagline}
+          </p>
+        </div>
+      </div>
+
+      {/* BRAND + LINK COLUMNS */}
       <div className="container-page py-12 lg:py-16">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 lg:gap-10 pb-10 border-b border-line">
-          <div className="col-span-2 lg:col-span-2">
-            <Logo size={56} className="text-ink mb-4" withEstablished />
-            <p className="text-[12px] leading-[1.7] text-muted max-w-[28ch]">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-12 gap-8 lg:gap-10">
+          {/* Brand block */}
+          <div className="col-span-2 md:col-span-3 lg:col-span-4 max-w-sm">
+            <Link href="/" aria-label={`${SITE.name} home`} className="inline-block">
+              <Logo size={68} />
+            </Link>
+            <p className="mt-5 text-[12.5px] leading-[1.85] text-muted">
               {FOOTER.brandBlurb}
             </p>
-            <ul className="mt-5 flex items-center gap-3">
+            <ul className="mt-6 flex items-center gap-3" aria-label="Social channels">
               {SOCIALS.map(({ label, href, Icon }) => (
                 <li key={label}>
                   <a
@@ -58,11 +74,16 @@ export function SiteFooter() {
             </ul>
           </div>
 
+          {/* Link columns: 4 of them sit in the remaining 8 cols on lg+ */}
           {FOOTER.columns.map((col) => (
-            <nav key={col.heading} aria-label={col.heading}>
-              <h2 className="text-[11px] tracking-[0.22em] font-semibold uppercase text-ink mb-4">
+            <nav
+              key={col.heading}
+              aria-label={col.heading}
+              className="lg:col-span-2"
+            >
+              <h3 className="text-[11px] tracking-[0.22em] font-semibold uppercase text-ink mb-4">
                 {col.heading}
-              </h2>
+              </h3>
               <ul className="flex flex-col gap-2.5 text-[12px] text-ink-2">
                 {col.links.map((l) => {
                   const linkPath = pathnameOf(l.href);
@@ -88,24 +109,85 @@ export function SiteFooter() {
           ))}
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-6 text-[11px] text-muted">
+        {/* STUDIO INFO CARD — sits below the columns, full width */}
+        <div className="mt-12 lg:mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-6 pt-10 border-t border-line">
+          <h2 className="lg:col-span-4 text-eyebrow text-muted">
+            {FOOTER.studio.heading}
+          </h2>
+
+          <div className="flex items-start gap-3">
+            <MapPin className="size-4 mt-0.5 text-gold-dk shrink-0" aria-hidden />
+            <div>
+              <p className="text-[10px] tracking-[0.22em] uppercase text-muted">Studio</p>
+              <p className="text-[13px] text-ink-2 mt-1 leading-[1.6]">
+                {FOOTER.studio.address}
+              </p>
+              <p className="text-[11px] text-muted mt-1 italic">
+                {FOOTER.studio.onlineNote}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-3">
+            <Mail className="size-4 mt-0.5 text-gold-dk shrink-0" aria-hidden />
+            <div>
+              <p className="text-[10px] tracking-[0.22em] uppercase text-muted">Email</p>
+              <a
+                href={`mailto:${CONTACT.email}`}
+                className="text-[13px] text-ink-2 mt-1 leading-[1.6] hover:text-gold-dk transition-colors block"
+              >
+                {CONTACT.email}
+              </a>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-3">
+            <MessageCircle className="size-4 mt-0.5 text-gold-dk shrink-0" aria-hidden />
+            <div>
+              <p className="text-[10px] tracking-[0.22em] uppercase text-muted">WhatsApp</p>
+              <a
+                href={CONTACT.whatsappCommunityUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[13px] text-ink-2 mt-1 leading-[1.6] hover:text-gold-dk transition-colors block"
+              >
+                Join the community
+              </a>
+            </div>
+          </div>
+
+          <div className="flex items-start gap-3">
+            <Clock className="size-4 mt-0.5 text-gold-dk shrink-0" aria-hidden />
+            <div>
+              <p className="text-[10px] tracking-[0.22em] uppercase text-muted">Hours</p>
+              <p className="text-[13px] text-ink-2 mt-1 leading-[1.6]">
+                {FOOTER.studio.hours}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* BOTTOM ROW */}
+      <div className="border-t border-line">
+        <div className="container-page py-6 flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-muted">
           <p>
-            © {year} {SITE.name}. All rights reserved.
+            © {year} {SITE.name}. Made with care in Bangalore.
           </p>
           <ul className="flex items-center gap-5">
             <li>
               <Link href="/privacy-policy" className="hover:text-ink transition-colors">
-                Privacy Policy
+                Privacy
               </Link>
             </li>
             <li>
               <Link href="/terms-and-conditions" className="hover:text-ink transition-colors">
-                Terms &amp; Conditions
+                Terms
               </Link>
             </li>
             <li>
               <Link href="/refund-policy" className="hover:text-ink transition-colors">
-                Refund Policy
+                Refunds
               </Link>
             </li>
           </ul>
