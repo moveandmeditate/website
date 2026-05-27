@@ -144,41 +144,43 @@ export const post: SeedBlogPost = {
 
     h2("Pricing in 2026 — what's reasonable"),
     p(
-      "Bangalore prices vary by neighborhood and reputation, but here's the honest landscape as of mid-2026:"
+      "Bangalore prices vary widely. Community centers and apartment-society batches start at the cheap end of the market; boutique studios and senior teachers sit at the top. Honest ranges as of mid-2026:"
     ),
     ...bullet([
       [
         strong("Drop-in single class: "),
-        txt("₹500–₹1,200 depending on neighborhood and teacher."),
+        txt(
+          "₹250–₹1,200 depending on neighborhood and teacher (community batches and fitness chains at the lower end; boutique studios at the upper)."
+        ),
       ],
       [
         strong("Class pack of 10: "),
-        txt("₹4,500–₹9,000. Roughly 10–25% cheaper per class."),
+        txt("₹3,000–₹9,000. Roughly 10–25% cheaper per class."),
       ],
       [
         strong("Unlimited month at a fitness chain: "),
-        txt("₹3,500–₹6,000."),
+        txt("₹999–₹4,500."),
       ],
       [
-        strong("Unlimited month at a dedicated studio: "),
-        txt("₹6,000–₹10,000."),
+        strong("Unlimited month at a dedicated yoga studio: "),
+        txt("₹3,500–₹8,000."),
       ],
       [
         strong("Small-group solo teacher (4–8 students): "),
         txt(
-          "₹6,000–₹15,000 per month. Higher per-class price; far deeper attention."
+          "₹5,000–₹15,000 per month. Higher per-class price; far deeper attention."
         ),
       ],
       [
         strong("Private 1:1: "),
         txt(
-          "₹2,500–₹6,000 per session. Worth it for injury rehab, prenatal/postnatal, or rapid progress."
+          "₹1,500–₹4,000 per session, sometimes up to ₹6,000 with senior teachers. Worth it for injury rehab, prenatal/postnatal, or rapid progress."
         ),
       ],
       [
         strong("Online live group: "),
         txt(
-          "₹2,500–₹5,000 per month for 2–3 sessions a week — typically the best value if you can keep yourself on the mat."
+          "₹1,500–₹5,000 per month for 2–3 sessions a week — typically the best value if you can keep yourself on the mat."
         ),
       ],
     ]),
@@ -344,7 +346,29 @@ export const post: SeedBlogPost = {
     {
       question: "How do I know if a yoga teacher is genuinely qualified?",
       answer:
-        "Ask three questions: where did you train, who was your teacher, and how many hours of training did you do. The most credible answers cite a named teacher, a specific school (e.g. Krishnamacharya Yoga Mandiram, Bihar School of Yoga, Iyengar Yoga Centre), and 200, 300, or 500 hours of formal training. Vague answers are a red flag.",
+        "Ask three questions: where did you train, who was your teacher, and how many hours of training. The most credible answers cite a named teacher, a recognised school (e.g. Krishnamacharya Yoga Mandiram in Chennai, the Bihar School of Yoga in Munger, or the Ramamani Iyengar Memorial Yoga Institute in Pune), and a specific training programme — typically 200 hours (RYT-200), 300 hours of advanced training, or 500 hours total under Yoga Alliance standards. Vague answers are a red flag.",
     },
   ],
 };
+
+/**
+ * External references cited (kept here for editorial integrity, not
+ * rendered to the page — citations are embedded inline in the body /
+ * FAQ where they make natural reading sense).
+ *
+ *   - Yoga Alliance — Standards for Registered Yoga Teachers
+ *     https://yogaalliance.org
+ *
+ *   - Krishnamacharya Yoga Mandiram (KYM), Chennai
+ *     https://www.kym.org
+ *
+ *   - Bihar School of Yoga, Munger
+ *     https://www.biharyoga.net
+ *
+ *   - Ramamani Iyengar Memorial Yoga Institute (RIMYI), Pune
+ *     https://bksiyengar.com
+ *
+ *   - Pricing-range survey: UrbanPro Bangalore listings (2026) +
+ *     Superprof India practitioner rates + sample studio pricing
+ *     pages (Krishna Wellness, Malleshwaram). Cross-checked May 2026.
+ */

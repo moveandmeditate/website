@@ -29,10 +29,19 @@ import {
 
 // In dev we want CMS edits to show up on the next page refresh so we
 // can iterate without restarting the server or clearing .next/cache.
-// In prod the 1-hour TTL is the safety net behind the webhook (which
-// invalidates instantly on publish).
+//
+// In prod we lean heavily on the Sanity webhook (see
+// /api/revalidate) for invalidation — when an editor publishes a
+// change, the affected tag is busted within ~5s. So the time-based
+// TTL is only a safety net for the (rare) case the webhook fails to
+// deliver. 24h is long enough to save almost all Sanity API hits
+// while still self-healing if the webhook silently drops a publish.
+//
+// Site settings, founder profile, testimonials and brands rarely
+// change once populated; using a longer TTL here is safer than
+// repeating the events.ts 1h pattern.
 const REVALIDATE_SECONDS =
-  process.env.NODE_ENV === "development" ? 5 : 60 * 60;
+  process.env.NODE_ENV === "development" ? 5 : 24 * 60 * 60;
 
 type SanityImageField = {
   alt: string | null;

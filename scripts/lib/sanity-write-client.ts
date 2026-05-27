@@ -9,7 +9,15 @@
  * The token is short-lived by design: generate it in Sanity manage UI,
  * run the import, revoke it. Never commit it to source.
  */
-import "dotenv/config";
+// `dotenv/config` defaults to loading `.env` only. Next.js auto-loads
+// `.env.local` for the app, but standalone scripts need to opt in
+// explicitly — otherwise the token sits in `.env.local` and the
+// script never sees it. Load `.env.local` first (it wins over `.env`
+// per the standard precedence) and fall back to `.env`.
+import { config as loadEnv } from "dotenv";
+loadEnv({ path: ".env.local" });
+loadEnv(); // fallback to .env if any keys aren't in .env.local
+
 import { createClient, type SanityClient } from "@sanity/client";
 
 function required(name: string): string {

@@ -23,8 +23,13 @@ import {
 } from "@/sanity/lib/queries";
 import { type PillarSlug } from "@/lib/content";
 
+// Blog posts are stable content — once published, they rarely change
+// outside of intentional revisions. Webhook handles instant
+// invalidation on publish/edit, so the time-based TTL is a safety
+// net. 7 days keeps Sanity API hits negligible (almost every read
+// after a fresh build is served from Next.js's cache layer).
 const REVALIDATE_SECONDS =
-  process.env.NODE_ENV === "development" ? 5 : 60 * 60;
+  process.env.NODE_ENV === "development" ? 5 : 7 * 24 * 60 * 60;
 
 /** Sanity-shaped image returned by IMAGE_FRAGMENT. */
 export type CmsImage = {
