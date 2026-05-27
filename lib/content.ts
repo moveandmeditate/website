@@ -27,7 +27,7 @@ export const SITE = {
 export const CONTACT = {
   email: "hello@moveandmeditate.in", // TODO: confirm final inbox
   phone: "", // TODO: optional
-  whatsappCommunityUrl: "https://chat.whatsapp.com/", // TODO: real invite link
+  whatsappCommunityUrl: "https://chat.whatsapp.com/F9tYK0m8Nwx0y9wBhJd8Am?mode=gi_t",
   whatsappDirectUrl: "https://wa.me/", // TODO: client phone number for direct chat
   city: "Bangalore",
   socials: {

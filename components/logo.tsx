@@ -10,11 +10,9 @@ type LogoProps = {
 };
 
 /**
- * Move & Meditate logo — renders the real brand asset.
+ * Move & Meditate logo — renders the real brand asset inside a circular
+ * cream cap so it sits cleanly on any background (cream, photo, footer).
  * Source: `public/mam-logo.png` (copied from `inspirations/mam_logo.png`).
- *
- * Kept as a tiny wrapper around <Image /> so we can swap to SVG later
- * (after vectorising) without touching every consumer.
  */
 export function Logo({
   className,
@@ -23,14 +21,24 @@ export function Logo({
   style,
 }: LogoProps) {
   return (
-    <Image
-      src="/mam-logo.png"
-      width={size}
-      height={size}
-      alt={title}
-      style={style}
-      priority
-      className={cn("shrink-0 select-none object-contain", className)}
-    />
+    <span
+      aria-label={title}
+      role="img"
+      className={cn(
+        "inline-grid place-items-center rounded-full bg-bg shrink-0 select-none overflow-hidden",
+        className
+      )}
+      style={{ width: size, height: size, ...style }}
+    >
+      <Image
+        src="/mam-logo.png"
+        width={size}
+        height={size}
+        alt=""
+        priority
+        className="object-contain"
+        style={{ width: "82%", height: "82%" }}
+      />
+    </span>
   );
 }

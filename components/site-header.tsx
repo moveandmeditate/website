@@ -58,7 +58,7 @@ export function SiteHeader() {
       className={cn(
         "fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter,box-shadow] duration-300",
         scrolled
-          ? "bg-bg/85 backdrop-blur shadow-[0_1px_0_var(--line)]"
+          ? "bg-bg/95 backdrop-blur-md shadow-[0_1px_0_var(--line),0_8px_24px_-12px_rgba(26,26,26,0.12)]"
           : "bg-transparent"
       )}
     >
