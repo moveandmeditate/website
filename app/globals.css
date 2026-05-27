@@ -1,0 +1,276 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  /* Brand palette (Move & Meditate) */
+  --color-bg: var(--bg);
+  --color-bg-2: var(--bg-2);
+  --color-bg-3: var(--bg-3);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-muted: var(--muted-color);
+  --color-muted-2: var(--muted-2);
+  --color-line: var(--line);
+  --color-line-2: var(--line-2);
+  --color-gold: var(--gold);
+  --color-gold-dk: var(--gold-dk);
+
+  /* shadcn token aliases mapped to brand palette */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted-bg: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Fonts (literal names — Tailwind v4 @theme inline resolves at parse time) */
+  --font-sans: "Jost", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Cormorant Garamond", ui-serif, Georgia, "Times New Roman", serif;
+  --font-script: "Cormorant Garamond", cursive;
+
+  /* Radius scale */
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+}
+
+:root {
+  /* Brand palette */
+  --bg: #f6f1ea;
+  --bg-2: #efe8de;
+  --bg-3: #eae2d4;
+  --ink: #1a1a1a;
+  --ink-2: #2b2b2b;
+  --muted-color: #6b6358;
+  --muted-2: #8a8275;
+  --line: #d9d1c2;
+  --line-2: #c8bfac;
+  --gold: #a08968;
+  --gold-dk: #7d6a4f;
+
+  /* shadcn tokens mapped to brand */
+  --background: var(--bg);
+  --foreground: var(--ink);
+  --card: var(--bg-3);
+  --card-foreground: var(--ink);
+  --popover: #ffffff;
+  --popover-foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--bg);
+  --secondary: var(--bg-2);
+  --secondary-foreground: var(--ink);
+  --muted: var(--bg-2);
+  --muted-foreground: var(--muted-color);
+  --accent: var(--bg-2);
+  --accent-foreground: var(--ink);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: var(--line);
+  --input: var(--line);
+  --ring: var(--ink);
+  --radius: 0.25rem;
+
+  /* Sticky header height (overridden in JS based on actual measurement) */
+  --header-h: 72px;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-weight: 300;
+  }
+
+  /* Section anchor offset so sticky header never covers headings */
+  section[id],
+  [data-section] {
+    scroll-margin-top: calc(var(--header-h) + 1rem);
+  }
+
+  /* Visible focus ring across the app */
+  :focus-visible {
+    outline: 2px solid var(--ink);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* Honor reduced motion globally */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer utilities {
+  .font-serif {
+    font-family: var(--font-serif);
+  }
+
+  /* Seamless marquee — duplicate content inside the track, translate
+     from 0 to -50% so the second copy lines up exactly where the first
+     started. Hover pauses. Reduced motion stops the loop. */
+  @keyframes marquee-x {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  .marquee-mask {
+    overflow: hidden;
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      black 4%,
+      black 96%,
+      transparent 100%
+    );
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      black 4%,
+      black 96%,
+      transparent 100%
+    );
+  }
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee-x var(--marquee-duration, 60s) linear infinite;
+    will-change: transform;
+  }
+  .marquee-mask:hover .marquee-track,
+  .marquee-mask:focus-within .marquee-track {
+    animation-play-state: paused;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-track {
+      animation: none;
+    }
+    .marquee-mask {
+      overflow-x: auto;
+      mask-image: none;
+      -webkit-mask-image: none;
+    }
+  }
+
+  /* Hero carousel slow infinite crossfade. Cycle = N * 5s; here 5 slides → 25s loop.
+     Each slide fades in (4%), holds (~14%), fades out (4%) then waits until its
+     next turn. Per-slot delay is set inline via --delay. */
+  @keyframes hero-slide-fade {
+    0%,
+    100% {
+      opacity: 0;
+      transform: scale(1.02);
+    }
+    4%,
+    18% {
+      opacity: 1;
+      transform: scale(1);
+    }
+    22% {
+      opacity: 0;
+      transform: scale(1);
+    }
+  }
+  .hero-slide {
+    animation: hero-slide-fade var(--hero-cycle, 25s) linear infinite;
+    animation-delay: var(--delay, 0s);
+    will-change: opacity, transform;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-slide {
+      animation: none;
+      opacity: 0;
+    }
+    .hero-slide[data-first="true"] {
+      opacity: 1;
+    }
+  }
+
+  /* Hero entry animation — CSS instead of motion for above-the-fold reliability */
+  @keyframes hero-rise {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .hero-item {
+    animation: hero-rise 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--d, 0s);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .hero-item {
+      animation: none;
+    }
+  }
+
+  .text-eyebrow {
+    font-family: var(--font-sans);
+    font-size: 0.6875rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .text-section-title {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    letter-spacing: 0.04em;
+    line-height: 1.1;
+  }
+
+  .container-page {
+    width: 100%;
+    margin-inline: auto;
+    padding-inline: 1.25rem;
+    max-width: 1440px;
+  }
+
+  @media (min-width: 768px) {
+    .container-page {
+      padding-inline: 2rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container-page {
+      padding-inline: 3.5rem;
+    }
+  }
+}
