@@ -93,7 +93,7 @@ export default function PrivacyPolicyPage() {
         use strong, unique passwords and to contact us immediately if you suspect any unauthorised access.
       </p>
 
-      <h2>9. Grievance Officer</h2>
+      <h2 id="grievance">9. Grievance Officer</h2>
       <p>
         As required under the DPDP Act and IT Rules, our Grievance Officer is responsible for addressing complaints
         about how we handle your personal data.
