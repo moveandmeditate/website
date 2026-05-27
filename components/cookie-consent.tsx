@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { GoogleAnalytics } from "@next/third-parties/google";
 
 const STORAGE_KEY = "mam:consent:v1";
@@ -38,6 +39,7 @@ function writeConsent(value: ConsentState) {
  * - Choice persists until manually cleared.
  */
 export function CookieConsent({ gaId }: { gaId: string }) {
+  const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [consent, setConsent] = useState<ConsentState>(null);
 
@@ -50,6 +52,9 @@ export function CookieConsent({ gaId }: { gaId: string }) {
   // pass (otherwise the gate is mounted, then immediately hidden during
   // hydration — distracting).
   if (!mounted) return null;
+  // Skip on the embedded Studio — analytics there would pollute reports
+  // with admin sessions, and a marketing banner doesn't belong on a CMS.
+  if (pathname.startsWith("/studio")) return null;
 
   const decide = (next: NonNullable<ConsentState>) => {
     writeConsent(next);

@@ -1,8 +1,9 @@
 import { ArrowRight } from "lucide-react";
 import { MediaFrame } from "@/components/media-frame";
-import { EVENTS } from "@/lib/content";
+import { getUpcomingEvents } from "@/sanity/lib/events";
 
-export function UpcomingEvents() {
+export async function UpcomingEvents() {
+  const events = await getUpcomingEvents();
   return (
     <section
       id="events"
@@ -27,7 +28,7 @@ export function UpcomingEvents() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {EVENTS.map((evt) => (
+          {events.map((evt) => (
             <article
               key={evt.id}
               className="group relative min-h-[112px] sm:h-36 overflow-hidden bg-bg-3"

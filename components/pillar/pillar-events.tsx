@@ -1,18 +1,17 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { MediaFrame } from "@/components/media-frame";
-import { eventsForPillar, type PillarSlug } from "@/lib/content";
+import { type PillarSlug } from "@/lib/content";
+import { getEventsForPillar } from "@/sanity/lib/events";
 
 /**
  * Pillar events strip.
- * Filters the shared EVENTS list by the current pillar's slug.
- * Renders nothing when no events match — keeps the page tight.
- *
- * Migration TODO (Sanity): replace `eventsForPillar()` with a GROQ fetch keyed
- * by pillar tag once the CMS lands.
+ * Pulls events tagged with the current pillar from Sanity, with a
+ * graceful fallback to the static EVENTS list when the dataset is
+ * empty. Renders nothing when no events match.
  */
-export function PillarEvents({ pillar }: { pillar: PillarSlug }) {
-  const events = eventsForPillar(pillar, 3);
+export async function PillarEvents({ pillar }: { pillar: PillarSlug }) {
+  const events = await getEventsForPillar(pillar, 3);
   if (events.length === 0) return null;
 
   return (

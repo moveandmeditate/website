@@ -25,9 +25,12 @@ export function MobileCtaBar() {
     pathname.startsWith("/privacy-policy") ||
     pathname.startsWith("/terms-and-conditions") ||
     pathname.startsWith("/refund-policy");
+  // Studio is the embedded CMS — full-bleed editing surface, no marketing
+  // chrome should leak into it.
+  const onStudio = pathname.startsWith("/studio");
 
   useEffect(() => {
-    if (onLegalPage) return;
+    if (onLegalPage || onStudio) return;
     const onScroll = () => {
       setVisible(window.scrollY > 320);
       const contact = document.getElementById("contact");
@@ -46,9 +49,9 @@ export function MobileCtaBar() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
     };
-  }, [pathname, onLegalPage]);
+  }, [pathname, onLegalPage, onStudio]);
 
-  if (onLegalPage) return null;
+  if (onLegalPage || onStudio) return null;
 
   const bookHref = pathname === "/" ? "#contact" : "/#contact";
   const show = visible && !nearContact;

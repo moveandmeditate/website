@@ -203,13 +203,43 @@ Use `<MediaFrame src=... alt=... watermark={false} sizes="..." />` everywhere ph
 ### Required env vars (Vercel → Project → Settings → Environment Variables)
 
 ```
-CONTACT_WEBHOOK_URL     # the Apps Script .../exec URL
-CONTACT_WEBHOOK_SECRET  # matches SHARED_SECRET inside the Apps Script
+CONTACT_WEBHOOK_URL              # the Apps Script .../exec URL
+CONTACT_WEBHOOK_SECRET           # matches SHARED_SECRET inside the Apps Script
+
+NEXT_PUBLIC_SANITY_PROJECT_ID    # sis92gxt (public)
+NEXT_PUBLIC_SANITY_DATASET       # production
+NEXT_PUBLIC_SANITY_API_VERSION   # 2024-12-01 (pin deliberately)
+SANITY_API_READ_TOKEN            # viewer-scoped token (server-only)
+SANITY_REVALIDATE_SECRET         # matches the Sanity webhook secret
 ```
 
-Local dev: copy `.env.example` → `.env.local` (gitignored) and fill the same two keys.
+Local dev: copy `.env.example` → `.env.local` (gitignored) and fill the same keys.
 
 Phone number is **required** on the schema. Honeypot field `website` must remain.
+
+## CMS — Sanity Studio
+
+Sanity is embedded at **`/studio`** (catch-all route `app/studio/[[...tool]]/page.tsx`). Sign in with the Sanity account email used to create the project (`moveandmeditate.infra@gmail.com`).
+
+Studio config lives at `sanity.config.ts`. Schemas live in `sanity/schemas/`:
+- `siteSettings` — singleton (contact info, social URLs, hero tagline)
+- `founderProfile` — singleton (bio, headline, photo)
+- `event` — collection (upcoming events / workshops)
+- `testimonial` — collection (per-pillar quotes)
+
+Reads:
+- `sanity/lib/client.ts` — public read client (CDN-cached, published-only perspective)
+- `sanity/lib/queries.ts` — GROQ queries with `defineQuery`
+- `sanity/lib/events.ts` — fetch wrapper with cache tags + **static fallback**: if the dataset is empty, falls back to the legacy `EVENTS[]` in `lib/content.ts` so the site never shows an empty section during the migration
+
+Cache invalidation: `app/api/revalidate/route.ts` is a webhook target. Sanity → Next.js. Configure a GROQ webhook in Sanity manage UI pointing at `/api/revalidate` with the same secret as `SANITY_REVALIDATE_SECRET`.
+
+When adding a new schema:
+1. Add the schema file in `sanity/schemas/`
+2. Register in `sanity/schemas/index.ts`
+3. Add a GROQ query in `sanity/lib/queries.ts`
+4. Add a fetch wrapper with `next: { tags: [...] }` so the webhook can invalidate
+5. Add the new `_type` → tag mapping in `app/api/revalidate/route.ts`
 
 ## Analytics
 
