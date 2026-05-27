@@ -92,7 +92,9 @@ export const HERO = {
   subTagline: "DANCE THAT MOVES YOU · YOGA THAT GROUNDS YOU",
   primaryCta: { label: "EXPLORE DANCE", href: "#move" },
   secondaryCta: { label: "EXPLORE YOGA", href: "#meditate" },
-  watchStory: { label: "WATCH OUR STORY", href: "#" }, // TODO: real video URL
+  // Set href to a real YouTube/Vimeo URL to enable the "Watch Our Story" link.
+  // Leave as "" or "#" to hide it (it's filtered out at render time in <Hero />).
+  watchStory: { label: "WATCH OUR STORY", href: "" }, // TODO: real video URL
   images: {
     left: HERO_SLIDES.find((s) => s.id === "dancer")!,
     right: HERO_SLIDES.find((s) => s.id === "meditator")!,

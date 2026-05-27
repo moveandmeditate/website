@@ -25,7 +25,7 @@ Last updated: 2026-05-27
 
 ### Hero
 
-- [ ] `WATCH OUR STORY` → real YouTube / Vimeo URL or in-page video modal (currently `href="#"`)
+- [~] `WATCH OUR STORY` → real YouTube / Vimeo URL or in-page video modal — _link is now hidden when `HERO.watchStory.href` is empty/placeholder. Set a real URL in `lib/content.ts` to re-enable. Modal player still TBD._
 
 ### Events section
 

@@ -107,16 +107,20 @@ export function Hero() {
           </a>
         </div>
 
-        <a
-          href={HERO.watchStory.href}
-          className="mt-7 inline-flex items-center gap-3 text-[11px] tracking-[0.24em] text-ink-2 font-medium hover:text-ink transition-colors hero-item"
-          style={{ ["--d" as string]: "0.8s" } as React.CSSProperties}
-        >
-          <span className="grid size-9 place-items-center rounded-full border border-ink">
-            <Play className="size-3 fill-ink text-ink" aria-hidden />
-          </span>
-          {HERO.watchStory.label}
-        </a>
+        {HERO.watchStory.href && HERO.watchStory.href !== "#" && (
+          <a
+            href={HERO.watchStory.href}
+            target={HERO.watchStory.href.startsWith("http") ? "_blank" : undefined}
+            rel={HERO.watchStory.href.startsWith("http") ? "noopener noreferrer" : undefined}
+            className="mt-7 inline-flex items-center gap-3 text-[11px] tracking-[0.24em] text-ink-2 font-medium hover:text-ink transition-colors hero-item"
+            style={{ ["--d" as string]: "0.8s" } as React.CSSProperties}
+          >
+            <span className="grid size-9 place-items-center rounded-full border border-ink">
+              <Play className="size-3 fill-ink text-ink" aria-hidden />
+            </span>
+            {HERO.watchStory.label}
+          </a>
+        )}
       </div>
     </section>
   );
