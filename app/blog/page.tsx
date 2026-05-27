@@ -72,7 +72,7 @@ export default async function BlogIndexPage({ searchParams }: PageProps) {
             <p className="text-eyebrow text-muted">WRITING</p>
             <h1
               id="blog-heading"
-              className="mt-3 text-section-title text-[clamp(2.4rem,5vw,3.5rem)] max-w-[20ch]"
+              className="mt-3 text-section-title text-[clamp(1.8rem,5vw,3.5rem)] max-w-[20ch] break-words"
             >
               Notes on movement, stillness and practice.
             </h1>

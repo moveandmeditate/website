@@ -104,7 +104,7 @@ export default async function BlogPostPage({ params }: PageProps) {
               <p className="mt-6 text-eyebrow text-muted">
                 {CATEGORY_LABELS[post.category] ?? post.category}
               </p>
-              <h1 className="mt-3 text-section-title text-[clamp(2rem,4.4vw,3.2rem)] leading-tight">
+              <h1 className="mt-3 text-section-title text-[clamp(1.55rem,5vw,3.2rem)] leading-[1.15] break-words hyphens-auto">
                 {post.title}
               </h1>
               <p className="mt-5 text-[15px] leading-[1.75] text-ink-2 max-w-[58ch]">

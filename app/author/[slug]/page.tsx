@@ -111,7 +111,7 @@ export default async function AuthorProfilePage({ params }: PageProps) {
               <p className="text-eyebrow text-muted">WRITTEN BY</p>
               <h1
                 id="author-heading"
-                className="mt-3 text-section-title text-[clamp(2rem,4vw,2.8rem)]"
+                className="mt-3 text-section-title text-[clamp(1.7rem,4vw,2.8rem)] break-words"
               >
                 {author.name}
               </h1>
