@@ -84,36 +84,19 @@ export const HERO_SLIDES: HeroSlide[] = [
   },
 ];
 
-/**
- * Disjoint pools per side guarantee left + right never show the same image,
- * even mid-transition. Left = movement themes, right = stillness themes.
- */
-const slideById = (id: string) => HERO_SLIDES.find((s) => s.id === id)!;
-
-export const HERO_SLIDES_LEFT: HeroSlide[] = [
-  slideById("dancer"),
-  slideById("sangeet"),
-  slideById("corporate"),
-];
-
-export const HERO_SLIDES_RIGHT: HeroSlide[] = [
-  slideById("meditator"),
-  slideById("sound"),
-];
-
 export const HERO = {
   word1: "MOVE",
   conjunction: "AND",
   word2: "MEDITATE",
   tagline: "MOVEMENT IS MEDICINE · STILLNESS IS POWER",
-  subTagline: "DANCE · YOGA · WEDDINGS · CORPORATE · SOUND",
+  subTagline: "DANCE THAT MOVES YOU · YOGA THAT GROUNDS YOU",
   primaryCta: { label: "EXPLORE DANCE", href: "#move" },
   secondaryCta: { label: "EXPLORE YOGA", href: "#meditate" },
   watchStory: { label: "WATCH OUR STORY", href: "#" }, // TODO: real video URL
-  slidesLeft: HERO_SLIDES_LEFT,
-  slidesRight: HERO_SLIDES_RIGHT,
-  /** Pool kept for any consumer that wants all hero imagery in one list. */
-  slides: HERO_SLIDES,
+  images: {
+    left: HERO_SLIDES.find((s) => s.id === "dancer")!,
+    right: HERO_SLIDES.find((s) => s.id === "meditator")!,
+  },
 };
 
 export type EventItem = {

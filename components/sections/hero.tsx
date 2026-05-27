@@ -1,59 +1,9 @@
 import { Play } from "lucide-react";
 import { Logo } from "@/components/logo";
 import { MediaFrame } from "@/components/media-frame";
-import { HERO, type HeroSlide } from "@/lib/content";
-
-const SECONDS_PER_SLIDE = 5; // Each slide visible ~4.5s + ~1s crossfade
-
-/** Renders a stacked carousel with staggered crossfade delays.
- *  Each side gets its own slide pool — they never share images so the two
- *  sides cannot collide on the same picture, even mid-transition. */
-function HeroCarousel({
-  slides,
-  side,
-}: {
-  slides: HeroSlide[];
-  side: "left" | "right";
-}) {
-  const cycleSeconds = slides.length * SECONDS_PER_SLIDE;
-  return (
-    <div
-      className={
-        side === "left"
-          ? "absolute inset-y-0 left-0 hidden md:block md:w-[38%] lg:w-[36%]"
-          : "absolute inset-y-0 right-0 hidden md:block md:w-[38%] lg:w-[36%]"
-      }
-    >
-      {slides.map((slide, i) => {
-        const delay = i * SECONDS_PER_SLIDE;
-        return (
-          <MediaFrame
-            key={slide.id}
-            src={slide.src}
-            alt={slide.alt}
-            className="hero-slide absolute inset-0"
-            sizes="(min-width: 768px) 38vw, 0px"
-            priority={i === 0}
-            watermark={false}
-            data-first={i === 0 ? "true" : undefined}
-            style={
-              {
-                ["--delay" as string]: `${delay}s`,
-                ["--hero-cycle" as string]: `${cycleSeconds}s`,
-              } as React.CSSProperties
-            }
-          />
-        );
-      })}
-    </div>
-  );
-}
+import { HERO } from "@/lib/content";
 
 export function Hero() {
-  const slidesLeft = HERO.slidesLeft;
-  const slidesRight = HERO.slidesRight;
-  const mobileSlide = slidesLeft[0];
-
   return (
     <section
       id="top"
@@ -61,10 +11,24 @@ export function Hero() {
       aria-label="Move and Meditate"
       className="relative isolate overflow-hidden bg-gradient-to-b from-[var(--bg)] via-[var(--bg-2)] to-[var(--bg-3)]"
     >
-      {/* Side image carousels: hidden on mobile, visible from md up */}
+      {/* Side images: hidden on mobile, visible from md up to keep above-the-fold copy clear on small screens */}
       <div className="pointer-events-none absolute inset-0">
-        <HeroCarousel slides={slidesLeft} side="left" />
-        <HeroCarousel slides={slidesRight} side="right" />
+        <MediaFrame
+          src={HERO.images.left.src}
+          alt={HERO.images.left.alt}
+          className="absolute inset-y-0 left-0 hidden md:block md:w-[38%] lg:w-[36%]"
+          sizes="(min-width: 768px) 38vw, 0px"
+          priority
+          watermark={false}
+        />
+        <MediaFrame
+          src={HERO.images.right.src}
+          alt={HERO.images.right.alt}
+          className="absolute inset-y-0 right-0 hidden md:block md:w-[38%] lg:w-[36%]"
+          sizes="(min-width: 768px) 38vw, 0px"
+          priority
+          watermark={false}
+        />
         {/* Fade the inner edges of the side images into the center on md+ */}
         <div className="absolute inset-y-0 left-[26%] right-[58%] hidden md:block bg-gradient-to-r from-transparent to-[var(--bg)]" />
         <div className="absolute inset-y-0 right-[26%] left-[58%] hidden md:block bg-gradient-to-l from-transparent to-[var(--bg)]" />
@@ -73,7 +37,7 @@ export function Hero() {
       {/* Mobile-only single background impression */}
       <div className="absolute inset-0 md:hidden">
         <MediaFrame
-          src={mobileSlide.src}
+          src={HERO.images.right.src}
           alt=""
           className="absolute inset-0 opacity-30"
           sizes="100vw"
