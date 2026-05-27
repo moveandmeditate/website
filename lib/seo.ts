@@ -1,4 +1,5 @@
-import { CONTACT, EVENTS, FOUNDER, SITE } from "@/lib/content";
+import type { Metadata } from "next";
+import { CONTACT, EVENTS, FOUNDER, PILLARS, SITE, type PillarSlug } from "@/lib/content";
 
 export function buildJsonLd() {
   return {
@@ -58,5 +59,62 @@ export function buildJsonLd() {
             : "https://schema.org/OfflineEventAttendanceMode",
       })),
     ],
+  };
+}
+
+/**
+ * JSON-LD `Service` for a single pillar page.
+ * Lets Google understand each /dance /yoga /weddings /corporate page as a
+ * distinct service offered by the same Organization.
+ */
+export function pillarJsonLd(slug: PillarSlug) {
+  const p = PILLARS[slug];
+  return {
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "@id": `${SITE.url}/${p.slug}#service`,
+    name: `${p.title} · ${SITE.name}`,
+    serviceType: p.title,
+    description: p.seoDescription,
+    areaServed: { "@type": "Country", name: "IN" },
+    provider: { "@id": `${SITE.url}#org` },
+    url: `${SITE.url}/${p.slug}`,
+    image: `${SITE.url}${p.heroImage.src}`,
+    hasOfferCatalog: {
+      "@type": "OfferCatalog",
+      name: `${p.title} offerings`,
+      itemListElement: p.offerings.map((o, i) => ({
+        "@type": "Offer",
+        position: i + 1,
+        name: o.title,
+        description: o.blurb,
+      })),
+    },
+  };
+}
+
+/** Per-pillar `metadata` export used by the page.tsx files. */
+export function pillarMetadata(slug: PillarSlug): Metadata {
+  const p = PILLARS[slug];
+  const url = `${SITE.url}/${p.slug}`;
+  return {
+    title: `${p.title} · ${SITE.name}`,
+    description: p.seoDescription,
+    alternates: { canonical: url },
+    openGraph: {
+      type: "website",
+      url,
+      siteName: SITE.name,
+      title: `${p.title} · ${SITE.name}`,
+      description: p.seoDescription,
+      images: [{ url: p.heroImage.src, alt: p.heroImage.alt }],
+      locale: "en_IN",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${p.title} · ${SITE.name}`,
+      description: p.seoDescription,
+      images: [p.heroImage.src],
+    },
   };
 }
