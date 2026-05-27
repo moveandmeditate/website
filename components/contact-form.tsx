@@ -121,7 +121,7 @@ export function ContactForm() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Field id="phone" label="Phone (optional)" error={errors.phone?.message}>
+        <Field id="phone" label="Phone" error={errors.phone?.message}>
           <Input
             id="phone"
             type="tel"
