@@ -20,10 +20,10 @@ Brand language clarification — when supporting copy refers to **MOVE**, that m
 
 - `/` — landing page with hero, events, trusted-by, category tiles, experiences grid, founder, testimonials, contact
 - `/dance` `/yoga` `/weddings` `/corporate` — pillar marketing pages (deep sell, FAQ, how-it-works)
-- `/privacy-policy` `/terms-and-conditions` `/refund-policy` — DPDP Act 2023 compliant
+- `/privacy-policy` `/terms-and-conditions` — DPDP Act 2023 compliant. No `/refund-policy` (site collects only enquiries; no payments processed here).
 - `/sitemap.xml` `/robots.txt` `/opengraph-image` — generated
 
-13 static routes total. No dynamic routes. Fully prerendered.
+12 static routes + 2 dynamic (`/studio/[[...tool]]`, `/api/revalidate`).
 
 ## Stack
 
@@ -64,7 +64,6 @@ app/
     layout.tsx                 # shared prose wrapper
     privacy-policy/page.tsx
     terms-and-conditions/page.tsx
-    refund-policy/page.tsx
   layout.tsx                   # root: fonts, metadata, skip-link, GA4 in prod
   globals.css                  # Tailwind v4 @theme + CSS custom props
   icon.png  apple-icon.png     # browser tab + iOS home-screen favicons
@@ -281,9 +280,17 @@ Google Analytics 4 (`G-7SGRQR3LE1`) wired via `@next/third-parties/google` in `a
 
 ## Legal pages
 
-All three under `app/(legal)/`. Use `<LegalProse>` from `components/legal-prose.tsx` for consistent reading width + serif headings. Privacy policy carries `id="grievance"` on the Grievance Officer section because the footer deep-links to it.
+Two pages under `app/(legal)/`: Privacy Policy + Terms & Conditions. Use `<LegalProse>` from `components/legal-prose.tsx` for consistent reading width + serif headings.
 
-Templates are DPDP Act 2023 + IT Rules 2021 aware **but must be reviewed by Amisha (and ideally a lawyer) before launch**. Placeholders flagged with `TODO:`.
+No `/refund-policy` exists — this site does not process payments or bookings. Anything that does (offline) is governed by the separate written agreement between client and {Founder}, not by this website.
+
+Privacy policy carries `id="data-concerns"` on the data-concerns contact section so the footer can deep-link there.
+
+Both pages are **async server components**: they fetch the data-concerns email via `getEffectiveContact()` so it stays in sync with Site Settings in Sanity Studio (no code push needed to update `hello@…` later).
+
+Framing is **sole proprietorship** (Amisha individually, operating Move & Meditate, Bangalore). Liability disclaimer for in-person dance/yoga classes is in Terms section 3.
+
+Drafted with DPDP Act 2023 + IT Rules 2021 in mind. Have Amisha read both pages once before launch. Lawyer review recommended but not blocking for a small-scope marketing + lead-capture site.
 
 ## Accessibility minimums
 

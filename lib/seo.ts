@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { CONTACT, EVENTS, FOUNDER, PILLARS, SITE, type PillarSlug } from "@/lib/content";
+import { CONTACT, FOUNDER, PILLARS, SITE, type PillarSlug } from "@/lib/content";
 
 export function buildJsonLd() {
   return {
@@ -43,21 +43,12 @@ export function buildJsonLd() {
         publisher: { "@id": `${SITE.url}#org` },
         inLanguage: "en-IN",
       },
-      ...EVENTS.map((evt) => ({
-        "@type": "Event",
-        name: evt.title,
-        startDate: undefined, // TODO: real ISO dates once client confirms event calendar
-        location: {
-          "@type": "Place",
-          name: evt.location,
-        },
-        organizer: { "@id": `${SITE.url}#org` },
-        eventStatus: "https://schema.org/EventScheduled",
-        eventAttendanceMode:
-          evt.location.toLowerCase() === "online"
-            ? "https://schema.org/OnlineEventAttendanceMode"
-            : "https://schema.org/OfflineEventAttendanceMode",
-      })),
+      // Event JSON-LD intentionally omitted. Events live in Sanity now
+      // and are time-sensitive — emitting Event schema without real
+      // `startDate` ISO values is worse than emitting nothing (Google
+      // de-prioritises malformed Event markup). Re-add as an async
+      // generator that pulls live events with real dates once the CMS
+      // has a populated calendar with `startsAt` set on each doc.
     ],
   };
 }

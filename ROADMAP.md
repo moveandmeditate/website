@@ -73,7 +73,7 @@ Last updated: 2026-05-27
 
 ### Legal pages
 
-- [ ] Grievance Officer name + email + address (DPDP Act §8(7) mandatory) in `app/(legal)/privacy-policy/page.tsx`
+- [x] Data-concerns contact in `app/(legal)/privacy-policy/page.tsx` (sole-prop site is below the SDF threshold, so a formally appointed Grievance Officer isn't legally mandatory — contact info reads from CMS Site settings and points at Amisha + Bangalore + the published email).
 - [ ] Business registration details when Amisha registers a legal entity
 - [ ] Lawyer review of all three legal templates before launch
 
@@ -214,7 +214,7 @@ For posterity, here's what's done as of the initial build. **Do not re-do.**
 - [x] Testimonials (4 cards)
 - [x] Contact section + RHF + Zod form (Server Action stub)
 - [x] Footer (4 columns + newsletter + socials + legal links)
-- [x] Legal pages — Privacy / Terms / Refund (DPDP Act 2023 templates)
+- [x] Legal pages — Privacy + Terms (DPDP Act 2023 + IT Rules 2021 aware, sole-prop framing, CMS-backed email, liability disclaimer for in-person classes). No Refund Policy — site does not process payments.
 - [x] SEO infra — metadata, sitemap, robots, OG image route, JSON-LD
 - [x] 18 Higgsfield Nano Banana Pro 2 images (5 hero candidates, 5 tiles, 4 events, 4 avatars, founder, contact bg)
 - [x] `AGENTS.md` + `README.md`

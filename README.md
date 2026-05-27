@@ -40,7 +40,7 @@ GA4 Measurement ID (`G-7SGRQR3LE1`) is hardcoded in `app/layout.tsx` since it's 
 
 - `/` — landing overview
 - `/dance` `/yoga` `/weddings` `/corporate` — pillar marketing pages
-- `/privacy-policy` `/terms-and-conditions` `/refund-policy`
+- `/privacy-policy` `/terms-and-conditions`
 - `/sitemap.xml` `/robots.txt` `/opengraph-image`
 - `/icon.png` `/apple-icon.png`
 - `/studio/[[...tool]]` *(dynamic — embedded Sanity Studio)*

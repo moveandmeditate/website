@@ -33,8 +33,7 @@ export function MobileCtaBar({
 
   const onLegalPage =
     pathname.startsWith("/privacy-policy") ||
-    pathname.startsWith("/terms-and-conditions") ||
-    pathname.startsWith("/refund-policy");
+    pathname.startsWith("/terms-and-conditions");
   // Studio is the embedded CMS — full-bleed editing surface, no marketing
   // chrome should leak into it.
   const onStudio = pathname.startsWith("/studio");

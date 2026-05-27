@@ -1,11 +1,12 @@
 /**
- * Bridge between Sanity's event documents and the `EventItem` shape that
- * the React components already consume. Lets us migrate to CMS without
- * touching the renderer.
+ * Bridge between Sanity's event documents and the `EventItem` shape
+ * the React components consume.
  *
- * Fallback strategy: if Sanity returns zero documents (dataset empty
- * during the rollout window), we surface the static `EVENTS` array from
- * `lib/content.ts` so the site never shows an empty section.
+ * Events are time-sensitive — a stale "next workshop" is worse than no
+ * workshop. So we deliberately do NOT fall back to the static EVENTS
+ * seed: if Sanity has zero published, upcoming events, the renderer
+ * gets an empty array and hides the section entirely (no empty grid,
+ * no placeholder copy, no whitespace).
  */
 import { sanityClient } from "@/sanity/lib/client";
 import { urlForImage } from "@/sanity/lib/image";
@@ -13,11 +14,7 @@ import {
   upcomingEventsQuery,
   eventsForPillarQuery,
 } from "@/sanity/lib/queries";
-import {
-  EVENTS as STATIC_EVENTS,
-  type EventItem,
-  type PillarSlug,
-} from "@/lib/content";
+import { type EventItem, type PillarSlug } from "@/lib/content";
 
 // Short TTL in dev so CMS edits show on the next refresh without
 // nuking .next/cache. 1-hour prod TTL is the safety net behind the
@@ -96,11 +93,11 @@ export async function getUpcomingEvents(): Promise<EventItem[]> {
         next: { revalidate: REVALIDATE_SECONDS, tags: ["events"] },
       }
     );
-    if (!docs || docs.length === 0) return STATIC_EVENTS;
-    return docs.map(toEventItem);
+    return docs?.map(toEventItem) ?? [];
   } catch {
-    // Network / auth blip — never break the page, fall back to static.
-    return STATIC_EVENTS;
+    // Network / auth blip — keep the section hidden rather than ship
+    // stale placeholder workshops. Renderer treats `[]` as "skip".
+    return [];
   }
 }
 
@@ -112,19 +109,15 @@ export async function getEventsForPillar(
     const docs = await sanityClient.fetch<SanityEvent[]>(
       eventsForPillarQuery,
       { pillar, limit },
-      { next: { revalidate: REVALIDATE_SECONDS, tags: ["events", `events:${pillar}`] } }
+      {
+        next: {
+          revalidate: REVALIDATE_SECONDS,
+          tags: ["events", `events:${pillar}`],
+        },
+      }
     );
-    if (!docs || docs.length === 0) {
-      return STATIC_EVENTS.filter((e) => e.pillars.includes(pillar)).slice(
-        0,
-        limit
-      );
-    }
-    return docs.map(toEventItem);
+    return docs?.map(toEventItem) ?? [];
   } catch {
-    return STATIC_EVENTS.filter((e) => e.pillars.includes(pillar)).slice(
-      0,
-      limit
-    );
+    return [];
   }
 }

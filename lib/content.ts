@@ -105,6 +105,16 @@ export const HERO = {
 
 export type PillarSlug = "dance" | "yoga" | "weddings" | "corporate";
 
+/**
+ * Renderer-friendly shape for an event card. Events live in Sanity
+ * (see `sanity/lib/events.ts`); this type just keeps the contract
+ * between the CMS adapter and the React components honest.
+ *
+ * Note: no static `EVENTS` array exists. Events are time-sensitive —
+ * a stale "next workshop" is worse than no workshop. When Sanity has
+ * zero upcoming events, the section is hidden entirely rather than
+ * falling back to placeholder content.
+ */
 export type EventItem = {
   id: string;
   day: string;
@@ -116,54 +126,6 @@ export type EventItem = {
   /** Pillar pages this event should surface on. Empty = home only. */
   pillars: PillarSlug[];
 };
-
-export const EVENTS: EventItem[] = [
-  {
-    id: "garba-intensive",
-    day: "24",
-    month: "MAY",
-    title: "Garba Intensive Weekend",
-    location: "Bangalore",
-    href: "#contact",
-    image: { src: "/images/event-garba.webp", alt: "Garba dance celebration" },
-    pillars: ["dance"],
-  },
-  {
-    id: "breathwork-sound",
-    day: "08",
-    month: "JUN",
-    title: "Breathwork & Sound Healing Circle",
-    location: "Bangalore",
-    href: "#contact",
-    image: { src: "/images/event-breathwork.webp", alt: "Breathwork circle with sound bowls" },
-    pillars: ["yoga"],
-  },
-  {
-    id: "couple-dance",
-    day: "15",
-    month: "JUN",
-    title: "Couple Dance Workshop",
-    location: "Bangalore",
-    href: "#contact",
-    image: { src: "/images/event-couple-dance.webp", alt: "Couple practising dance choreography" },
-    pillars: ["dance", "weddings"],
-  },
-  {
-    id: "yoga-nidra",
-    day: "29",
-    month: "JUN",
-    title: "Yoga Nidra Workshop",
-    location: "Online",
-    href: "#contact",
-    image: { src: "/images/event-yoga-nidra.webp", alt: "Yoga Nidra relaxation practice" },
-    pillars: ["yoga"],
-  },
-];
-
-/** Returns at most `limit` events that should appear on the given pillar page. */
-export function eventsForPillar(slug: PillarSlug, limit = 3): EventItem[] {
-  return EVENTS.filter((e) => e.pillars.includes(slug)).slice(0, limit);
-}
 
 export type Brand = {
   name: string;
@@ -423,8 +385,7 @@ export const FOOTER = {
       links: [
         { label: "Privacy Policy", href: "/privacy-policy" },
         { label: "Terms & Conditions", href: "/terms-and-conditions" },
-        { label: "Refund Policy", href: "/refund-policy" },
-        { label: "Grievance Officer", href: "/privacy-policy#grievance" },
+        { label: "Data Concerns", href: "/privacy-policy#data-concerns" },
         { label: "Sitemap", href: "/sitemap.xml" },
       ],
     },

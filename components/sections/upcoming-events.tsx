@@ -4,6 +4,9 @@ import { getUpcomingEvents } from "@/sanity/lib/events";
 
 export async function UpcomingEvents() {
   const events = await getUpcomingEvents();
+  // Hide the section entirely when there are no upcoming events — no
+  // empty grid, no placeholder copy, no leftover heading.
+  if (events.length === 0) return null;
   return (
     <section
       id="events"

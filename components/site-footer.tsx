@@ -209,11 +209,6 @@ export function SiteFooter({
                 Terms
               </Link>
             </li>
-            <li>
-              <Link href="/refund-policy" className="hover:text-ink transition-colors">
-                Refunds
-              </Link>
-            </li>
           </ul>
         </div>
       </div>

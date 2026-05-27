@@ -15,7 +15,6 @@ const routes: RouteEntry[] = [
   { path: "/corporate", priority: 0.8, changeFrequency: "monthly" },
   { path: "/privacy-policy", priority: 0.3, changeFrequency: "yearly" },
   { path: "/terms-and-conditions", priority: 0.3, changeFrequency: "yearly" },
-  { path: "/refund-policy", priority: 0.3, changeFrequency: "yearly" },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
