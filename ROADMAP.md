@@ -96,16 +96,11 @@ Last updated: 2026-05-27
 - [x] Migrate testimonials to Sanity (landing grid + per-pillar)
 - [x] Migrate founder bio + stats to Sanity (4 stats with icon/number/label)
 - [x] Migrate trusted-by brands to Sanity (`brand` collection, logo upload + render-enum fallback)
-- [x] Webhook handler at `/api/revalidate` using Next 16 `updateTag` + secret signature verification
-- [ ] **CONFIG (manual, not code):** add Sanity env vars in Vercel dashboard (Settings → Environment Variables):
-  - `NEXT_PUBLIC_SANITY_PROJECT_ID=sis92gxt`
-  - `NEXT_PUBLIC_SANITY_DATASET=production`
-  - `NEXT_PUBLIC_SANITY_API_VERSION=2024-12-01`
-  - `SANITY_API_READ_TOKEN=<viewer token from manage UI>`
-  - `SANITY_REVALIDATE_SECRET=<long random string, paste same in Sanity webhook>`
-- [ ] **CONFIG:** add Sanity CORS origin for prod URL (sanity.io/manage → API → CORS origins) with Allow credentials
-- [ ] **CONFIG:** create Sanity GROQ webhook (manage UI → API → Webhooks) pointing at `https://<prod-url>/api/revalidate` with filter `_type in ["event","testimonial","founderProfile","siteSettings","brand"]`, projection `{ _type, _id }`, secret matches `SANITY_REVALIDATE_SECRET`
-- [ ] Register prod Studio as canonical (Studio → "Register this studio" prompt on first prod visit)
+- [x] Webhook handler at `/api/revalidate` using `revalidateTag(tag, { expire: 0 })` (Next 16's documented webhook-invalidation pattern) + HMAC signature verification via `parseBody` from `next-sanity/webhook`
+- [x] **CONFIG:** Sanity env vars added in Vercel dashboard (all 5 keys, Production + Preview)
+- [x] **CONFIG:** Sanity CORS origin set for prod URL + Vercel preview alias with Allow credentials
+- [x] **CONFIG:** Sanity GROQ webhook live, pointing at `/api/revalidate` with the right filter + projection + signature secret. End-to-end tested: editor publish in Studio → site updates within ~5s.
+- [ ] Register prod Studio as canonical once the real domain is wired (Studio → "Register this studio" prompt on first visit)
 - [ ] **Future:** migrate `PILLARS` (dance/yoga/weddings/corporate) to a Sanity `pillar` schema so offerings + how-it-works + FAQ + gallery + CTA can be edited without a code push (today these live in `lib/content.ts`)
 - [ ] **Future:** migrate `EXPERIENCES` 6-card grid to a Sanity `experience` collection
 - [ ] **Future:** clean up duplicate singleton docs left over from early Studio testing (write one-off cleanup script with an Editor-scope token, then revoke the token)
@@ -178,10 +173,10 @@ Last updated: 2026-05-27
 
 ### Phase B — CMS + bookings (~2-3 days)
 
-- [ ] Embed Sanity Studio at `/studio`
-- [ ] Migrate events, testimonials, founder to Sanity
-- [ ] District `bookingUrl` per event drives the `BOOK NOW` link
-- [ ] Sanity → Vercel revalidation webhook
+- [x] Embed Sanity Studio at `/studio`
+- [x] Migrate events, testimonials, founder, site settings, brands to Sanity
+- [x] Sanity → Vercel revalidation webhook live (`revalidateTag(tag, { expire: 0 })`)
+- [ ] District `bookingUrl` per event drives the `BOOK NOW` link (today CMS holds a generic `ctaHref`; switch to District-specific URLs when she opens that account)
 
 ### Phase C — Growth surface (~1 week)
 
@@ -223,3 +218,7 @@ For posterity, here's what's done as of the initial build. **Do not re-do.**
 - [x] SEO infra — metadata, sitemap, robots, OG image route, JSON-LD
 - [x] 18 Higgsfield Nano Banana Pro 2 images (5 hero candidates, 5 tiles, 4 events, 4 avatars, founder, contact bg)
 - [x] `AGENTS.md` + `README.md`
+- [x] Pillar pages (`/dance` `/yoga` `/weddings` `/corporate`) — hero, intro, offerings, how-it-works, gallery, testimonial, events (dance/yoga only), FAQ, CTA, per-page SEO metadata + JSON-LD
+- [x] Sticky mobile CTA bar + custom 404 + loading skeleton
+- [x] Cookie consent banner (GA4 consent-gated, useSyncExternalStore, pre-hydration flash fix)
+- [x] Sanity CMS — 5 schemas, embedded Studio, GROQ + image transforms, async server components with CMS-first/static-fallback adapters, signature-verified webhook with `revalidateTag(tag, { expire: 0 })`
