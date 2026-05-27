@@ -90,7 +90,7 @@ export default async function AuthorProfilePage({ params }: PageProps) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <SiteHeader contact={contact} />
-      <main id="main">
+      <main id="main" className="pt-[var(--header-h)]">
         <section
           aria-labelledby="author-heading"
           className="bg-bg-2 border-b border-line-2"

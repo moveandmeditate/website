@@ -62,7 +62,7 @@ export default async function BlogIndexPage({ searchParams }: PageProps) {
   return (
     <>
       <SiteHeader contact={contact} />
-      <main id="main">
+      <main id="main" className="pt-[var(--header-h)]">
         {/* Header */}
         <section
           aria-labelledby="blog-heading"
