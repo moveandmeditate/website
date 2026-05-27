@@ -1,9 +1,9 @@
 import type { Pillar } from "@/lib/content";
 
 /**
- * 3-step process strip per pillar — gives the visitor a clear "what happens
- * next" so the marketing copy converts to an action. Vertical on mobile,
- * 3-column horizontal from md+.
+ * 3-step process strip per pillar. Vertical on mobile, 3-column horizontal
+ * from md+. Numbers float without per-cell borders so the line work doesn't
+ * collide at column gaps.
  */
 export function PillarHowItWorks({ pillar }: { pillar: Pillar }) {
   return (
@@ -22,30 +22,25 @@ export function PillarHowItWorks({ pillar }: { pillar: Pillar }) {
           </h2>
         </div>
 
-        <ol className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 relative">
-          {pillar.howItWorks.steps.map((step, i) => (
-            <li
-              key={step.number}
-              className="relative border-t border-line-2 pt-6 md:pl-0"
-            >
+        <ol className="grid grid-cols-1 md:grid-cols-3 gap-x-10 gap-y-10">
+          {pillar.howItWorks.steps.map((step) => (
+            <li key={step.number} className="flex flex-col">
               <span
-                className="absolute -top-3 left-0 bg-bg pr-3 font-serif text-[1.05rem] tracking-[0.16em] text-gold-dk"
                 aria-hidden
+                className="font-serif text-[1.85rem] leading-none tracking-[0.16em] text-gold-dk"
               >
                 {step.number}
               </span>
-              <h3 className="font-serif text-[1.35rem] leading-tight tracking-[0.02em] text-ink mt-1">
+              <span
+                aria-hidden
+                className="mt-3 mb-5 block h-px w-10 bg-line-2"
+              />
+              <h3 className="font-serif text-[1.35rem] leading-tight tracking-[0.02em] text-ink">
                 {step.title}
               </h3>
               <p className="mt-3 text-[13px] leading-[1.8] text-ink-2 max-w-[42ch]">
                 {step.body}
               </p>
-              {i < pillar.howItWorks.steps.length - 1 && (
-                <span
-                  aria-hidden
-                  className="hidden md:block absolute top-0 right-[-1rem] lg:right-[-1.5rem] h-px w-8 bg-line-2 translate-y-[1px]"
-                />
-              )}
             </li>
           ))}
         </ol>

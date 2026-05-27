@@ -38,6 +38,7 @@ export const CONTACT = {
 };
 
 export const NAV_ITEMS = [
+  { label: "HOME", href: "/" },
   { label: "DANCE", href: "/dance" },
   { label: "YOGA", href: "/yoga" },
   { label: "WEDDINGS", href: "/weddings" },
@@ -365,34 +366,53 @@ export const INTERESTS = [
 
 export const FOOTER = {
   brandBlurb:
-    "A global movement community creating experiences that inspire transformation through movement and stillness.",
+    "A practice + performance studio led by Amisha. Dance, yoga, breathwork, sound healing and choreography — built around your body, your story, your timeline.",
+  /** Big tagline strip at the very top of the footer. */
+  ribbon: {
+    wordmark: "MOVE & MEDITATE",
+    tagline: "Movement is medicine. Stillness is power.",
+  },
+  /** Studio contact card — sits as a row above the column grid. */
+  studio: {
+    heading: "STUDIO",
+    address: "Bangalore, Karnataka · India",
+    hours: "Mon - Sat · 7am - 9pm IST",
+    onlineNote: "Online sessions available worldwide",
+  },
   columns: [
     {
-      heading: "DISCOVER",
+      heading: "PRACTICE",
       links: [
         { label: "Dance", href: "/dance" },
+        { label: "Group Classes", href: "/dance#offerings" },
+        { label: "Private Lessons", href: "/dance#offerings" },
         { label: "Yoga", href: "/yoga" },
-        { label: "Weddings", href: "/weddings" },
-        { label: "Corporate", href: "/corporate" },
-        { label: "Retreats", href: "/#contact" },
+        { label: "Breathwork", href: "/yoga#offerings" },
+        { label: "Sound Healing", href: "/yoga#offerings" },
+        { label: "Yoga Nidra", href: "/yoga#offerings" },
       ],
     },
     {
-      heading: "EXPERIENCES",
+      heading: "OCCASIONS",
       links: [
-        { label: "Dance Classes", href: "/dance#offerings" },
-        { label: "Yoga Classes", href: "/yoga#offerings" },
+        { label: "Weddings", href: "/weddings" },
         { label: "Sangeet Choreography", href: "/weddings#offerings" },
-        { label: "Corporate Wellness", href: "/corporate#offerings" },
-        { label: "Online Sessions", href: "/#experiences" },
+        { label: "Couple Dance", href: "/weddings#offerings" },
+        { label: "Family Performances", href: "/weddings#offerings" },
+        { label: "Destination Weddings", href: "/weddings#offerings" },
+        { label: "Corporate Wellness", href: "/corporate" },
+        { label: "Team Workshops", href: "/corporate#offerings" },
+        { label: "Retreats", href: "/#contact" },
       ],
     },
     {
       heading: "COMPANY",
       links: [
-        { label: "About", href: "/#founder" },
-        { label: "Events", href: "/#events" },
+        { label: "About Amisha", href: "/#founder" },
+        { label: "Upcoming Events", href: "/#events" },
         { label: "Reviews", href: "/#testimonials" },
+        { label: "Dance FAQ", href: "/dance#pillar-faq-heading" },
+        { label: "Yoga FAQ", href: "/yoga#pillar-faq-heading" },
         { label: "Contact", href: "/#contact" },
       ],
     },
@@ -402,6 +422,8 @@ export const FOOTER = {
         { label: "Privacy Policy", href: "/privacy-policy" },
         { label: "Terms & Conditions", href: "/terms-and-conditions" },
         { label: "Refund Policy", href: "/refund-policy" },
+        { label: "Grievance Officer", href: "/privacy-policy#grievance" },
+        { label: "Sitemap", href: "/sitemap.xml" },
       ],
     },
   ],

@@ -92,9 +92,13 @@ export function CategoryTiles() {
         ))}
       </ul>
 
-      {/* md+ : seamless infinite marquee, pause on hover */}
+      {/* md+ : seamless infinite marquee, pause on hover.
+         NOTE: do NOT add `group` to this wrapper. Pause-on-hover is handled
+         by CSS (`marquee-mask:hover .marquee-track`), and a stray `group`
+         scope here makes every tile's `group-hover:` arrow respond to a
+         hover on ANY tile. Per-tile `group` lives on each <a>. */}
       <div
-        className="hidden md:block marquee-mask group"
+        className="hidden md:block marquee-mask"
         style={{ ["--marquee-duration" as string]: MARQUEE_DURATION } as React.CSSProperties}
       >
         <ul className="marquee-track">
