@@ -42,3 +42,6 @@ next-env.d.ts
 
 # Claude Code local state
 .claude/
+
+# Track the env template, ignore real env files
+!.env.example
