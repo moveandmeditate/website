@@ -74,8 +74,8 @@ export function SiteHeader() {
           aria-label={`${SITE.name} home`}
           className="flex items-center gap-3"
         >
-          <Logo size={48} className="text-ink lg:hidden" />
-          <Logo size={56} className="text-ink hidden lg:block" />
+          <Logo size={48} className="lg:hidden" />
+          <Logo size={56} className="hidden lg:block" />
         </Link>
 
         <nav aria-label="Primary" className="hidden lg:flex flex-1 justify-center gap-9">
@@ -132,7 +132,7 @@ export function SiteHeader() {
             >
               <SheetHeader className="border-b border-line px-6 py-5 flex flex-row items-center justify-between">
                 <SheetTitle className="flex items-center gap-2 text-ink">
-                  <Logo size={36} className="text-ink" />
+                  <Logo size={36} />
                   <span className="font-serif text-lg tracking-wider">
                     Move &amp; Meditate
                   </span>
