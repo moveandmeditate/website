@@ -105,10 +105,14 @@
     font-weight: 300;
   }
 
-  /* Section anchor offset so sticky header never covers headings */
-  section[id],
+  /* Sticky header offset for ANY anchor target — `#founder`, `#contact`,
+     `#offerings`, `#grievance`, etc. Applying to every `[id]` is the broadest
+     safe net (the property is inert when the element isn't being scrolled to).
+     We keep the older selectors as well so explicit `data-section` markers
+     stay self-documenting. */
+  [id],
   [data-section] {
-    scroll-margin-top: calc(var(--header-h) + 1rem);
+    scroll-margin-top: calc(var(--header-h) + 1.5rem);
   }
 
   /* Visible focus ring across the app */
