@@ -91,6 +91,15 @@
 }
 
 @layer base {
+  /* Pre-hydration consent probe (see <script> in app/layout.tsx) stamps
+     `.mam-consent-set` on <html> when localStorage already holds an
+     accepted/declined decision. Hide the banner via CSS so React never
+     paints it during the brief hydration window — kills the one-frame
+     flash that appeared on every page load after the first Accept. */
+  .mam-consent-set [data-consent-banner] {
+    display: none !important;
+  }
+
   html {
     scroll-behavior: smooth;
     /* Belt + suspenders: every scroll into the page reserves space for the

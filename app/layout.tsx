@@ -74,6 +74,22 @@ export default async function RootLayout({
       className={`${jost.variable} ${cormorant.variable}`}
       suppressHydrationWarning
     >
+      <head>
+        {/*
+          Pre-hydration consent probe. Runs synchronously before any body
+          markup paints, reads the consent value from localStorage, and
+          stamps a class on <html> if a decision has already been made.
+          CSS in globals.css uses that class to hide the consent banner
+          so we don't get a one-frame flash on every page load.
+          Wrapped in try/catch because localStorage can throw in
+          private-browsing modes / quota-exceeded states.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `try{var c=localStorage.getItem('mam:consent:v1');if(c==='accepted'||c==='declined')document.documentElement.classList.add('mam-consent-set');}catch(e){}`,
+          }}
+        />
+      </head>
       <body className="min-h-dvh bg-bg text-ink">
         <a
           href="#main"

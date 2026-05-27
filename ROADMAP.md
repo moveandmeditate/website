@@ -151,7 +151,8 @@ Last updated: 2026-05-27
 
 - [ ] DMARC / SPF / DKIM on outbound email
 - [ ] Apple icon + full PWA manifest
-- [ ] Cookie consent banner — only once analytics / pixels ship
+- [x] Cookie consent banner — gated GA4 via useSyncExternalStore
+- [x] Bug: cookie banner flashes for a frame on every load after Accept. Fixed via inline pre-hydration probe in `<head>` that stamps `.mam-consent-set` on `<html>` when a decision exists in localStorage; CSS hides the banner element via `display: none` so it never paints during the hydration window.
 - [ ] axe DevTools accessibility audit pass
 - [ ] Lighthouse audit — target ≥95 on every category
 - [ ] Color contrast check on `--color-gold` (`#a08968` on `--color-bg` `#f6f1ea` is borderline)

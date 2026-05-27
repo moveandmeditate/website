@@ -95,6 +95,10 @@ export function CookieConsent({ gaId }: { gaId: string }) {
           role="dialog"
           aria-labelledby="cookie-consent-title"
           aria-describedby="cookie-consent-body"
+          // `data-consent-banner` is the hook the pre-hydration probe
+          // script (in app/layout.tsx) uses to keep this off-screen
+          // when a decision already exists in localStorage.
+          data-consent-banner
           className="fixed bottom-3 left-3 right-3 sm:right-auto sm:max-w-sm z-50 bg-bg border border-line-2 shadow-[0_12px_32px_-12px_rgba(26,26,26,0.18)]"
         >
           <div className="p-5">
