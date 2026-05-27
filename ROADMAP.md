@@ -21,7 +21,7 @@ Last updated: 2026-05-27
 
 - [x] Mobile sheet `JOIN WHATSAPP COMMUNITY` button currently scrolls to `#contact` — point it at `CONTACT.whatsappCommunityUrl` instead — _placeholder URL until Amisha confirms the real invite link_
 - [ ] Confirm whether `BOOK DISCOVERY CALL` should keep scrolling to the contact form or open a Cal.com / Calendly slot picker
-- [ ] Decide: keep nav as 5 anchor links (HOME / MOVE / MEDITATE / EVENTS / ABOUT) or add real sub-pages
+- [x] Decide: keep nav as 5 anchor links (HOME / MOVE / MEDITATE / EVENTS / ABOUT) or add real sub-pages — _Phase 2 ships 4 sub-pages: `/dance` `/yoga` `/weddings` `/corporate`. Nav now uses these routes. HOME/EVENTS/ABOUT dropped from nav per client; logo returns to `/`._
 
 ### Hero
 
@@ -36,12 +36,12 @@ Last updated: 2026-05-27
 
 ### Category tiles (marquee)
 
-- [ ] Every tile arrow currently links to `#contact` — point each to its own deeper anchor or service page when those exist
+- [x] Every tile arrow currently links to `#contact` — point each to its own deeper anchor or service page when those exist — _Move/Meditate/Weddings/Corporate now link to their pillar pages. Retreats keeps `/#contact` per client._
 
 ### Experiences grid
 
 - [ ] `VIEW ALL EXPERIENCES →` is `href="#"` — drop link or build `/experiences` page
-- [ ] Per-service detail pages (`/dance`, `/yoga`, `/breathwork` etc.) — optional Phase D work
+- [x] Per-service detail pages — _Phase 2: `/dance` `/yoga` `/weddings` `/corporate` shipped. Per-experience sub-pages (breathwork, sound healing, etc.) still optional later work._
 
 ### Founder
 
@@ -65,9 +65,9 @@ Last updated: 2026-05-27
 
 ### Footer
 
-- [ ] MOVE column sub-links (Dance Classes / Folk / Couple Dance / Kids) all point to `#move` — either build real pages or simplify
-- [ ] MEDITATE column sub-links — same situation as above
-- [ ] WEDDINGS column sub-links — same
+- [x] MOVE column sub-links (Dance Classes / Folk / Couple Dance / Kids) all point to `#move` — either build real pages or simplify — _Footer restructured: DISCOVER / EXPERIENCES / COMPANY / LEGAL columns. Each link now points at its actual destination (pillar pages, real anchors, legal routes). `aria-current` highlights the route the visitor is currently on._
+- [x] MEDITATE column sub-links — _Same fix; see above._
+- [x] WEDDINGS column sub-links — _Same fix; see above._
 - [ ] Newsletter input has no handler — wire to Resend Audiences / Mailerlite / Beehiiv (see §2.C)
 - [ ] Real social URLs in `CONTACT.socials` (Instagram / Facebook / YouTube)
 
