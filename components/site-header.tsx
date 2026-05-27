@@ -102,10 +102,14 @@ export function SiteHeader() {
       ref={headerRef}
       id="site-header"
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter,box-shadow] duration-300",
+        "fixed inset-x-0 top-0 z-50 transition-[background-color,backdrop-filter,box-shadow,border-color] duration-300 border-b",
         scrolled
-          ? "bg-bg/95 backdrop-blur-md shadow-[0_1px_0_var(--line),0_8px_24px_-12px_rgba(26,26,26,0.12)]"
-          : "bg-transparent"
+          ? // White-ish tint so the bar reads elevated against the page cream
+            // (`bg-bg` is the same colour as the page body, so any tone of it
+            // disappears). Layered blur + soft drop shadow give the floating
+            // feel without breaking the editorial palette.
+            "bg-white/75 backdrop-blur-xl border-line/70 shadow-[0_8px_24px_-12px_rgba(26,26,26,0.18)]"
+          : "bg-transparent border-transparent"
       )}
     >
       <div className="container-page flex items-center gap-4 py-3 lg:py-4">
