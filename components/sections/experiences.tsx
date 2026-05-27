@@ -8,8 +8,6 @@ import {
   Monitor,
   type LucideIcon,
 } from "lucide-react";
-import { FadeUp } from "@/components/motion/fade-up";
-import { Stagger, StaggerItem } from "@/components/motion/stagger";
 import { EXPERIENCES, type Experience } from "@/lib/content";
 
 const ICONS: Record<Experience["icon"], LucideIcon> = {
@@ -28,7 +26,7 @@ export function Experiences() {
       className="bg-bg"
     >
       <div className="container-page py-20 lg:py-24 grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-10 lg:gap-12 items-start">
-        <FadeUp>
+        <div>
           <p className="text-eyebrow text-muted">WHAT WE OFFER</p>
           <h2
             id="experiences-heading"
@@ -45,17 +43,13 @@ export function Experiences() {
           >
             VIEW ALL <ArrowRight className="size-3" aria-hidden />
           </a>
-        </FadeUp>
+        </div>
 
-        <Stagger
-          as="ul"
-          className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 lg:border-l lg:border-line"
-        >
+        <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 lg:border-l lg:border-line">
           {EXPERIENCES.map((exp) => {
             const Icon = ICONS[exp.icon];
             return (
-              <StaggerItem
-                as="li"
+              <li
                 key={exp.id}
                 className="border-b lg:border-b-0 lg:border-r border-line p-5 lg:px-5 lg:py-2 text-center"
               >
@@ -66,10 +60,10 @@ export function Experiences() {
                   {exp.title}
                 </h3>
                 <p className="text-[12px] leading-[1.7] text-muted">{exp.body}</p>
-              </StaggerItem>
+              </li>
             );
           })}
-        </Stagger>
+        </ul>
       </div>
     </section>
   );

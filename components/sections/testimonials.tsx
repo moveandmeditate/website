@@ -1,7 +1,5 @@
 import { Star } from "lucide-react";
 import { MediaFrame } from "@/components/media-frame";
-import { FadeUp } from "@/components/motion/fade-up";
-import { Stagger, StaggerItem } from "@/components/motion/stagger";
 import { TESTIMONIALS } from "@/lib/content";
 
 export function Testimonials() {
@@ -13,23 +11,16 @@ export function Testimonials() {
       className="bg-bg"
     >
       <div className="container-page py-16 lg:py-20">
-        <FadeUp className="mb-8">
+        <div className="mb-8">
           <p className="text-eyebrow text-ink">WHAT PEOPLE FEEL</p>
-          <h2
-            id="testimonials-heading"
-            className="sr-only"
-          >
+          <h2 id="testimonials-heading" className="sr-only">
             Testimonials
           </h2>
-        </FadeUp>
+        </div>
 
-        <Stagger
-          as="ul"
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
-        >
+        <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {TESTIMONIALS.map((t) => (
-            <StaggerItem
-              as="li"
+            <li
               key={t.id}
               className="bg-bg-3 p-6 relative min-h-[180px] flex flex-col"
             >
@@ -61,9 +52,9 @@ export function Testimonials() {
                   watermark={false}
                 />
               </div>
-            </StaggerItem>
+            </li>
           ))}
-        </Stagger>
+        </ul>
       </div>
     </section>
   );

@@ -1,7 +1,5 @@
 import { ArrowRight } from "lucide-react";
 import { MediaFrame } from "@/components/media-frame";
-import { FadeUp } from "@/components/motion/fade-up";
-import { Stagger, StaggerItem } from "@/components/motion/stagger";
 import { EVENTS } from "@/lib/content";
 
 export function UpcomingEvents() {
@@ -13,7 +11,7 @@ export function UpcomingEvents() {
       className="bg-bg"
     >
       <div className="container-page py-16 lg:py-20">
-        <FadeUp className="flex items-end justify-between gap-4 mb-8">
+        <div className="flex items-end justify-between gap-4 mb-8">
           <div>
             <p className="text-eyebrow text-muted">UPCOMING</p>
             <h2 id="events-heading" className="text-section-title text-[clamp(1.75rem,3.4vw,2.25rem)] mt-2">
@@ -26,13 +24,12 @@ export function UpcomingEvents() {
           >
             VIEW ALL <ArrowRight className="size-3" aria-hidden />
           </a>
-        </FadeUp>
+        </div>
 
-        <Stagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {EVENTS.map((evt) => (
-            <StaggerItem
+            <article
               key={evt.id}
-              as="article"
               className="group relative min-h-[112px] sm:h-36 overflow-hidden bg-bg-3"
             >
               <MediaFrame
@@ -69,9 +66,9 @@ export function UpcomingEvents() {
                   </a>
                 </div>
               </div>
-            </StaggerItem>
+            </article>
           ))}
-        </Stagger>
+        </div>
 
         <div className="sm:hidden mt-6">
           <a

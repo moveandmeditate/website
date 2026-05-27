@@ -1,7 +1,6 @@
 import { Mail, MessageCircle } from "lucide-react";
 import { MediaFrame } from "@/components/media-frame";
 import { ContactForm } from "@/components/contact-form";
-import { FadeUp } from "@/components/motion/fade-up";
 import { CONTACT, CONTACT_SECTION } from "@/lib/content";
 
 export function Contact() {
@@ -22,7 +21,7 @@ export function Contact() {
       <div className="absolute inset-0 bg-gradient-to-r from-[var(--bg-3)] via-[var(--bg-3)]/85 to-[var(--bg-3)]/30" />
 
       <div className="container-page relative z-10 py-16 lg:py-24 grid grid-cols-1 lg:grid-cols-[1fr_1fr] gap-10 lg:gap-16 items-start">
-        <FadeUp>
+        <div>
           <p className="text-eyebrow text-muted">{CONTACT_SECTION.eyebrow}</p>
           <h2
             id="contact-heading"
@@ -60,11 +59,11 @@ export function Contact() {
               </span>
             </a>
           </div>
-        </FadeUp>
+        </div>
 
-        <FadeUp delay={0.1}>
+        <div>
           <ContactForm />
-        </FadeUp>
+        </div>
       </div>
     </section>
   );
