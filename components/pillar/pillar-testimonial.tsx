@@ -38,7 +38,7 @@ export function PillarTestimonial({ pillar }: { pillar: Pillar }) {
               <div className="text-[10.5px] tracking-[0.18em] text-muted mt-0.5 uppercase">
                 {t.context}
               </div>
-              <div className="mt-2 flex gap-0.5" aria-label="5 out of 5 stars">
+              <div role="img" aria-label="5 out of 5 stars" className="mt-2 flex gap-0.5">
                 {[0, 1, 2, 3, 4].map((i) => (
                   <Star key={i} className="size-3 fill-gold stroke-gold" aria-hidden />
                 ))}

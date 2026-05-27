@@ -30,7 +30,6 @@ function TileCard({ tile, ariaHidden, variant }: TileCardProps) {
         href={tile.href}
         tabIndex={ariaHidden ? -1 : 0}
         className={`group relative block h-[280px] md:h-[320px] ${anchorWidth} overflow-hidden focus-visible:outline-2 focus-visible:outline-ink bg-bg-2`}
-        aria-label={ariaHidden ? undefined : `${tile.title} — ${tile.eyebrow}`}
       >
         <MediaFrame
           src={tile.image.src}

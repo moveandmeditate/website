@@ -25,8 +25,9 @@ export function Testimonials() {
               className="bg-bg-3 p-6 relative min-h-[180px] flex flex-col"
             >
               <div
-                className="flex items-center gap-0.5 text-gold mb-3"
+                role="img"
                 aria-label="5 out of 5 stars"
+                className="flex items-center gap-0.5 text-gold mb-3"
               >
                 {[0, 1, 2, 3, 4].map((i) => (
                   <Star key={i} className="size-3.5 fill-gold stroke-gold" aria-hidden />
