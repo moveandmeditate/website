@@ -524,6 +524,11 @@ export const PILLARS: Record<PillarSlug, Pillar> = {
           "Sangeet sets, couple dances, family performances and full choreography schedules.",
       },
       {
+        title: "Concert Choreography",
+        blurb:
+          "Stage and concert choreography for performers, music videos, college fests and touring shows.",
+      },
+      {
         title: "Online Drop-Ins",
         blurb:
           "Live online sessions on weekends. Record + replay so you never miss a beat.",

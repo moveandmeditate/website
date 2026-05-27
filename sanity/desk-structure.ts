@@ -34,6 +34,7 @@ export const structure = (S: StructureBuilder) =>
       // Collections — default list + create flow.
       S.documentTypeListItem("event").title("Events"),
       S.documentTypeListItem("testimonial").title("Testimonials"),
+      S.documentTypeListItem("brand").title("Trusted-by brands"),
     ]);
 
 /** Used by `document.actions` in sanity.config.ts to strip create/delete

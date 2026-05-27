@@ -1,4 +1,5 @@
 import type { SchemaTypeDefinition } from "sanity";
+import { brandSchema } from "./brand";
 import { eventSchema } from "./event";
 import { testimonialSchema } from "./testimonial";
 import { founderProfileSchema } from "./founderProfile";
@@ -11,4 +12,5 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   // Collections.
   eventSchema,
   testimonialSchema,
+  brandSchema,
 ];

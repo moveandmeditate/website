@@ -33,6 +33,7 @@ const TYPE_TO_TAGS: Record<string, string[]> = {
   testimonial: ["testimonials"],
   founderProfile: ["founderProfile"],
   siteSettings: ["siteSettings"],
+  brand: ["brands"],
 };
 
 export async function POST(req: NextRequest) {

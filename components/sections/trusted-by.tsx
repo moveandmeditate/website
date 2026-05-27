@@ -1,8 +1,10 @@
 import { BrandMark } from "@/components/brand-mark";
 import { FadeUp } from "@/components/motion/fade-up";
-import { TRUSTED_BRANDS } from "@/lib/content";
+import { getEffectiveBrands } from "@/sanity/lib/site-data";
 
-export function TrustedBy() {
+export async function TrustedBy() {
+  const brands = await getEffectiveBrands();
+  if (brands.length === 0) return null;
   return (
     <section
       aria-labelledby="trusted-heading"
@@ -22,11 +24,30 @@ export function TrustedBy() {
               aria-label="Brands we have worked with"
               className="flex items-center gap-8 sm:gap-12 lg:justify-between lg:gap-10 overflow-x-auto lg:overflow-visible scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
             >
-              {TRUSTED_BRANDS.map((brand) => (
-                <li key={brand.name} className="opacity-80 hover:opacity-100 transition-opacity">
+              {brands.map((brand) => {
+                const node = (
                   <BrandMark brand={brand} />
-                </li>
-              ))}
+                );
+                return (
+                  <li
+                    key={brand.name}
+                    className="opacity-80 hover:opacity-100 transition-opacity"
+                  >
+                    {brand.websiteUrl ? (
+                      <a
+                        href={brand.websiteUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={`${brand.name} website`}
+                      >
+                        {node}
+                      </a>
+                    ) : (
+                      node
+                    )}
+                  </li>
+                );
+              })}
               <li className="text-[11px] tracking-[0.24em] text-muted font-medium shrink-0">
                 &amp; MORE
               </li>

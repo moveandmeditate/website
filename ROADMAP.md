@@ -90,13 +90,25 @@ Last updated: 2026-05-27
 
 ### B. Content management (Sanity)
 
-- [ ] Scaffold Sanity Studio embedded at `/studio` route
-- [ ] Schemas: `event`, `testimonial`, `experience`, `tile`, `founderProfile`, `siteSettings`, `blogPost`
-- [ ] Migrate events from `lib/content.ts` to Sanity, fetch via GROQ in `app/page.tsx`
-- [ ] Migrate testimonials to Sanity
-- [ ] Migrate founder bio + stats to Sanity
-- [ ] Optional: tiles + experiences too
-- [ ] Webhook from Sanity → Vercel revalidate route so edits show within seconds
+- [x] Scaffold Sanity Studio embedded at `/studio` route
+- [x] Schemas: `event`, `testimonial`, `founderProfile`, `siteSettings`, `brand`
+- [x] Migrate events from `lib/content.ts` to Sanity (CMS-first + static fallback)
+- [x] Migrate testimonials to Sanity (landing grid + per-pillar)
+- [x] Migrate founder bio + stats to Sanity (4 stats with icon/number/label)
+- [x] Migrate trusted-by brands to Sanity (`brand` collection, logo upload + render-enum fallback)
+- [x] Webhook handler at `/api/revalidate` using Next 16 `updateTag` + secret signature verification
+- [ ] **CONFIG (manual, not code):** add Sanity env vars in Vercel dashboard (Settings → Environment Variables):
+  - `NEXT_PUBLIC_SANITY_PROJECT_ID=sis92gxt`
+  - `NEXT_PUBLIC_SANITY_DATASET=production`
+  - `NEXT_PUBLIC_SANITY_API_VERSION=2024-12-01`
+  - `SANITY_API_READ_TOKEN=<viewer token from manage UI>`
+  - `SANITY_REVALIDATE_SECRET=<long random string, paste same in Sanity webhook>`
+- [ ] **CONFIG:** add Sanity CORS origin for prod URL (sanity.io/manage → API → CORS origins) with Allow credentials
+- [ ] **CONFIG:** create Sanity GROQ webhook (manage UI → API → Webhooks) pointing at `https://<prod-url>/api/revalidate` with filter `_type in ["event","testimonial","founderProfile","siteSettings","brand"]`, projection `{ _type, _id }`, secret matches `SANITY_REVALIDATE_SECRET`
+- [ ] Register prod Studio as canonical (Studio → "Register this studio" prompt on first prod visit)
+- [ ] **Future:** migrate `PILLARS` (dance/yoga/weddings/corporate) to a Sanity `pillar` schema so offerings + how-it-works + FAQ + gallery + CTA can be edited without a code push (today these live in `lib/content.ts`)
+- [ ] **Future:** migrate `EXPERIENCES` 6-card grid to a Sanity `experience` collection
+- [ ] **Future:** clean up duplicate singleton docs left over from early Studio testing (write one-off cleanup script with an Editor-scope token, then revoke the token)
 
 ### C. Inbound + lead capture
 

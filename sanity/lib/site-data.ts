@@ -11,6 +11,7 @@
 import { sanityClient } from "@/sanity/lib/client";
 import { urlForImage } from "@/sanity/lib/image";
 import {
+  allBrandsQuery,
   allTestimonialsQuery,
   founderProfileQuery,
   siteSettingsQuery,
@@ -22,6 +23,8 @@ import {
   type PillarSlug,
   type Testimonial,
   TESTIMONIALS,
+  TRUSTED_BRANDS,
+  type Brand,
 } from "@/lib/content";
 
 // In dev we want CMS edits to show up on the next page refresh so we
@@ -207,6 +210,54 @@ export async function getEffectiveTestimonials(): Promise<Testimonial[]> {
     return docs.map(toTestimonial);
   } catch {
     return TESTIMONIALS;
+  }
+}
+
+// ────────────────────────────────────────────────────────────────────────
+// Effective trusted-by brands
+// ────────────────────────────────────────────────────────────────────────
+
+type SanityBrand = {
+  _id: string;
+  name: string;
+  render: Brand["render"] | null;
+  websiteUrl: string | null;
+  logo: SanityImageField | null;
+};
+
+/** Extended brand shape: `render` is optional (CMS docs may only carry
+ *  a logo image), plus an optional CDN-resolved logo URL + external
+ *  website link. The static fallback satisfies this type because its
+ *  required `render` is a superset of the optional one here. */
+export type EffectiveBrand = {
+  name: string;
+  render?: Brand["render"];
+  logoSrc?: string;
+  logoAlt?: string;
+  websiteUrl?: string;
+};
+
+export async function getEffectiveBrands(): Promise<EffectiveBrand[]> {
+  try {
+    const docs = await sanityClient.fetch<SanityBrand[]>(
+      allBrandsQuery,
+      {},
+      { next: { revalidate: REVALIDATE_SECONDS, tags: ["brands"] } }
+    );
+    if (!docs?.length) return TRUSTED_BRANDS;
+    return docs.map<EffectiveBrand>((doc) => {
+      const logoSrc = doc.logo?.asset
+        ? urlForImage(doc.logo).width(220).auto("format").url()
+        : undefined;
+      return {
+        name: doc.name,
+        ...(doc.render ? { render: doc.render } : {}),
+        ...(logoSrc ? { logoSrc, logoAlt: doc.logo?.alt || doc.name } : {}),
+        ...(doc.websiteUrl ? { websiteUrl: doc.websiteUrl } : {}),
+      };
+    });
+  } catch {
+    return TRUSTED_BRANDS;
   }
 }
 

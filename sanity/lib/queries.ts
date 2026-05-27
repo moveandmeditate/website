@@ -110,6 +110,20 @@ export const founderProfileQuery = defineQuery(`
   }
 `);
 
+/** Trusted-by brands. Published-only, sorted by displayOrder then name. */
+export const allBrandsQuery = defineQuery(`
+  *[
+    _type == "brand"
+    && published == true
+  ] | order(coalesce(displayOrder, 9999) asc, name asc) {
+    _id,
+    name,
+    render,
+    websiteUrl,
+    logo{ ${IMAGE_FRAGMENT} }
+  }
+`);
+
 /** Singleton site settings. */
 export const siteSettingsQuery = defineQuery(`
   *[_type == "siteSettings"] | order(_updatedAt desc) [0] {
