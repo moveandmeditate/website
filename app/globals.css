@@ -93,6 +93,10 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    /* Belt + suspenders: every scroll into the page reserves space for the
+       sticky header. Works for browser-native hash navigation, in-page
+       anchor clicks, and `Element.scrollIntoView()`. */
+    scroll-padding-top: calc(var(--header-h) + 2rem);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
@@ -112,7 +116,7 @@
      stay self-documenting. */
   [id],
   [data-section] {
-    scroll-margin-top: calc(var(--header-h) + 1.5rem);
+    scroll-margin-top: calc(var(--header-h) + 2rem);
   }
 
   /* Visible focus ring across the app */
