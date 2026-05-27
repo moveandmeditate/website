@@ -3,25 +3,29 @@ import { Logo } from "@/components/logo";
 import { MediaFrame } from "@/components/media-frame";
 import { HERO, type HeroSlide } from "@/lib/content";
 
-const SLIDE_COUNT = HERO.slides.length;
-const CYCLE_SECONDS = SLIDE_COUNT * 5; // 5s per slide → 25s total for 5 slides
+const SECONDS_PER_SLIDE = 5; // Each slide visible ~4.5s + ~1s crossfade
 
-/** Renders the stacked slides with staggered crossfade delays. */
+/** Renders a stacked carousel with staggered crossfade delays.
+ *  Each side gets its own slide pool — they never share images so the two
+ *  sides cannot collide on the same picture, even mid-transition. */
 function HeroCarousel({
   slides,
-  startIndex,
   side,
 }: {
   slides: HeroSlide[];
-  startIndex: number;
   side: "left" | "right";
 }) {
+  const cycleSeconds = slides.length * SECONDS_PER_SLIDE;
   return (
-    <div className={side === "left" ? "absolute inset-y-0 left-0 hidden md:block md:w-[38%] lg:w-[36%]" : "absolute inset-y-0 right-0 hidden md:block md:w-[38%] lg:w-[36%]"}>
+    <div
+      className={
+        side === "left"
+          ? "absolute inset-y-0 left-0 hidden md:block md:w-[38%] lg:w-[36%]"
+          : "absolute inset-y-0 right-0 hidden md:block md:w-[38%] lg:w-[36%]"
+      }
+    >
       {slides.map((slide, i) => {
-        // Offset each side so left and right rarely show the same image at once
-        const slotIndex = (i + startIndex) % SLIDE_COUNT;
-        const delay = (slotIndex * CYCLE_SECONDS) / SLIDE_COUNT;
+        const delay = i * SECONDS_PER_SLIDE;
         return (
           <MediaFrame
             key={slide.id}
@@ -29,13 +33,13 @@ function HeroCarousel({
             alt={slide.alt}
             className="hero-slide absolute inset-0"
             sizes="(min-width: 768px) 38vw, 0px"
-            priority={slotIndex === 0}
+            priority={i === 0}
             watermark={false}
-            data-first={slotIndex === 0 ? "true" : undefined}
+            data-first={i === 0 ? "true" : undefined}
             style={
               {
                 ["--delay" as string]: `${delay}s`,
-                ["--hero-cycle" as string]: `${CYCLE_SECONDS}s`,
+                ["--hero-cycle" as string]: `${cycleSeconds}s`,
               } as React.CSSProperties
             }
           />
@@ -46,8 +50,9 @@ function HeroCarousel({
 }
 
 export function Hero() {
-  const slides = HERO.slides;
-  const mobileSlide = slides[0];
+  const slidesLeft = HERO.slidesLeft;
+  const slidesRight = HERO.slidesRight;
+  const mobileSlide = slidesLeft[0];
 
   return (
     <section
@@ -58,12 +63,8 @@ export function Hero() {
     >
       {/* Side image carousels: hidden on mobile, visible from md up */}
       <div className="pointer-events-none absolute inset-0">
-        <HeroCarousel slides={slides} startIndex={0} side="left" />
-        <HeroCarousel
-          slides={slides}
-          startIndex={Math.floor(SLIDE_COUNT / 2)}
-          side="right"
-        />
+        <HeroCarousel slides={slidesLeft} side="left" />
+        <HeroCarousel slides={slidesRight} side="right" />
         {/* Fade the inner edges of the side images into the center on md+ */}
         <div className="absolute inset-y-0 left-[26%] right-[58%] hidden md:block bg-gradient-to-r from-transparent to-[var(--bg)]" />
         <div className="absolute inset-y-0 right-[26%] left-[58%] hidden md:block bg-gradient-to-l from-transparent to-[var(--bg)]" />
