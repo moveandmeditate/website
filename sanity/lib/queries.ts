@@ -7,15 +7,19 @@
 import { defineQuery } from "next-sanity";
 
 /**
- * Image projection — pulls only what the renderer needs. Always include
- * `asset->{ ... }` so the URL builder has the document reference; alt
- * lives on the parent image field, not the asset.
+ * Image projection — keeps the full image object (asset ref, hotspot,
+ * crop) so the `@sanity/image-url` builder can derive CDN transforms.
+ * Resolving `asset->url` directly in GROQ defeats those transforms, so
+ * we explicitly DON'T do that here.
  */
 const IMAGE_FRAGMENT = /* groq */ `
-  "src": asset->url,
+  ...,
   "alt": coalesce(alt, ""),
-  "lqip": asset->metadata.lqip,
-  "dimensions": asset->metadata.dimensions{ width, height }
+  asset->{
+    _id,
+    url,
+    metadata { lqip, dimensions { width, height } }
+  }
 `;
 
 /**
@@ -95,8 +99,14 @@ export const testimonialForPillarQuery = defineQuery(`
 /** Singleton founder profile. */
 export const founderProfileQuery = defineQuery(`
   *[_type == "founderProfile"] | order(_updatedAt desc) [0] {
-    _id, name, role, headline, bio, credentials,
-    photo{ ${IMAGE_FRAGMENT} }
+    _id,
+    eyebrow,
+    title,
+    paragraphs,
+    signature,
+    signatureLabel,
+    portrait{ ${IMAGE_FRAGMENT} },
+    stats[]{ icon, number, label }
   }
 `);
 

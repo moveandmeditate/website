@@ -8,6 +8,7 @@
  * `lib/content.ts` so the site never shows an empty section.
  */
 import { sanityClient } from "@/sanity/lib/client";
+import { urlForImage } from "@/sanity/lib/image";
 import {
   upcomingEventsQuery,
   eventsForPillarQuery,
@@ -19,9 +20,17 @@ import {
 } from "@/lib/content";
 
 type SanityImage = {
-  src: string | null;
   alt: string | null;
-  lqip?: string | null;
+  asset: {
+    _id: string;
+    url: string;
+    metadata?: {
+      lqip?: string | null;
+      dimensions?: { width: number; height: number } | null;
+    };
+  } | null;
+  hotspot?: { x: number; y: number; height: number; width: number } | null;
+  crop?: { top: number; left: number; bottom: number; right: number } | null;
 };
 
 type SanityEvent = {
@@ -48,10 +57,13 @@ function toEventItem(doc: SanityEvent): EventItem {
     .toLocaleString("en-US", { month: "short" })
     .toUpperCase();
 
-  // Sanity returns `asset->url` directly via the IMAGE_FRAGMENT in the
-  // query. For Phase 1 we use the URL as-is — no on-the-fly width
-  // transforms. Easy to swap to `urlForImage(...).width(800).url()` once
-  // we want responsive variants per breakpoint.
+  // CDN-optimised image URL — width 800 fits the largest layout slot
+  // (single column on mobile) and Next/Image's `sizes` then picks the
+  // right variant per breakpoint. `auto('format')` ships WebP/AVIF.
+  const imageSrc = doc.image?.asset
+    ? urlForImage(doc.image).width(800).auto("format").url()
+    : "";
+
   return {
     id: doc._id,
     day,
@@ -60,7 +72,7 @@ function toEventItem(doc: SanityEvent): EventItem {
     location: doc.location,
     href: doc.ctaHref || "#contact",
     image: {
-      src: doc.image?.src ?? "",
+      src: imageSrc,
       alt: doc.image?.alt ?? doc.title,
     },
     pillars: (doc.pillars ?? []) as PillarSlug[],

@@ -9,15 +9,17 @@ import { Founder } from "@/components/sections/founder";
 import { Testimonials } from "@/components/sections/testimonials";
 import { Contact } from "@/components/sections/contact";
 import { buildJsonLd } from "@/lib/seo";
+import { getEffectiveContact } from "@/sanity/lib/site-data";
 
-export default function HomePage() {
+export default async function HomePage() {
+  const contact = await getEffectiveContact();
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(buildJsonLd()) }}
       />
-      <SiteHeader />
+      <SiteHeader contact={contact} />
       <main id="main">
         <Hero />
         <UpcomingEvents />
@@ -28,7 +30,7 @@ export default function HomePage() {
         <Testimonials />
         <Contact />
       </main>
-      <SiteFooter />
+      <SiteFooter contact={contact} />
     </>
   );
 }

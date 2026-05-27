@@ -33,7 +33,6 @@ export async function submitContact(data: unknown): Promise<ContactResult> {
   const secret = process.env.CONTACT_WEBHOOK_SECRET;
 
   if (!url || !secret) {
-    // eslint-disable-next-line no-console -- visible in Vercel logs
     console.error(
       "[contact:webhook] Missing CONTACT_WEBHOOK_URL or CONTACT_WEBHOOK_SECRET env var; submission could not be forwarded.",
       { name: parsed.data.name, email: parsed.data.email }
@@ -66,7 +65,6 @@ export async function submitContact(data: unknown): Promise<ContactResult> {
     });
 
     if (!res.ok) {
-      // eslint-disable-next-line no-console
       console.error("[contact:webhook] Non-2xx from Apps Script", res.status);
       return {
         ok: false,
@@ -78,7 +76,6 @@ export async function submitContact(data: unknown): Promise<ContactResult> {
     // fields — just check `ok`.
     const body = (await res.json().catch(() => null)) as { ok?: boolean; error?: string } | null;
     if (!body?.ok) {
-      // eslint-disable-next-line no-console
       console.error("[contact:webhook] Apps Script returned error", body);
       return {
         ok: false,
@@ -88,7 +85,6 @@ export async function submitContact(data: unknown): Promise<ContactResult> {
 
     return { ok: true };
   } catch (err) {
-    // eslint-disable-next-line no-console
     console.error("[contact:webhook] Network error", err);
     return {
       ok: false,

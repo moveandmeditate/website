@@ -13,12 +13,13 @@ import {
 import { CONTACT, FOOTER, SITE } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
-const SOCIALS = [
-  { label: "Instagram", href: CONTACT.socials.instagram, Icon: InstagramIcon },
-  { label: "Facebook", href: CONTACT.socials.facebook, Icon: FacebookIcon },
-  { label: "YouTube", href: CONTACT.socials.youtube, Icon: YoutubeIcon },
-  { label: "WhatsApp Community", href: CONTACT.whatsappCommunityUrl, Icon: WhatsAppIcon },
-] as const;
+/** Subset of `EffectiveContact` the footer actually needs. Kept loose
+ *  so callers don't have to import the full Sanity-aware type. */
+export type FooterContact = {
+  email: string;
+  whatsappCommunityUrl: string;
+  socials: { instagram: string; youtube: string; facebook: string };
+};
 
 /** Returns the pathname portion of an href so `/dance` matches both `/dance`
  *  and `/dance#offerings`. Pure anchors and non-routes pass through. */
@@ -28,9 +29,32 @@ function pathnameOf(href: string): string {
   return hashIndex === -1 ? href : href.slice(0, hashIndex) || "/";
 }
 
-export function SiteFooter() {
+export function SiteFooter({
+  contact = CONTACT,
+}: {
+  contact?: FooterContact;
+} = {}) {
   const pathname = usePathname();
   const year = new Date().getFullYear();
+
+  const socials = [
+    {
+      label: "Instagram",
+      href: contact.socials.instagram,
+      Icon: InstagramIcon,
+    },
+    {
+      label: "Facebook",
+      href: contact.socials.facebook,
+      Icon: FacebookIcon,
+    },
+    { label: "YouTube", href: contact.socials.youtube, Icon: YoutubeIcon },
+    {
+      label: "WhatsApp Community",
+      href: contact.whatsappCommunityUrl,
+      Icon: WhatsAppIcon,
+    },
+  ] as const;
 
   return (
     <footer className="bg-bg border-t border-line">
@@ -58,7 +82,7 @@ export function SiteFooter() {
               {FOOTER.brandBlurb}
             </p>
             <ul className="mt-6 flex items-center gap-3" aria-label="Social channels">
-              {SOCIALS.map(({ label, href, Icon }) => (
+              {socials.map(({ label, href, Icon }) => (
                 <li key={label}>
                   <a
                     href={href}
@@ -133,10 +157,10 @@ export function SiteFooter() {
             <div>
               <p className="text-[10px] tracking-[0.22em] uppercase text-muted">Email</p>
               <a
-                href={`mailto:${CONTACT.email}`}
+                href={`mailto:${contact.email}`}
                 className="text-[13px] text-ink-2 mt-1 leading-[1.6] hover:text-gold-dk transition-colors block"
               >
-                {CONTACT.email}
+                {contact.email}
               </a>
             </div>
           </div>
@@ -146,7 +170,7 @@ export function SiteFooter() {
             <div>
               <p className="text-[10px] tracking-[0.22em] uppercase text-muted">WhatsApp</p>
               <a
-                href={CONTACT.whatsappCommunityUrl}
+                href={contact.whatsappCommunityUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-[13px] text-ink-2 mt-1 leading-[1.6] hover:text-gold-dk transition-colors block"

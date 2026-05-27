@@ -6,7 +6,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { MediaFrame } from "@/components/media-frame";
-import { FOUNDER } from "@/lib/content";
+import { getEffectiveFounder } from "@/sanity/lib/site-data";
 
 const STAT_ICONS: Record<string, LucideIcon> = {
   users: Users,
@@ -15,7 +15,8 @@ const STAT_ICONS: Record<string, LucideIcon> = {
   heart: Heart,
 };
 
-export function Founder() {
+export async function Founder() {
+  const founder = await getEffectiveFounder();
   return (
     <section
       id="founder"
@@ -26,8 +27,8 @@ export function Founder() {
       <div className="grid grid-cols-1 lg:grid-cols-[40%_60%]">
         <div className="relative aspect-[4/5] lg:aspect-auto lg:min-h-[480px]">
           <MediaFrame
-            src={FOUNDER.portrait.src}
-            alt={FOUNDER.portrait.alt}
+            src={founder.portrait.src}
+            alt={founder.portrait.alt}
             className="absolute inset-0"
             sizes="(min-width: 1024px) 40vw, 100vw"
             watermark
@@ -37,14 +38,14 @@ export function Founder() {
 
         <div className="container-page lg:px-12 py-14 lg:py-20 grid grid-cols-1 xl:grid-cols-[1.05fr_1fr] gap-10 xl:gap-14 items-center">
           <div>
-            <p className="text-eyebrow text-muted">{FOUNDER.eyebrow}</p>
+            <p className="text-eyebrow text-muted">{founder.eyebrow}</p>
             <h2
               id="founder-heading"
               className="mt-3 text-section-title text-[clamp(1.85rem,3.8vw,2.4rem)] whitespace-pre-line max-w-[18ch]"
             >
-              {FOUNDER.title}
+              {founder.title}
             </h2>
-            {FOUNDER.paragraphs.map((p, i) => (
+            {founder.paragraphs.map((p, i) => (
               <p
                 key={i}
                 className="mt-5 text-[13px] leading-[1.9] text-ink-2 max-w-[40ch]"
@@ -54,16 +55,16 @@ export function Founder() {
             ))}
             <div className="mt-7">
               <div className="font-serif italic text-[1.6rem] text-ink leading-none">
-                {FOUNDER.signature}
+                {founder.signature}
               </div>
               <div className="mt-2 text-[10px] tracking-[0.24em] text-muted font-medium">
-                {FOUNDER.signatureLabel}
+                {founder.signatureLabel}
               </div>
             </div>
           </div>
 
           <ul className="grid grid-cols-2 border-t border-l border-line-2">
-            {FOUNDER.stats.map((stat) => {
+            {founder.stats.map((stat) => {
               const Icon = STAT_ICONS[stat.icon];
               return (
                 <li

@@ -3,6 +3,7 @@ import { Cormorant_Garamond, Jost } from "next/font/google";
 import { CookieConsent } from "@/components/cookie-consent";
 import { MobileCtaBar } from "@/components/mobile-cta-bar";
 import { SITE } from "@/lib/content";
+import { getEffectiveContact } from "@/sanity/lib/site-data";
 import "./globals.css";
 
 // GA4 Measurement ID. Public identifier (visible in the page HTML), so no env
@@ -59,9 +60,14 @@ export const viewport: Viewport = {
   initialScale: 1,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  // Fetch CMS contact once at the layout level. Cached + tag-revalidated
+  // (see /api/revalidate). MobileCtaBar reads this so the WhatsApp link
+  // can be edited from Studio without a code push.
+  const contact = await getEffectiveContact();
+
   return (
     <html
       lang="en"
@@ -76,7 +82,7 @@ export default function RootLayout({
           Skip to content
         </a>
         {children}
-        <MobileCtaBar />
+        <MobileCtaBar contact={contact} />
         {/* CookieConsent is the gate for GA4 — it only injects the
            analytics snippet once the visitor accepts. Skipped entirely
            in dev so local sessions never pollute the GA property. */}

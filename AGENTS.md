@@ -229,8 +229,19 @@ Studio config lives at `sanity.config.ts`. Schemas live in `sanity/schemas/`:
 
 Reads:
 - `sanity/lib/client.ts` — public read client (CDN-cached, published-only perspective)
-- `sanity/lib/queries.ts` — GROQ queries with `defineQuery`
-- `sanity/lib/events.ts` — fetch wrapper with cache tags + **static fallback**: if the dataset is empty, falls back to the legacy `EVENTS[]` in `lib/content.ts` so the site never shows an empty section during the migration
+- `sanity/lib/image.ts` — `urlForImage(image)` URL builder with `.auto('format')` + width transforms (CDN-served WebP/AVIF)
+- `sanity/lib/queries.ts` — GROQ queries with `defineQuery`. Image fragment keeps the full image object (asset ref, hotspot, crop) so the URL builder can apply transforms — DON'T resolve `asset->url` directly in GROQ
+- `sanity/lib/events.ts` — `getUpcomingEvents()` + `getEventsForPillar()` with cache tags
+- `sanity/lib/site-data.ts` — `getEffectiveContact()` + `getEffectiveFounder()` + `getEffectiveTestimonials()` + `getEffectiveTestimonialForPillar()`
+
+Every fetcher uses **CMS-first, static fallback**: empty/missing CMS values fall back to the static defaults in `lib/content.ts` so the site never blanks out during editor onboarding.
+
+Server-side fetch flow:
+- `app/layout.tsx` (root, async) fetches contact once → passes to `<MobileCtaBar contact>`
+- `app/page.tsx` (landing, async) fetches contact → passes to `<SiteHeader contact>` + `<SiteFooter contact>`
+- `app/(legal)/layout.tsx` (async) same pattern
+- `components/pillar/pillar-page.tsx` (async) fetches contact → header + footer + `<PillarCta contact>`
+- Section components (`<Contact>`, `<Founder>`, `<Testimonials>`, `<PillarTestimonial>`) are async server components that fetch their own slice; Next request-dedupes upstream Sanity calls so multiple sections sharing siteSettings is one network hit per request.
 
 Cache invalidation: `app/api/revalidate/route.ts` is a webhook target. Sanity → Next.js. Configure a GROQ webhook in Sanity manage UI pointing at `/api/revalidate` with the same secret as `SANITY_REVALIDATE_SECRET`.
 

@@ -1,9 +1,13 @@
 import { Star } from "lucide-react";
 import { MediaFrame } from "@/components/media-frame";
-import { TESTIMONIALS, type Pillar } from "@/lib/content";
+import { type Pillar } from "@/lib/content";
+import { getEffectiveTestimonialForPillar } from "@/sanity/lib/site-data";
 
-export function PillarTestimonial({ pillar }: { pillar: Pillar }) {
-  const t = TESTIMONIALS.find((x) => x.id === pillar.testimonialId);
+export async function PillarTestimonial({ pillar }: { pillar: Pillar }) {
+  const t = await getEffectiveTestimonialForPillar(
+    pillar.slug,
+    pillar.testimonialId
+  );
   if (!t) return null;
 
   return (

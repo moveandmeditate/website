@@ -1,8 +1,8 @@
-import imageUrlBuilder from "@sanity/image-url";
+import { createImageUrlBuilder } from "@sanity/image-url";
 import type { SanityImageSource } from "@sanity/image-url";
 import { dataset, projectId } from "@/sanity/env";
 
-const builder = imageUrlBuilder({ projectId, dataset });
+const builder = createImageUrlBuilder({ projectId, dataset });
 
 /**
  * Build a CDN URL for a Sanity image reference. Returns the builder so

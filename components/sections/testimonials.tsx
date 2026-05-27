@@ -1,8 +1,9 @@
 import { Star } from "lucide-react";
 import { MediaFrame } from "@/components/media-frame";
-import { TESTIMONIALS } from "@/lib/content";
+import { getEffectiveTestimonials } from "@/sanity/lib/site-data";
 
-export function Testimonials() {
+export async function Testimonials() {
+  const testimonials = await getEffectiveTestimonials();
   return (
     <section
       id="testimonials"
@@ -19,7 +20,7 @@ export function Testimonials() {
         </div>
 
         <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {TESTIMONIALS.map((t) => (
+          {testimonials.map((t) => (
             <li
               key={t.id}
               className="bg-bg-3 p-6 relative min-h-[180px] flex flex-col"

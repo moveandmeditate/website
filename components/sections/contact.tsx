@@ -1,9 +1,11 @@
 import { Mail, MessageCircle } from "lucide-react";
 import { MediaFrame } from "@/components/media-frame";
 import { ContactForm } from "@/components/contact-form";
-import { CONTACT, CONTACT_SECTION } from "@/lib/content";
+import { CONTACT_SECTION } from "@/lib/content";
+import { getEffectiveContact } from "@/sanity/lib/site-data";
 
-export function Contact() {
+export async function Contact() {
+  const contact = await getEffectiveContact();
   return (
     <section
       id="contact"
@@ -35,7 +37,7 @@ export function Contact() {
 
           <div className="mt-8 space-y-4">
             <a
-              href={CONTACT_SECTION.cta.href}
+              href={contact.whatsappCommunityUrl}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center justify-center gap-3 bg-ink text-bg text-[11px] tracking-[0.22em] font-medium px-6 h-12 hover:bg-ink-2 transition-colors w-full sm:w-auto"
@@ -45,7 +47,7 @@ export function Contact() {
             </a>
 
             <a
-              href={`mailto:${CONTACT.email}`}
+              href={`mailto:${contact.email}`}
               className="flex items-center gap-3 text-[13px] text-ink-2 hover:text-ink transition-colors"
             >
               <span className="grid size-9 place-items-center rounded-full border border-line-2 bg-bg">
@@ -55,7 +57,7 @@ export function Contact() {
                 <span className="block text-[10px] tracking-[0.22em] uppercase text-muted">
                   {CONTACT_SECTION.emailLabel}
                 </span>
-                <span className="block font-medium">{CONTACT.email}</span>
+                <span className="block font-medium">{contact.email}</span>
               </span>
             </a>
           </div>

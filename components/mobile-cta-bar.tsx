@@ -7,6 +7,12 @@ import { Phone } from "lucide-react";
 import { WhatsAppIcon } from "@/components/social-icons";
 import { CONTACT } from "@/lib/content";
 
+/** Subset of `EffectiveContact` the mobile bar uses. Defaulted to the
+ *  static CONTACT so the bar still renders if a caller forgets the prop. */
+export type MobileCtaContact = {
+  whatsappCommunityUrl: string;
+};
+
 /**
  * Sticky bottom CTA bar shown on mobile / tablet only.
  * - Two thumb-zone buttons: Book Discovery Call · WhatsApp Community
@@ -16,7 +22,11 @@ import { CONTACT } from "@/lib/content";
  *   sit on top of the form
  * - Auto-hides on legal pages (where conversion isn't the goal)
  */
-export function MobileCtaBar() {
+export function MobileCtaBar({
+  contact = CONTACT,
+}: {
+  contact?: MobileCtaContact;
+} = {}) {
   const pathname = usePathname();
   const [visible, setVisible] = useState(false);
   const [nearContact, setNearContact] = useState(false);
@@ -77,7 +87,7 @@ export function MobileCtaBar() {
           BOOK CALL
         </Link>
         <a
-          href={CONTACT.whatsappCommunityUrl}
+          href={contact.whatsappCommunityUrl}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex h-12 items-center justify-center gap-2 bg-bg text-ink text-[11px] tracking-[0.22em] font-medium border border-ink hover:bg-ink hover:text-bg transition-colors shadow-[0_4px_18px_-6px_rgba(26,26,26,0.25)]"

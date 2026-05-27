@@ -10,19 +10,36 @@ import { Logo } from "@/components/logo";
 import { CONTACT, NAV_ITEMS, SITE } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
-/** Resolve the link href for `BOOK DISCOVERY CALL`. On `/` we scroll to the
- *  contact anchor. On any sub-page we route home with the same anchor so the
- *  user lands on the form regardless of where they are. */
-function bookHref(pathname: string) {
+/** Subset of `EffectiveContact` the header uses. `calBookingUrl` is the
+ *  optional Cal.com / Calendly link — when set, the Book Discovery CTA
+ *  links there directly (opens external) instead of scrolling to the
+ *  in-page contact form. */
+export type HeaderContact = {
+  whatsappCommunityUrl: string;
+  calBookingUrl?: string;
+};
+
+/** Resolve the link href for `BOOK DISCOVERY CALL`. If the CMS has a
+ *  `calBookingUrl` set, prefer it (highest-intent action). Otherwise
+ *  scroll to the contact anchor on the home page. */
+function bookHref(pathname: string, calBookingUrl?: string) {
+  if (calBookingUrl) return calBookingUrl;
   return pathname === "/" ? "#contact" : "/#contact";
 }
 
-export function SiteHeader() {
+export function SiteHeader({
+  contact = CONTACT,
+}: {
+  contact?: HeaderContact;
+} = {}) {
   const headerRef = useRef<HTMLElement>(null);
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
-  const discoveryHref = bookHref(pathname);
+  const discoveryHref = bookHref(pathname, contact.calBookingUrl);
+  // External booking links open in a new tab; internal anchor scrolls in
+  // place. Use this flag below to set `target`/`rel` only when needed.
+  const discoveryIsExternal = Boolean(contact.calBookingUrl);
   const reducedMotion = useReducedMotion();
 
   // Sync the rendered header height to --header-h so scroll-margin-top is accurate.
@@ -114,6 +131,8 @@ export function SiteHeader() {
         <div className="ml-auto flex items-center gap-2">
           <Link
             href={discoveryHref}
+            target={discoveryIsExternal ? "_blank" : undefined}
+            rel={discoveryIsExternal ? "noopener noreferrer" : undefined}
             className="hidden md:inline-flex h-10 items-center px-5 rounded-none bg-ink text-bg tracking-[0.18em] text-[11px] font-medium hover:bg-ink-2 transition-colors"
           >
             BOOK DISCOVERY CALL
@@ -162,13 +181,15 @@ export function SiteHeader() {
               <div className="px-6 pb-8 border-t border-line pt-6 flex flex-col gap-3">
                 <Link
                   href={discoveryHref}
+                  target={discoveryIsExternal ? "_blank" : undefined}
+                  rel={discoveryIsExternal ? "noopener noreferrer" : undefined}
                   onClick={() => setOpen(false)}
                   className="inline-flex h-12 items-center justify-center bg-ink text-bg tracking-[0.18em] text-[11px] font-medium hover:bg-ink-2 transition-colors"
                 >
                   BOOK DISCOVERY CALL
                 </Link>
                 <a
-                  href={CONTACT.whatsappCommunityUrl}
+                  href={contact.whatsappCommunityUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   onClick={() => setOpen(false)}

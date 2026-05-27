@@ -1,9 +1,20 @@
 import Link from "next/link";
 import { MediaFrame } from "@/components/media-frame";
 import { WhatsAppIcon } from "@/components/social-icons";
-import { CONTACT, type Pillar } from "@/lib/content";
+import { type Pillar } from "@/lib/content";
+import type { EffectiveContact } from "@/sanity/lib/site-data";
 
-export function PillarCta({ pillar }: { pillar: Pillar }) {
+export function PillarCta({
+  pillar,
+  contact,
+}: {
+  pillar: Pillar;
+  contact: EffectiveContact;
+}) {
+  // Prefer the CMS-set Cal.com / Calendly link when present. Falls back
+  // to the in-page contact form at /#contact otherwise.
+  const bookHref = contact.calBookingUrl || "/#contact";
+  const bookIsExternal = Boolean(contact.calBookingUrl);
   return (
     <section
       aria-labelledby="pillar-cta-heading"
@@ -34,13 +45,15 @@ export function PillarCta({ pillar }: { pillar: Pillar }) {
 
         <div className="flex flex-col sm:flex-row lg:flex-col gap-3 lg:items-end">
           <Link
-            href="/#contact"
+            href={bookHref}
+            target={bookIsExternal ? "_blank" : undefined}
+            rel={bookIsExternal ? "noopener noreferrer" : undefined}
             className="inline-flex h-12 items-center justify-center bg-ink text-bg text-[11px] tracking-[0.24em] px-7 font-medium hover:bg-ink-2 transition-colors"
           >
             BOOK DISCOVERY CALL
           </Link>
           <a
-            href={CONTACT.whatsappCommunityUrl}
+            href={contact.whatsappCommunityUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex h-12 items-center justify-center border border-ink text-ink text-[11px] tracking-[0.22em] px-7 font-medium hover:bg-ink hover:text-bg transition-colors gap-2"
