@@ -219,13 +219,16 @@ Phone number is **required** on the schema. Honeypot field `website` must remain
 
 ## CMS — Sanity Studio
 
-Sanity is embedded at **`/studio`** (catch-all route `app/studio/[[...tool]]/page.tsx`). Sign in with the Sanity account email used to create the project (`moveandmeditate.infra@gmail.com`).
+Sanity is embedded at **`/studio`** (catch-all route `app/studio/[[...tool]]/page.tsx`). Sign in with the Sanity account email used to create the project (`moveandmeditate.infra@gmail.com`). Project ID is `sis92gxt`, dataset is `production`.
 
-Studio config lives at `sanity.config.ts`. Schemas live in `sanity/schemas/`:
-- `siteSettings` — singleton (contact info, social URLs, hero tagline)
-- `founderProfile` — singleton (bio, headline, photo)
-- `event` — collection (upcoming events / workshops)
-- `testimonial` — collection (per-pillar quotes)
+Studio config lives at `sanity.config.ts`. Custom desk structure (`sanity/desk-structure.ts`) enforces singleton constraints — Site settings + Founder profile render as one fixed-id doc each (no list, no "+" button, no duplicate/delete actions). Collections (event, testimonial, brand) keep the default list + create UX.
+
+Schemas live in `sanity/schemas/`:
+- `siteSettings` — singleton (email, phone, WhatsApp invite, socials, Cal booking URL, hero tagline)
+- `founderProfile` — singleton (eyebrow, title, paragraphs, signature, portrait, 4 stats)
+- `event` — collection (upcoming events / workshops; tagged by pillar so per-pillar pages can filter)
+- `testimonial` — collection (per-pillar quotes; optional `pillars[]` tag for filtering)
+- `brand` — collection (trusted-by strip; logo upload OR render-enum fallback + optional websiteUrl)
 
 Reads:
 - `sanity/lib/client.ts` — public read client (CDN-cached, published-only perspective)
@@ -243,14 +246,18 @@ Server-side fetch flow:
 - `components/pillar/pillar-page.tsx` (async) fetches contact → header + footer + `<PillarCta contact>`
 - Section components (`<Contact>`, `<Founder>`, `<Testimonials>`, `<PillarTestimonial>`) are async server components that fetch their own slice; Next request-dedupes upstream Sanity calls so multiple sections sharing siteSettings is one network hit per request.
 
-Cache invalidation: `app/api/revalidate/route.ts` is a webhook target. Sanity → Next.js. Configure a GROQ webhook in Sanity manage UI pointing at `/api/revalidate` with the same secret as `SANITY_REVALIDATE_SECRET`.
+Cache invalidation: `app/api/revalidate/route.ts` (Route Handler) verifies the Sanity webhook signature, then awaits `invalidateCmsTags()` from `lib/cms-revalidate.ts`. That file carries the `"use server"` directive — required because Next.js 16 narrows both `revalidateTag` and `updateTag` to Server-Action context (calling either directly from a Route Handler throws `"updateTag can only be called from within a Server Action"`). Tag-level invalidation (not `revalidatePath`) is required because the GROQ fetch wrappers cache with `next: { tags: [...] }`; clearing the route HTML cache via `revalidatePath` leaves the underlying fetch data cache hot and the next render reuses the stale Sanity response.
+
+Configure a GROQ webhook in Sanity manage UI pointing at `/api/revalidate` with the same secret as `SANITY_REVALIDATE_SECRET`. Filter: `_type in ["event","testimonial","founderProfile","siteSettings","brand"]`. Projection: `{ _type, _id }`.
 
 When adding a new schema:
 1. Add the schema file in `sanity/schemas/`
 2. Register in `sanity/schemas/index.ts`
-3. Add a GROQ query in `sanity/lib/queries.ts`
-4. Add a fetch wrapper with `next: { tags: [...] }` so the webhook can invalidate
-5. Add the new `_type` → tag mapping in `app/api/revalidate/route.ts`
+3. Add to `sanity/desk-structure.ts` if it's a singleton (otherwise it auto-appears as a collection list)
+4. Add a GROQ query in `sanity/lib/queries.ts`
+5. Add a fetch wrapper with `next: { tags: [...], revalidate: REVALIDATE_SECONDS }` so the webhook can invalidate
+6. Add the new `_type` → tag mapping in `app/api/revalidate/route.ts`
+7. Add the new `_type` to the Sanity webhook filter expression
 
 ## Analytics
 
@@ -293,6 +300,22 @@ The full audit + phased plan lives in [`ROADMAP.md`](./ROADMAP.md). It tracks:
 - If the change was authored entirely by an AI agent, append a single line: `Assisted by AI`. Otherwise no AI attribution.
 - Don't mention Claude / Anthropic / any AI vendor in commits or PRs.
 - Don't bypass hooks (`--no-verify`, `--no-gpg-sign`) unless the user explicitly asks.
+
+## Domain migration
+
+The site currently lives on `moveandmeditate.vercel.app`. When the real domain `moveandmeditate.in` (or whatever the final host is) goes live, do **all** of these — missing any one creates a partial-cutover bug:
+
+1. **Vercel project**: Settings → Domains → Add the new domain. Follow the prompts to add the A/CNAME records at the DNS provider.
+2. **Update `SITE.url`** in `lib/content.ts` to the new origin. Drives `metadataBase`, OpenGraph URLs, sitemap, JSON-LD `url` fields, and the canonical link.
+3. **Update GA4 stream URL** in Google Analytics → Admin → Data Streams → edit the stream → set the new URL. (Measurement ID stays the same.)
+4. **Sanity CORS origins** (https://www.sanity.io/manage/project/sis92gxt/api/cors): add the new domain with **Allow credentials = ON**. Keep the Vercel preview URL too so PR previews keep working.
+5. **Sanity webhook URL** (https://www.sanity.io/manage/project/sis92gxt/api/webhooks): edit the webhook, change the URL to `https://<new-domain>/api/revalidate`. Secret stays the same.
+6. **Register the prod Studio**: first visit to `https://<new-domain>/studio` after the domain flips will prompt to register — click "Register this studio" so Sanity treats it as the canonical Studio.
+7. **Contact email** (if moving off Gmail): once MX records for the new domain are live, edit Site settings in Studio → set Public contact email to `hello@<new-domain>`. Publish. The webhook handles propagation.
+8. **DMARC / SPF / DKIM** on the new domain if outbound email is going through it.
+9. **`robots.txt` + `sitemap.xml`**: generated dynamically from `SITE.url`, so step 2 already covers these.
+10. **Submit new sitemap to Google Search Console + Bing Webmaster Tools** under the new property.
+11. **Verify**: hit the new domain in incognito + verify (a) `/studio` loads + auths, (b) publishing in Studio updates the public site within ~10s, (c) `/sitemap.xml` lists the new origin, (d) GA4 realtime shows traffic.
 
 ## Things NOT to do
 

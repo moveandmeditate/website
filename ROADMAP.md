@@ -109,6 +109,7 @@ Last updated: 2026-05-27
 - [ ] **Future:** migrate `PILLARS` (dance/yoga/weddings/corporate) to a Sanity `pillar` schema so offerings + how-it-works + FAQ + gallery + CTA can be edited without a code push (today these live in `lib/content.ts`)
 - [ ] **Future:** migrate `EXPERIENCES` 6-card grid to a Sanity `experience` collection
 - [ ] **Future:** clean up duplicate singleton docs left over from early Studio testing (write one-off cleanup script with an Editor-scope token, then revoke the token)
+- [ ] **One-time CMS → static fallback sync** (deferred): once Amisha has finished populating CMS with real content, run a `pnpm sync-cms` script that pulls all docs from Sanity and writes them to `lib/cms-snapshot.generated.ts`. Update the adapters in `sanity/lib/site-data.ts` + `sanity/lib/events.ts` to prefer that snapshot over the hardcoded static fallbacks in `lib/content.ts`. Commit the generated file. Goal: if Sanity ever has an outage, the static fallback shows real recent content instead of placeholder seed data. Skip for now — the current adapters degrade gracefully and Sanity uptime is high. Build the script when there's real content worth preserving as a fallback.
 
 ### C. Inbound + lead capture
 
@@ -138,7 +139,7 @@ Last updated: 2026-05-27
 - [ ] City pages (`/bangalore`, `/online`) if she serves multiple regions
 - [ ] Hindi locale via `next-intl` (`en` + `hi`)
 - [ ] Rich snippets — Event schema with real dates, Course schema, FAQ schema
-- [ ] Real domain `moveandmeditate.in` + DNS records
+- [ ] Real domain `moveandmeditate.in` + DNS records. Full migration checklist documented in **AGENTS.md → Domain migration** (Vercel domain add, `SITE.url` update, GA4 stream URL, Sanity CORS + webhook URL, Studio re-register, contact email switch, DMARC/SPF/DKIM, GSC + Bing sitemap submission). Miss any step → partial-cutover bug.
 
 ### G. Analytics + observability
 
