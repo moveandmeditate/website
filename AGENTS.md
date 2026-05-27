@@ -150,6 +150,21 @@ Generation count breakdown lives in `inspirations/` README (or this repo's main 
 
 All three legal pages use `<LegalProse>` from `components/legal-prose.tsx`. Edit copy directly in each route's `page.tsx`. Templates are DPDP Act 2023 + IT Rules 2021 aware but **must be reviewed by Amisha (and ideally a lawyer) before launch**. Placeholders are marked.
 
+## Roadmap — `ROADMAP.md`
+
+The full audit + phased plan lives in [`ROADMAP.md`](./ROADMAP.md) at repo root. It tracks:
+- **Wiring gaps** — things already on the page but not fully connected (placeholder URLs, stubbed handlers, etc.)
+- **Missing features** — business-analyst layer (CMS, bookings, analytics, blog, etc.)
+- **Phased delivery** — Phase A wiring, Phase B CMS, Phase C growth, Phase D polish
+
+**MANDATORY when you ship any item from the roadmap:**
+1. Flip the matching `- [ ]` to `- [x]` in `ROADMAP.md` in the **same commit** that lands the change.
+2. Add a one-line note after the checkbox if useful (commit hash, follow-up, etc.).
+3. If you discover a new gap during the work, add a new `- [ ]` line to the right section.
+4. If you decide to drop an item, change it to `- [-]` with a one-line reason.
+
+If you complete an item that wasn't on the roadmap, ADD it (as already done) instead of silently shipping. The roadmap is the single source of truth for "what's left".
+
 ## Commit conventions
 
 - Use Conventional Commits (`feat:`, `fix:`, `chore:`, `refactor:`, `docs:`, `style:`).
