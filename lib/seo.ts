@@ -93,6 +93,27 @@ export function pillarJsonLd(slug: PillarSlug) {
   };
 }
 
+/**
+ * FAQPage JSON-LD for a pillar route. Lets Google render the "People also
+ * ask" rich-result snippet directly under the listing.
+ */
+export function pillarFaqJsonLd(slug: PillarSlug) {
+  const p = PILLARS[slug];
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "@id": `${SITE.url}/${p.slug}#faq`,
+    mainEntity: p.faq.map((qa) => ({
+      "@type": "Question",
+      name: qa.question,
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: qa.answer,
+      },
+    })),
+  };
+}
+
 /** Per-pillar `metadata` export used by the page.tsx files. */
 export function pillarMetadata(slug: PillarSlug): Metadata {
   const p = PILLARS[slug];

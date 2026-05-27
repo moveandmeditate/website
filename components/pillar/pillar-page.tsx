@@ -3,9 +3,11 @@ import { SiteFooter } from "@/components/site-footer";
 import { PillarHero } from "@/components/pillar/pillar-hero";
 import { PillarIntro } from "@/components/pillar/pillar-intro";
 import { OfferingsGrid } from "@/components/pillar/offerings-grid";
+import { PillarHowItWorks } from "@/components/pillar/pillar-how-it-works";
 import { GalleryStrip } from "@/components/pillar/gallery-strip";
 import { PillarTestimonial } from "@/components/pillar/pillar-testimonial";
 import { PillarEvents } from "@/components/pillar/pillar-events";
+import { PillarFaq } from "@/components/pillar/pillar-faq";
 import { PillarCta } from "@/components/pillar/pillar-cta";
 import type { Pillar } from "@/lib/content";
 
@@ -27,9 +29,11 @@ export function PillarPage({ pillar }: { pillar: Pillar }) {
         <PillarHero pillar={pillar} />
         <PillarIntro pillar={pillar} />
         <OfferingsGrid pillar={pillar} />
+        <PillarHowItWorks pillar={pillar} />
         <GalleryStrip pillar={pillar} />
         <PillarTestimonial pillar={pillar} />
         {showEvents && <PillarEvents pillar={pillar.slug} />}
+        <PillarFaq pillar={pillar} />
         <PillarCta pillar={pillar} />
       </main>
       <SiteFooter />

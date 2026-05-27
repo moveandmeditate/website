@@ -1,6 +1,6 @@
 import { PillarPage } from "@/components/pillar/pillar-page";
 import { PILLARS } from "@/lib/content";
-import { pillarJsonLd, pillarMetadata } from "@/lib/seo";
+import { pillarFaqJsonLd, pillarJsonLd, pillarMetadata } from "@/lib/seo";
 
 export const metadata = pillarMetadata("corporate");
 
@@ -10,6 +10,10 @@ export default function CorporatePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(pillarJsonLd("corporate")) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(pillarFaqJsonLd("corporate")) }}
       />
       <PillarPage pillar={PILLARS.corporate} />
     </>

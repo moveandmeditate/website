@@ -417,6 +417,17 @@ export type Offering = {
   ctaLabel?: string;
 };
 
+export type ProcessStep = {
+  number: string;
+  title: string;
+  body: string;
+};
+
+export type Faq = {
+  question: string;
+  answer: string;
+};
+
 export type Pillar = {
   slug: PillarSlug;
   nav: string;
@@ -433,9 +444,13 @@ export type Pillar = {
     bullets: string[];
   };
   offerings: Offering[];
+  /** 3-step customer journey shown as a horizontal strip. */
+  howItWorks: { title: string; steps: ProcessStep[] };
   /** 3–5 images shown in the gallery strip. */
   gallery: { src: string; alt: string }[];
   testimonialId: Testimonial["id"];
+  /** SEO-optimised Q&A pairs. Drives the FAQ accordion + FAQPage JSON-LD. */
+  faq: Faq[];
   cta: {
     title: string;
     subtitle: string;
@@ -497,6 +512,48 @@ export const PILLARS: Record<PillarSlug, Pillar> = {
       { src: "/images/hero-dancer.webp", alt: "Sunlit dance studio with arched windows" },
     ],
     testimonialId: "neha",
+    howItWorks: {
+      title: "How a class starts with us.",
+      steps: [
+        {
+          number: "01",
+          title: "Tell us your goal",
+          body: "Drop a note with what you're hoping to feel after class — stronger, freer, performance-ready, or just curious. No experience required.",
+        },
+        {
+          number: "02",
+          title: "Free discovery call",
+          body: "A 20-minute call with Amisha to match you to the right format — private, group, online, or wedding choreography — and answer every question.",
+        },
+        {
+          number: "03",
+          title: "Begin moving",
+          body: "Step into your first session within the week. Class packs and ongoing schedules are tailored to your pace and the city you're in.",
+        },
+      ],
+    },
+    faq: [
+      {
+        question: "Do I need prior dance experience to join classes?",
+        answer:
+          "No. Every group has space for absolute beginners, and private classes are built around exactly where you are. Most students discover they can do more than they expected within the first three sessions.",
+      },
+      {
+        question: "Where are dance classes held in Bangalore?",
+        answer:
+          "We hold studio classes in Bangalore (location shared on confirmation, close to central neighbourhoods) and travel to a venue of your choice for private and wedding work. We also run live online sessions for dancers outside the city.",
+      },
+      {
+        question: "How do private 1:1 dance lessons differ from group classes?",
+        answer:
+          "Private lessons are fully tailored — your songs, your style, your timeline — and ideal for performance prep, weddings or fast progress. Group classes are weekly, energising and a great way to find your community.",
+      },
+      {
+        question: "Can you choreograph for our wedding sangeet?",
+        answer:
+          "Yes — sangeet, couple dance, mehendi sets and full multi-day performances. Couples typically book us 6–10 weeks before the wedding. See the Weddings page for our full sangeet process.",
+      },
+    ],
     cta: {
       title: "Move with us.",
       subtitle:
@@ -558,6 +615,48 @@ export const PILLARS: Record<PillarSlug, Pillar> = {
       { src: "/images/event-yoga-nidra.webp", alt: "Participants in yoga nidra rest" },
     ],
     testimonialId: "priya",
+    howItWorks: {
+      title: "How a practice begins.",
+      steps: [
+        {
+          number: "01",
+          title: "Tell us where you are",
+          body: "Send a short note — new to yoga, returning after a break, working through an injury, looking for stress relief. We design from there.",
+        },
+        {
+          number: "02",
+          title: "Free discovery call",
+          body: "A 20-minute call to map a practice to your body and your week. We'll cover format, frequency, and which adjacent practices (breathwork, sound, nidra) might serve you.",
+        },
+        {
+          number: "03",
+          title: "Roll out the mat",
+          body: "Begin in the studio in Bangalore or live online from anywhere. First session inside 7 days of your call.",
+        },
+      ],
+    },
+    faq: [
+      {
+        question: "What kind of yoga is taught at Move & Meditate?",
+        answer:
+          "A grounded, breath-led blend of vinyasa, hatha and restorative yoga, layered with breathwork, sound healing and yoga nidra. Style choice is always matched to your goal — energy, recovery, or stillness.",
+      },
+      {
+        question: "Is yoga at Move & Meditate suitable for beginners?",
+        answer:
+          "Yes. Every class includes modifications for newer practitioners and we never push anyone past a safe range. Many of our members started here without a single previous class.",
+      },
+      {
+        question: "Can I join yoga classes online from outside Bangalore?",
+        answer:
+          "Yes — group classes, breathwork, sound and yoga nidra all run live online on weekends. Recordings are available for 24–72 hours so you can practise on your time-zone.",
+      },
+      {
+        question: "What's the difference between yoga, breathwork and yoga nidra?",
+        answer:
+          "Yoga moves the body and trains attention. Breathwork uses guided breathing to regulate the nervous system. Yoga nidra is a deep-rest, lying-down practice — closer to meditation. We weave all three depending on what you need.",
+      },
+    ],
     cta: {
       title: "Find your practice.",
       subtitle:
@@ -619,6 +718,48 @@ export const PILLARS: Record<PillarSlug, Pillar> = {
       { src: "/images/tile-move.webp", alt: "Contemporary dancer in a sunlit room" },
     ],
     testimonialId: "ananya-rahul",
+    howItWorks: {
+      title: "From first call to first dance.",
+      steps: [
+        {
+          number: "01",
+          title: "Discovery call",
+          body: "We talk songs, timeline, family + friend group size, venue, and the moments you want people to remember. Free, no pressure, no commitment.",
+        },
+        {
+          number: "02",
+          title: "Design + rehearsal calendar",
+          body: "We choreograph each set, send video references, and lock a rehearsal schedule that respects everyone's calendars — including the parents.",
+        },
+        {
+          number: "03",
+          title: "Perform with confidence",
+          body: "On the day, we're with you for a final polish and run-through. You step on stage knowing every cue is in your body.",
+        },
+      ],
+    },
+    faq: [
+      {
+        question: "How early should we book wedding choreography?",
+        answer:
+          "Most couples book us 6–10 weeks before the wedding. Bigger sangeet sets with multiple family groups benefit from 10–12 weeks. We do take rush bookings — drop us a note even if your wedding is closer.",
+      },
+      {
+        question: "Do you travel for destination weddings?",
+        answer:
+          "Yes. We design and rehearse remotely (in-person + video), then travel for the final on-site polish and the performance itself. Travel + stay are billed at cost; everything else is in the package.",
+      },
+      {
+        question: "How many rehearsals are usually needed for a sangeet?",
+        answer:
+          "A couple dance typically takes 6–8 sessions. A full sangeet with family + friend sets averages 12–18 rehearsals across 6–8 weeks. Schedules flex around your family's availability.",
+      },
+      {
+        question: "Can you choreograph for family members of all ages and fitness levels?",
+        answer:
+          "Yes — that's our specialty. Steps are adapted on the spot so grandparents, kids and your unfit-but-enthusiastic cousins all look great on stage. The goal is celebration, never comparison.",
+      },
+    ],
     cta: {
       title: "Let's design your sangeet.",
       subtitle:
@@ -680,6 +821,48 @@ export const PILLARS: Record<PillarSlug, Pillar> = {
       { src: "/images/event-yoga-nidra.webp", alt: "Participants resting in yoga nidra" },
     ],
     testimonialId: "rohit",
+    howItWorks: {
+      title: "How we partner with your team.",
+      steps: [
+        {
+          number: "01",
+          title: "Listening call",
+          body: "We start with a 30-minute call to understand your team — energy levels, hybrid mix, calendar pressure, and the outcomes you're hoping for.",
+        },
+        {
+          number: "02",
+          title: "Programme design",
+          body: "We propose a format (weekly on-site, monthly workshop, offsite, or hybrid library) and a 4-, 8- or 12-week arc with measurable engagement signals.",
+        },
+        {
+          number: "03",
+          title: "Run + review",
+          body: "We deliver every session and review impact with you every 4 weeks. The programme flexes as your team's needs evolve.",
+        },
+      ],
+    },
+    faq: [
+      {
+        question: "What corporate wellness formats do you offer?",
+        answer:
+          "Weekly on-site sessions, half-day team workshops, multi-day offsites + retreats, and on-demand digital practice for distributed teams. Most clients combine 2–3 formats across a quarter.",
+      },
+      {
+        question: "How does a corporate retreat with Move & Meditate work?",
+        answer:
+          "We design the entire programme — movement, breathwork, sound, yoga nidra and reflection — around your team's theme. Typical retreats run 2–4 days, in Bangalore or destinations like Goa and the Himalayan foothills.",
+      },
+      {
+        question: "Can you run sessions for distributed teams?",
+        answer:
+          "Yes. We host live sessions on Zoom or Meet, and maintain a curated library of recorded practices your team can drop into. Engagement reports are shared with HR / People Ops monthly.",
+      },
+      {
+        question: "How is impact measured for corporate wellness programs?",
+        answer:
+          "We track attendance, retention across sessions, and a short post-session pulse (3 questions). For longer engagements we run a baseline + 12-week wellbeing survey and share the comparison with you.",
+      },
+    ],
     cta: {
       title: "Bring wellness to your team.",
       subtitle:
