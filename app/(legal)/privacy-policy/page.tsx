@@ -73,11 +73,15 @@ export default function PrivacyPolicyPage() {
         <li><strong>Right to nominate</strong> another individual to exercise these rights on your behalf in the event of death or incapacity.</li>
       </ul>
 
-      <h2>6. Cookies</h2>
+      <h2>6. Cookies &amp; analytics</h2>
       <p>
-        We currently use only essential cookies required for site functionality (such as remembering your form
-        progress). If we later add analytics or marketing cookies, we will request your consent via an in-app banner
-        before they are set.
+        We use Google Analytics 4 to understand aggregate, anonymised traffic patterns. The analytics snippet is only
+        loaded after you accept the consent banner shown on your first visit. If you decline, no analytics cookies are
+        set. You can clear your choice at any time by clearing site data in your browser.
+      </p>
+      <p>
+        Beyond analytics, we use only essential cookies required for site functionality (such as remembering your form
+        progress).
       </p>
 
       <h2>7. Children</h2>

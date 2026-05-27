@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Jost } from "next/font/google";
-import { GoogleAnalytics } from "@next/third-parties/google";
+import { CookieConsent } from "@/components/cookie-consent";
+import { MobileCtaBar } from "@/components/mobile-cta-bar";
 import { SITE } from "@/lib/content";
 import "./globals.css";
 
@@ -75,8 +76,12 @@ export default function RootLayout({
           Skip to content
         </a>
         {children}
+        <MobileCtaBar />
+        {/* CookieConsent is the gate for GA4 — it only injects the
+           analytics snippet once the visitor accepts. Skipped entirely
+           in dev so local sessions never pollute the GA property. */}
+        {isProd && <CookieConsent gaId={GA_MEASUREMENT_ID} />}
       </body>
-      {isProd && <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />}
     </html>
   );
 }
