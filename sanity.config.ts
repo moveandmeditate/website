@@ -13,6 +13,11 @@ import { visionTool } from "@sanity/vision";
 
 import { apiVersion, dataset, projectId } from "@/sanity/env";
 import { schemaTypes } from "@/sanity/schemas";
+import {
+  isSingletonType,
+  SINGLETON_TYPE_LIST,
+  structure,
+} from "@/sanity/desk-structure";
 
 export default defineConfig({
   name: "default",
@@ -22,11 +27,33 @@ export default defineConfig({
   basePath: "/studio",
   schema: { types: schemaTypes },
   plugins: [
-    // Document desk (default left-hand tree).
-    structureTool(),
+    // Document desk with our custom structure — singletons appear as
+    // single docs (no list, no create) so editors can't make dupes.
+    structureTool({ structure }),
     // GROQ playground for ad-hoc queries. Safe to keep — viewer-only
     // tokens still apply to query results, and the studio itself is
     // authenticated.
     visionTool({ defaultApiVersion: apiVersion }),
   ],
+  document: {
+    // Strip duplicate/delete actions from singletons so the only thing
+    // an editor can do is publish/edit the canonical document.
+    actions: (input, context) => {
+      if (!isSingletonType(context.schemaType)) return input;
+      return input.filter(
+        ({ action }) =>
+          action !== "duplicate" &&
+          action !== "delete" &&
+          action !== "unpublish"
+      );
+    },
+    // Remove singletons from the global "Create" menu (the "+" button
+    // in the top-left and in the keyboard-shortcut palette).
+    newDocumentOptions: (prev, { creationContext }) =>
+      creationContext.type === "global"
+        ? prev.filter(
+            (template) => !SINGLETON_TYPE_LIST.includes(template.templateId)
+          )
+        : prev,
+  },
 });
