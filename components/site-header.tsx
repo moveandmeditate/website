@@ -2,21 +2,26 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Logo } from "@/components/logo";
 import { CONTACT, NAV_ITEMS, SITE } from "@/lib/content";
 import { cn } from "@/lib/utils";
 
-const SECTION_IDS = NAV_ITEMS.filter((item) => item.href.startsWith("#") && item.href !== "#top").map(
-  (item) => item.href.slice(1)
-);
+/** Resolve the link href for `BOOK DISCOVERY CALL`. On `/` we scroll to the
+ *  contact anchor. On any sub-page we route home with the same anchor so the
+ *  user lands on the form regardless of where they are. */
+function bookHref(pathname: string) {
+  return pathname === "/" ? "#contact" : "/#contact";
+}
 
 export function SiteHeader() {
   const headerRef = useRef<HTMLElement>(null);
   const [scrolled, setScrolled] = useState(false);
-  const [activeId, setActiveId] = useState<string>("top");
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const discoveryHref = bookHref(pathname);
 
   // Sync the rendered header height to --header-h so scroll-margin-top is accurate.
   useEffect(() => {
@@ -46,33 +51,6 @@ export function SiteHeader() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Active section highlight via IntersectionObserver, offset by header height.
-  useEffect(() => {
-    if (SECTION_IDS.length === 0) return;
-    const headerH = parseInt(getComputedStyle(document.documentElement).getPropertyValue("--header-h")) || 72;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((e) => e.isIntersecting)
-          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
-        if (visible) {
-          setActiveId(visible.target.id);
-        } else if (window.scrollY < 60) {
-          setActiveId("top");
-        }
-      },
-      {
-        rootMargin: `-${headerH + 16}px 0px -55% 0px`,
-        threshold: [0, 0.25, 0.5, 0.75, 1],
-      }
-    );
-    SECTION_IDS.forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) observer.observe(el);
-    });
-    return () => observer.disconnect();
-  }, []);
-
   return (
     <header
       ref={headerRef}
@@ -86,7 +64,7 @@ export function SiteHeader() {
     >
       <div className="container-page flex items-center gap-4 py-3 lg:py-4">
         <Link
-          href="#top"
+          href="/"
           aria-label={`${SITE.name} home`}
           className="flex items-center gap-3"
         >
@@ -96,11 +74,9 @@ export function SiteHeader() {
 
         <nav aria-label="Primary" className="hidden lg:flex flex-1 justify-center gap-9">
           {NAV_ITEMS.map((item) => {
-            const isActive =
-              (item.href === "#top" && activeId === "top") ||
-              (item.href !== "#top" && activeId === item.href.slice(1));
+            const isActive = pathname === item.href;
             return (
-              <a
+              <Link
                 key={item.href}
                 href={item.href}
                 className={cn(
@@ -116,18 +92,18 @@ export function SiteHeader() {
                     isActive ? "opacity-100" : "opacity-0"
                   )}
                 />
-              </a>
+              </Link>
             );
           })}
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
-          <a
-            href="#contact"
+          <Link
+            href={discoveryHref}
             className="hidden md:inline-flex h-10 items-center px-5 rounded-none bg-ink text-bg tracking-[0.18em] text-[11px] font-medium hover:bg-ink-2 transition-colors"
           >
             BOOK DISCOVERY CALL
-          </a>
+          </Link>
 
           <Sheet open={open} onOpenChange={setOpen}>
             <SheetTrigger
@@ -150,26 +126,33 @@ export function SiteHeader() {
               </SheetHeader>
 
               <nav aria-label="Mobile" className="flex flex-col gap-1 px-6 py-6">
-                {NAV_ITEMS.map((item) => (
-                  <a
-                    key={item.href}
-                    href={item.href}
-                    onClick={() => setOpen(false)}
-                    className="py-3 text-sm font-medium tracking-[0.22em] text-ink hover:text-gold-dk transition-colors"
-                  >
-                    {item.label}
-                  </a>
-                ))}
+                {NAV_ITEMS.map((item) => {
+                  const isActive = pathname === item.href;
+                  return (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setOpen(false)}
+                      aria-current={isActive ? "page" : undefined}
+                      className={cn(
+                        "py-3 text-sm font-medium tracking-[0.22em] text-ink hover:text-gold-dk transition-colors",
+                        isActive && "text-gold-dk"
+                      )}
+                    >
+                      {item.label}
+                    </Link>
+                  );
+                })}
               </nav>
 
               <div className="px-6 pb-8 border-t border-line pt-6 flex flex-col gap-3">
-                <a
-                  href="#contact"
+                <Link
+                  href={discoveryHref}
                   onClick={() => setOpen(false)}
                   className="inline-flex h-12 items-center justify-center bg-ink text-bg tracking-[0.18em] text-[11px] font-medium hover:bg-ink-2 transition-colors"
                 >
                   BOOK DISCOVERY CALL
-                </a>
+                </Link>
                 <a
                   href={CONTACT.whatsappCommunityUrl}
                   target="_blank"

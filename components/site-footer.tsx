@@ -1,3 +1,7 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Logo } from "@/components/logo";
 import {
   FacebookIcon,
@@ -6,6 +10,7 @@ import {
   YoutubeIcon,
 } from "@/components/social-icons";
 import { CONTACT, FOOTER, SITE } from "@/lib/content";
+import { cn } from "@/lib/utils";
 
 const SOCIALS = [
   { label: "Instagram", href: CONTACT.socials.instagram, Icon: InstagramIcon },
@@ -14,8 +19,19 @@ const SOCIALS = [
   { label: "WhatsApp Community", href: CONTACT.whatsappCommunityUrl, Icon: WhatsAppIcon },
 ] as const;
 
+/** Returns the pathname portion of a href so we can match `/dance` against
+ *  `/dance#offerings` for active state. Falls back to the whole href when it's
+ *  a pure anchor or doesn't start with `/`. */
+function pathnameOf(href: string): string {
+  if (!href.startsWith("/")) return href;
+  const hashIndex = href.indexOf("#");
+  return hashIndex === -1 ? href : href.slice(0, hashIndex) || "/";
+}
+
 export function SiteFooter() {
+  const pathname = usePathname();
   const year = new Date().getFullYear();
+
   return (
     <footer className="bg-bg border-t border-line">
       <div className="container-page py-12 lg:py-16">
@@ -48,16 +64,25 @@ export function SiteFooter() {
                 {col.heading}
               </h2>
               <ul className="flex flex-col gap-2.5 text-[12px] text-ink-2">
-                {col.links.map((l) => (
-                  <li key={l.label}>
-                    <a
-                      href={l.href}
-                      className="hover:text-gold-dk transition-colors"
-                    >
-                      {l.label}
-                    </a>
-                  </li>
-                ))}
+                {col.links.map((l) => {
+                  const linkPath = pathnameOf(l.href);
+                  const isActive =
+                    l.href.startsWith("/") && pathname === linkPath;
+                  return (
+                    <li key={l.label}>
+                      <Link
+                        href={l.href}
+                        aria-current={isActive ? "page" : undefined}
+                        className={cn(
+                          "hover:text-gold-dk transition-colors",
+                          isActive && "text-gold-dk font-medium"
+                        )}
+                      >
+                        {l.label}
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
             </nav>
           ))}
@@ -69,19 +94,19 @@ export function SiteFooter() {
           </p>
           <ul className="flex items-center gap-5">
             <li>
-              <a href="/privacy-policy" className="hover:text-ink transition-colors">
+              <Link href="/privacy-policy" className="hover:text-ink transition-colors">
                 Privacy Policy
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="/terms-and-conditions" className="hover:text-ink transition-colors">
+              <Link href="/terms-and-conditions" className="hover:text-ink transition-colors">
                 Terms &amp; Conditions
-              </a>
+              </Link>
             </li>
             <li>
-              <a href="/refund-policy" className="hover:text-ink transition-colors">
+              <Link href="/refund-policy" className="hover:text-ink transition-colors">
                 Refund Policy
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
