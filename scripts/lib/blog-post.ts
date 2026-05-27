@@ -17,8 +17,15 @@
  *   - Hero image is optional in the schema; the seed never sets it.
  *     Amisha can upload one in Studio later.
  */
+import { randomUUID } from "node:crypto";
 import { type SanityClient } from "@sanity/client";
 import { type PortableTextBlock } from "./portable-text";
+
+// Sanity arrays require a stable `_key` on every item. Without one,
+// Studio shows a "Missing keys" warning and refuses to let editors
+// modify the list inline. The Portable Text helpers already stamp
+// keys; this helper handles plain object arrays (faq, tags, etc.).
+const uid = () => randomUUID().replace(/-/g, "").slice(0, 12);
 
 export type BlogCategory = "dance" | "yoga" | "weddings" | "corporate";
 
@@ -54,6 +61,11 @@ export async function upsertBlogPost(
     { slug: post.slug }
   );
 
+  // Faq items + tag entries need stable `_key` props so Studio doesn't
+  // flag "Missing keys" and refuse inline editing. Body blocks already
+  // ship with keys (the Portable Text helpers stamp them).
+  const faqWithKeys = post.faq?.map((item) => ({ _key: uid(), ...item }));
+
   const doc = {
     _type: "blogPost",
     title: post.title,
@@ -66,7 +78,7 @@ export async function upsertBlogPost(
     ...(post.updatedAt ? { updatedAt: post.updatedAt } : {}),
     ...(post.readingTime ? { readingTime: post.readingTime } : {}),
     body: post.body,
-    ...(post.faq?.length ? { faq: post.faq } : {}),
+    ...(faqWithKeys?.length ? { faq: faqWithKeys } : {}),
     ...(post.relatedPillar ? { relatedPillar: post.relatedPillar } : {}),
     ...(post.seo
       ? {

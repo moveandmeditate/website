@@ -32,7 +32,7 @@ export const post: SeedBlogPost = {
   slug: "is-yoga-good-for-weight-loss",
   title: "Is Yoga Good for Weight Loss? An Honest Practitioner Answer",
   excerpt:
-    "Yes — but not in the way Instagram thinks. The honest answer requires looking at what yoga actually does to weight (stress, sleep, eating behaviour) versus what it doesn't (burn many calories).",
+    "Yes — but not the way Instagram thinks. Honest take on what yoga actually does to weight (stress, sleep, eating awareness) versus what it doesn't (burn many calories).",
   category: "yoga",
   tags: ["yoga", "weight-loss", "fitness", "honest-take"],
   publishedAt: "2026-05-28T11:15:00.000Z",

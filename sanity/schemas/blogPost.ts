@@ -41,15 +41,17 @@ export const blogPostSchema = defineType({
       name: "excerpt",
       title: "Excerpt",
       description:
-        "60-160 chars. Used as the meta description and the card teaser. Lead with the value, not the headline.",
+        "60-240 chars. Used as the meta description AND the blog-card teaser. Google truncates meta descriptions around ~155 chars in SERPs, so lead with the value in the first sentence; treat the rest as bonus copy for the card.",
       type: "text",
       rows: 3,
       validation: (r) =>
         r
           .required()
           .min(60)
-          .max(180)
-          .error("Excerpt should be 60-180 characters."),
+          .max(240)
+          .warning(
+            "Over 160 chars — Google will likely truncate this in search results. Make sure the first sentence carries the value."
+          ),
     }),
     defineField({
       name: "heroImage",
