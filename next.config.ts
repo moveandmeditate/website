@@ -13,6 +13,31 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  async headers() {
+    return [
+      {
+        // Force the service worker to be served as fresh JS every time.
+        // Without these headers Chrome aggressively caches /sw.js, so
+        // a SW update wouldn't reach installed PWAs without manual
+        // re-registration. Mirrors the recipe in Next.js's PWA guide.
+        source: "/sw.js",
+        headers: [
+          {
+            key: "Content-Type",
+            value: "application/javascript; charset=utf-8",
+          },
+          {
+            key: "Cache-Control",
+            value: "no-cache, no-store, must-revalidate",
+          },
+          {
+            key: "Content-Security-Policy",
+            value: "default-src 'self'; script-src 'self'",
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

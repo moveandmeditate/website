@@ -259,6 +259,22 @@ When adding a new schema:
 6. Add the new `_type` → tag mapping in `app/api/revalidate/route.ts`
 7. Add the new `_type` to the Sanity webhook filter expression
 
+## Studio PWA (installable on phone)
+
+Sanity Studio at `/studio` is installable as a Progressive Web App so Amisha can edit content from her phone home screen — no native app, no app store.
+
+Pieces:
+- `app/manifest.ts` — emits `/manifest.webmanifest`. `start_url` + `scope` both set to `/studio` so the installed app opens straight into the CMS (not the marketing landing page). Icons at `public/studio-icon-{192,512}.png` (downsampled from `public/mam-logo.png`, both `any` + `maskable` purposes).
+- `public/sw.js` — minimal service worker. Registers cleanly, claims clients, passes all fetches through to the network. Exists purely to satisfy Chrome's install-prompt heuristic on Android. No offline caching — Studio is a network-bound CMS, offline editing isn't supported. Replace with Serwist/Workbox later if real offline support is ever needed.
+- `next.config.ts` → `headers()` — strict `Cache-Control: no-cache, no-store, must-revalidate` on `/sw.js` so SW updates always reach installed PWAs. Mirrors the official Next.js PWA recipe.
+- `components/studio/pwa-support.tsx` — client component mounted inside the Studio layout. Registers the SW, captures `beforeinstallprompt` on Android (custom Install button), shows an iOS-specific Add-to-Home-Screen strip in Safari, and self-hides when the app is already running standalone (`display-mode: standalone`).
+- `app/studio/[[...tool]]/layout.tsx` — wires the PWA support component into the Studio shell, sets `appleWebApp` metadata (capable, status-bar style, title), and pins the brand `themeColor` so the iOS status bar matches the Studio chrome.
+
+When changing PWA behavior:
+- Manifest `scope` and SW `register({ scope })` must both stay aligned with where the PWA lives. Today both = `/studio`. Don't widen scope to `/` without changing the SW headers (would require `Service-Worker-Allowed`).
+- The marketing site is intentionally NOT installable. The PWA install surface lives inside Studio only — there's no "Install" button on `/`.
+- The install strip uses session-storage to remember dismissals within a session; cleared automatically when the browser closes.
+
 ## Analytics
 
 Google Analytics 4 (`G-7SGRQR3LE1`) wired via `@next/third-parties/google` in `app/layout.tsx`. Only loads when `process.env.NODE_ENV === 'production'` — Vercel preview + production both qualify, local dev does not.
