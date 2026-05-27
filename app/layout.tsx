@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Jost } from "next/font/google";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { CookieConsent } from "@/components/cookie-consent";
 import { MobileCtaBar } from "@/components/mobile-cta-bar";
 import { SITE } from "@/lib/content";
@@ -103,6 +104,12 @@ export default async function RootLayout({
            analytics snippet once the visitor accepts. Skipped entirely
            in dev so local sessions never pollute the GA property. */}
         {isProd && <CookieConsent gaId={GA_MEASUREMENT_ID} />}
+        {/* Vercel Speed Insights — measures real-user Core Web Vitals
+           (LCP, INP, CLS, FCP, TTFB) on production traffic. No PII is
+           collected per Vercel docs, so it's mounted outside the
+           cookie-consent gate. Auto-noops in dev + on preview
+           deployments. */}
+        {isProd && <SpeedInsights />}
       </body>
     </html>
   );
