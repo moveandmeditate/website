@@ -199,6 +199,22 @@ export const TILES: Tile[] = [
     href: "#contact",
     image: { src: "/images/tile-weddings.webp", alt: "Couple in a candle-lit sangeet" },
   },
+  {
+    id: "corporate",
+    eyebrow: "TEAMS",
+    title: "CORPORATE",
+    tags: ["FOCUS", "RESILIENCE", "TEAM CHEMISTRY"],
+    href: "#contact",
+    image: { src: "/images/tile-corporate.webp", alt: "A corporate wellness session in a sunlit studio" },
+  },
+  {
+    id: "retreats",
+    eyebrow: "JOURNEYS",
+    title: "RETREATS",
+    tags: ["NATURE", "REST", "TRANSFORMATION"],
+    href: "#contact",
+    image: { src: "/images/tile-retreats.webp", alt: "A wellness retreat at golden hour in the Himalayan foothills" },
+  },
 ];
 
 export type Experience = {
