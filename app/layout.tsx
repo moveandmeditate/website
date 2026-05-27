@@ -1,7 +1,14 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Jost } from "next/font/google";
+import { GoogleAnalytics } from "@next/third-parties/google";
 import { SITE } from "@/lib/content";
 import "./globals.css";
+
+// GA4 Measurement ID. Public identifier (visible in the page HTML), so no env
+// var needed. Loaded only in production builds to keep dev sessions out of
+// the analytics reports.
+const GA_MEASUREMENT_ID = "G-7SGRQR3LE1";
+const isProd = process.env.NODE_ENV === "production";
 
 const jost = Jost({
   variable: "--font-jost",
@@ -69,6 +76,7 @@ export default function RootLayout({
         </a>
         {children}
       </body>
+      {isProd && <GoogleAnalytics gaId={GA_MEASUREMENT_ID} />}
     </html>
   );
 }
