@@ -109,6 +109,20 @@
     font-weight: 300;
   }
 
+  /* Tailwind v4 dropped the implicit `cursor: pointer` on buttons that v3
+     used to ship via Preflight. Restore it globally so every clickable
+     `<button>` feels right without having to scatter `cursor-pointer`
+     classes across the codebase. Disabled buttons keep the not-allowed
+     hint. Anchors with [href] already get pointer from the browser default. */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    cursor: pointer;
+  }
+  button[disabled],
+  [role="button"][aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+
   /* Sticky header offset for ANY anchor target — `#founder`, `#contact`,
      `#offerings`, `#grievance`, etc. Applying to every `[id]` is the broadest
      safe net (the property is inert when the element isn't being scrolled to).
