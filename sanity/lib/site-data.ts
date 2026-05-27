@@ -24,7 +24,12 @@ import {
   TESTIMONIALS,
 } from "@/lib/content";
 
-const ONE_HOUR = 60 * 60;
+// In dev we want CMS edits to show up on the next page refresh so we
+// can iterate without restarting the server or clearing .next/cache.
+// In prod the 1-hour TTL is the safety net behind the webhook (which
+// invalidates instantly on publish).
+const REVALIDATE_SECONDS =
+  process.env.NODE_ENV === "development" ? 5 : 60 * 60;
 
 type SanityImageField = {
   alt: string | null;
@@ -73,7 +78,7 @@ export async function getEffectiveContact(): Promise<EffectiveContact> {
     const doc = await sanityClient.fetch<SanitySiteSettings | null>(
       siteSettingsQuery,
       {},
-      { next: { revalidate: ONE_HOUR, tags: ["siteSettings"] } }
+      { next: { revalidate: REVALIDATE_SECONDS, tags: ["siteSettings"] } }
     );
     if (!doc) return CONTACT;
 
@@ -125,7 +130,7 @@ export async function getEffectiveFounder(): Promise<Founder> {
     const doc = await sanityClient.fetch<SanityFounder | null>(
       founderProfileQuery,
       {},
-      { next: { revalidate: ONE_HOUR, tags: ["founderProfile"] } }
+      { next: { revalidate: REVALIDATE_SECONDS, tags: ["founderProfile"] } }
     );
     if (!doc) return FOUNDER;
 
@@ -196,7 +201,7 @@ export async function getEffectiveTestimonials(): Promise<Testimonial[]> {
     const docs = await sanityClient.fetch<SanityTestimonial[]>(
       allTestimonialsQuery,
       {},
-      { next: { revalidate: ONE_HOUR, tags: ["testimonials"] } }
+      { next: { revalidate: REVALIDATE_SECONDS, tags: ["testimonials"] } }
     );
     if (!docs?.length) return TESTIMONIALS;
     return docs.map(toTestimonial);
@@ -222,7 +227,7 @@ export async function getEffectiveTestimonialForPillar(
       { pillar: slug },
       {
         next: {
-          revalidate: ONE_HOUR,
+          revalidate: REVALIDATE_SECONDS,
           tags: ["testimonials", `testimonials:${slug}`],
         },
       }

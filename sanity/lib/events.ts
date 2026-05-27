@@ -19,6 +19,12 @@ import {
   type PillarSlug,
 } from "@/lib/content";
 
+// Short TTL in dev so CMS edits show on the next refresh without
+// nuking .next/cache. 1-hour prod TTL is the safety net behind the
+// webhook (which invalidates instantly on publish).
+const REVALIDATE_SECONDS =
+  process.env.NODE_ENV === "development" ? 5 : 60 * 60;
+
 type SanityImage = {
   alt: string | null;
   asset: {
@@ -87,7 +93,7 @@ export async function getUpcomingEvents(): Promise<EventItem[]> {
       {
         // Cache aggressively — events change daily at most. The webhook
         // at /api/revalidate flushes this tag on any write.
-        next: { revalidate: 60 * 60, tags: ["events"] },
+        next: { revalidate: REVALIDATE_SECONDS, tags: ["events"] },
       }
     );
     if (!docs || docs.length === 0) return STATIC_EVENTS;
@@ -106,7 +112,7 @@ export async function getEventsForPillar(
     const docs = await sanityClient.fetch<SanityEvent[]>(
       eventsForPillarQuery,
       { pillar, limit },
-      { next: { revalidate: 60 * 60, tags: ["events", `events:${pillar}`] } }
+      { next: { revalidate: REVALIDATE_SECONDS, tags: ["events", `events:${pillar}`] } }
     );
     if (!docs || docs.length === 0) {
       return STATIC_EVENTS.filter((e) => e.pillars.includes(pillar)).slice(
