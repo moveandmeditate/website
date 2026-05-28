@@ -53,22 +53,29 @@ export function SiteHeader({
     const section = document.getElementById("contact");
     if (!section) return;
     e.preventDefault();
-    // Desktop: contact is a 2-column layout (heading | form), so landing on
-    // the section top shows both. Mobile: the form sits below the heading,
-    // so scroll to the form fields (header-offset) to put them in view.
+    const headerH =
+      parseInt(
+        getComputedStyle(document.documentElement).getPropertyValue("--header-h"),
+        10
+      ) || 72;
+    // Desktop: contact is a 2-column layout (heading | form), so land the
+    // section's tinted top flush against the navbar (its 121px scroll-margin
+    // otherwise leaves a cream strip). Mobile: form sits below the heading,
+    // so scroll to the form fields with a little breathing room.
     const isDesktop = window.matchMedia("(min-width: 768px)").matches;
+    let top: number;
     if (isDesktop) {
-      section.scrollIntoView({ behavior: "smooth", block: "start" });
+      // Land the tinted section's top at the viewport top so it sits behind
+      // the translucent (blurred) navbar — the prior section no longer peeks
+      // through. The section's ~96px inner padding keeps the heading clear
+      // of the navbar.
+      top = window.scrollY + section.getBoundingClientRect().top;
     } else {
-      const target = section.querySelector<HTMLElement>("form") ?? section;
-      const headerH =
-        parseInt(
-          getComputedStyle(document.documentElement).getPropertyValue("--header-h"),
-          10
-        ) || 72;
-      const top = window.scrollY + target.getBoundingClientRect().top - headerH - 16;
-      window.scrollTo({ top, behavior: "smooth" });
+      // Mobile stacks heading above form; scroll to the form fields.
+      const form = section.querySelector<HTMLElement>("form") ?? section;
+      top = window.scrollY + form.getBoundingClientRect().top - headerH - 16;
     }
+    window.scrollTo({ top, behavior: "smooth" });
     if (location.hash !== "#contact") history.replaceState(null, "", "/#contact");
   };
 
