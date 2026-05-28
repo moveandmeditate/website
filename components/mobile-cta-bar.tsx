@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Phone } from "lucide-react";
 import { WhatsAppIcon } from "@/components/social-icons";
 import { CONTACT } from "@/lib/content";
+import { contactHref, interestSlugForPath } from "@/lib/interest";
 
 /** Subset of `EffectiveContact` the mobile bar uses. Defaulted to the
  *  static CONTACT so the bar still renders if a caller forgets the prop. */
@@ -62,7 +63,11 @@ export function MobileCtaBar({
 
   if (onLegalPage || onStudio) return null;
 
-  const bookHref = pathname === "/" ? "#contact" : "/#contact";
+  // On the home page keep the bare anchor (no reload). On a pillar
+  // page carry the pillar as the contact pre-fill interest.
+  const slug = pathname === "/" ? null : interestSlugForPath(pathname);
+  const bookHref =
+    pathname === "/" ? "#contact" : slug ? contactHref(slug) : "/#contact";
   const show = visible && !nearContact;
 
   return (

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { MediaFrame } from "@/components/media-frame";
 import { WhatsAppIcon } from "@/components/social-icons";
 import { type Pillar } from "@/lib/content";
+import { contactHref } from "@/lib/interest";
 import type { EffectiveContact } from "@/sanity/lib/site-data";
 
 export function PillarCta({
@@ -11,9 +12,10 @@ export function PillarCta({
   pillar: Pillar;
   contact: EffectiveContact;
 }) {
-  // Prefer the CMS-set Cal.com / Calendly link when present. Falls back
-  // to the in-page contact form at /#contact otherwise.
-  const bookHref = contact.calBookingUrl || "/#contact";
+  // Prefer the CMS-set Cal.com / Calendly link when present. Otherwise
+  // route to the in-page contact form, carrying the pillar as the
+  // pre-fill interest (e.g. /?interest=dance#contact).
+  const bookHref = contact.calBookingUrl || contactHref(pillar.slug);
   const bookIsExternal = Boolean(contact.calBookingUrl);
   return (
     <section

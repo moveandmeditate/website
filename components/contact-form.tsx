@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CheckCircle2, Loader2, Send } from "lucide-react";
@@ -18,12 +19,22 @@ import {
 import { ContactSchema, type ContactInput } from "@/lib/contact-schema";
 import { submitContact } from "@/lib/contact-action";
 import { INTERESTS } from "@/lib/content";
+import { resolveInterestPrefill } from "@/lib/interest";
 import { cn } from "@/lib/utils";
 
 export function ContactForm() {
   const [pending, startTransition] = useTransition();
   const [submitted, setSubmitted] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+
+  // Read the `?interest=<slug>` param a CTA may have set. Resolved at
+  // render (not in an effect) and fed straight into RHF defaultValues,
+  // so the dropdown + message starter are correct on first paint with
+  // no setState-in-effect. User can freely change both afterward.
+  // `useSearchParams` triggers the closest Suspense boundary — see the
+  // <Suspense> wrapper in `components/sections/contact.tsx`.
+  const searchParams = useSearchParams();
+  const prefill = resolveInterestPrefill(searchParams.get("interest"));
 
   const {
     register,
@@ -38,8 +49,10 @@ export function ContactForm() {
       name: "",
       email: "",
       phone: "",
-      interest: undefined as unknown as ContactInput["interest"],
-      message: "",
+      interest:
+        prefill?.interest ??
+        (undefined as unknown as ContactInput["interest"]),
+      message: prefill?.message ?? "",
       website: "",
     },
     mode: "onBlur",

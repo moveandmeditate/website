@@ -7,7 +7,6 @@ import {
   ctaCard,
   calloutTip,
   h2,
-  h3,
   internalLink,
   link,
   numbered,

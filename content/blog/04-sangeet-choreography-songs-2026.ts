@@ -7,7 +7,6 @@ import {
   ctaCard,
   calloutNote,
   calloutTip,
-  em,
   h2,
   h3,
   internalLink,

@@ -6,7 +6,6 @@ import {
   bullet,
   ctaCard,
   calloutNote,
-  em,
   h2,
   h3,
   internalLink,

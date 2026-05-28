@@ -15,7 +15,7 @@
  * Serwist / Workbox later if real offline support is ever needed.
  */
 
-self.addEventListener("install", (event) => {
+self.addEventListener("install", () => {
   // Skip waiting so a new SW replaces the old one on the next reload
   // instead of needing a full tab close. Safe because we cache nothing.
   self.skipWaiting();
@@ -26,9 +26,9 @@ self.addEventListener("activate", (event) => {
   event.waitUntil(self.clients.claim());
 });
 
-self.addEventListener("fetch", (event) => {
-  // Pass-through. The handler being registered (even if it does
-  // nothing) is what Chrome's install-prompt heuristics look for.
-  // Don't call `event.respondWith()` so the browser fetch stack
-  // handles the request normally.
+self.addEventListener("fetch", () => {
+  // Pass-through. The handler merely being registered (even with an
+  // empty body) is what Chrome's install-prompt heuristics look for.
+  // We never call `event.respondWith()`, so the browser fetch stack
+  // handles every request normally.
 });

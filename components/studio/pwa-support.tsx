@@ -38,7 +38,16 @@ export function StudioPwaSupport() {
   const [dismissed, setDismissed] = useState(false);
 
   useEffect(() => {
-    // Detect environment once on mount.
+    // Detect environment once on mount. These setState calls inside an
+    // effect are deliberate and the hydration-SAFE pattern for
+    // client-only detection: starting all three flags `false` means the
+    // server HTML and the first client render agree (strip hidden), and
+    // we only reveal the install UI after mount. Lazy useState
+    // initializers would read `navigator`/`matchMedia` during render and
+    // cause an iOS hydration mismatch (server renders null, client wants
+    // the strip). This mirrors the official Next.js PWA guide's
+    // InstallPrompt example.
+    /* eslint-disable react-hooks/set-state-in-effect */
     const ua = window.navigator.userAgent;
     setIsIOS(/iPad|iPhone|iPod/.test(ua));
     setIsStandalone(
@@ -57,6 +66,7 @@ export function StudioPwaSupport() {
     } catch {
       // sessionStorage can throw in private modes — assume not dismissed
     }
+    /* eslint-enable react-hooks/set-state-in-effect */
 
     // Register service worker for Chrome install criteria. Default
     // scope ('/') because the SW file is served from /sw.js — claiming
