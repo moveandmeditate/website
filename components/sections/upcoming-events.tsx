@@ -23,7 +23,7 @@ export async function UpcomingEvents() {
             </h2>
           </div>
           <a
-            href="#contact"
+            href="/#contact"
             className="hidden sm:inline-flex items-center gap-2 text-[11px] tracking-[0.24em] font-medium border-b border-ink pb-1 hover:text-gold-dk hover:border-gold-dk transition-colors"
           >
             VIEW ALL <ArrowRight className="size-3" aria-hidden />
@@ -76,7 +76,7 @@ export async function UpcomingEvents() {
 
         <div className="sm:hidden mt-6">
           <a
-            href="#contact"
+            href="/#contact"
             className="inline-flex items-center gap-2 text-[11px] tracking-[0.24em] font-medium border-b border-ink pb-1"
           >
             VIEW ALL <ArrowRight className="size-3" aria-hidden />

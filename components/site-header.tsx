@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState, type MouseEvent } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutGroup, motion, useReducedMotion } from "motion/react";
@@ -45,39 +45,6 @@ export function SiteHeader({
   // place. Use this flag below to set `target`/`rel` only when needed.
   const discoveryIsExternal = Boolean(contact.calBookingUrl);
   const reducedMotion = useReducedMotion();
-
-  // Scroll to the contact form on the home page rather than relying on the
-  // hash Link (which is a no-op once the URL already ends in `#contact`).
-  const onDiscoveryClick = (e: MouseEvent<HTMLAnchorElement>) => {
-    if (discoveryIsExternal || pathname !== "/") return;
-    const section = document.getElementById("contact");
-    if (!section) return;
-    e.preventDefault();
-    const headerH =
-      parseInt(
-        getComputedStyle(document.documentElement).getPropertyValue("--header-h"),
-        10
-      ) || 72;
-    // Desktop: contact is a 2-column layout (heading | form), so land the
-    // section's tinted top flush against the navbar (its 121px scroll-margin
-    // otherwise leaves a cream strip). Mobile: form sits below the heading,
-    // so scroll to the form fields with a little breathing room.
-    const isDesktop = window.matchMedia("(min-width: 768px)").matches;
-    let top: number;
-    if (isDesktop) {
-      // Land the tinted section's top right at the navbar's bottom edge
-      // (offset by navbar height) so it touches the navbar without the cream
-      // strip the 121px scroll-margin would leave, and without sliding behind
-      // it.
-      top = window.scrollY + section.getBoundingClientRect().top - headerH;
-    } else {
-      // Mobile stacks heading above form; scroll to the form fields.
-      const form = section.querySelector<HTMLElement>("form") ?? section;
-      top = window.scrollY + form.getBoundingClientRect().top - headerH - 16;
-    }
-    window.scrollTo({ top, behavior: "smooth" });
-    if (location.hash !== "#contact") history.replaceState(null, "", "/#contact");
-  };
 
   // Sync the rendered header height to --header-h so scroll-margin-top is accurate.
   useEffect(() => {
@@ -170,7 +137,6 @@ export function SiteHeader({
             href={discoveryHref}
             target={discoveryIsExternal ? "_blank" : undefined}
             rel={discoveryIsExternal ? "noopener noreferrer" : undefined}
-            onClick={onDiscoveryClick}
             className="hidden md:inline-flex h-10 items-center px-5 rounded-none bg-ink text-bg tracking-[0.18em] text-[11px] font-medium hover:bg-ink-2 transition-colors"
           >
             BOOK DISCOVERY CALL
@@ -221,10 +187,7 @@ export function SiteHeader({
                   href={discoveryHref}
                   target={discoveryIsExternal ? "_blank" : undefined}
                   rel={discoveryIsExternal ? "noopener noreferrer" : undefined}
-                  onClick={(e) => {
-                    setOpen(false);
-                    onDiscoveryClick(e);
-                  }}
+                  onClick={() => setOpen(false)}
                   className="inline-flex h-12 items-center justify-center bg-ink text-bg tracking-[0.18em] text-[11px] font-medium hover:bg-ink-2 transition-colors"
                 >
                   BOOK DISCOVERY CALL

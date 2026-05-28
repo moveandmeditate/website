@@ -1,6 +1,7 @@
 import { Mail, MessageCircle } from "lucide-react";
 import { MediaFrame } from "@/components/media-frame";
 import { ContactForm } from "@/components/contact-form";
+import { ContactScroll } from "@/components/contact-scroll";
 import { CONTACT_SECTION } from "@/lib/content";
 import { getEffectiveContact } from "@/sanity/lib/site-data";
 
@@ -13,6 +14,7 @@ export async function Contact() {
       aria-labelledby="contact-heading"
       className="relative isolate overflow-hidden bg-bg-3"
     >
+      <ContactScroll />
       <MediaFrame
         src={CONTACT_SECTION.background.src}
         alt=""

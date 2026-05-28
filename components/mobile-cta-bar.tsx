@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type MouseEvent } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Phone } from "lucide-react";
@@ -62,30 +62,10 @@ export function MobileCtaBar({
 
   if (onLegalPage || onStudio) return null;
 
-  // Absolute href (not a bare `#contact`) so resolution is deterministic.
-  // On the home page we scroll programmatically in `onBookClick` — a bare
-  // hash Link is a no-op when the URL already ends in `#contact` (and Next's
-  // router can even double it to `#contact#contact`), so the button would
-  // silently fail to re-scroll to the form.
+  // Absolute `/#contact` (not a bare `#contact`) so resolution is
+  // deterministic. The scroll itself is handled centrally by <ContactScroll>
+  // (mounted in the contact section), so every contact link behaves the same.
   const bookHref = "/#contact";
-  const onBookClick = (e: MouseEvent<HTMLAnchorElement>) => {
-    if (pathname !== "/") return; // off-home: let it navigate to /#contact
-    // Scroll to the form itself (not the section heading) so the fields are
-    // in view, offset by the fixed header so the first input isn't hidden.
-    const el =
-      document.querySelector<HTMLElement>("#contact form") ??
-      document.getElementById("contact");
-    if (!el) return;
-    e.preventDefault();
-    const headerH =
-      parseInt(
-        getComputedStyle(document.documentElement).getPropertyValue("--header-h"),
-        10
-      ) || 72;
-    const top = window.scrollY + el.getBoundingClientRect().top - headerH - 16;
-    window.scrollTo({ top, behavior: "smooth" });
-    if (location.hash !== "#contact") history.replaceState(null, "", "/#contact");
-  };
   const show = visible && !nearContact;
 
   return (
@@ -103,7 +83,6 @@ export function MobileCtaBar({
       <div className="relative px-3 pb-3 pt-2 grid grid-cols-2 gap-2">
         <Link
           href={bookHref}
-          onClick={onBookClick}
           className="inline-flex h-12 items-center justify-center gap-2 bg-ink text-bg text-[11px] tracking-[0.22em] font-medium hover:bg-ink-2 transition-colors shadow-[0_4px_18px_-6px_rgba(26,26,26,0.35)]"
         >
           <Phone className="size-4" aria-hidden />
