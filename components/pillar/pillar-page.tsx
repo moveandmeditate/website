@@ -2,6 +2,7 @@ import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { PillarHero } from "@/components/pillar/pillar-hero";
 import { PillarIntro } from "@/components/pillar/pillar-intro";
+import { PillarQuote } from "@/components/pillar/pillar-quote";
 import { OfferingsGrid } from "@/components/pillar/offerings-grid";
 import { PillarHowItWorks } from "@/components/pillar/pillar-how-it-works";
 import { GalleryStrip } from "@/components/pillar/gallery-strip";
@@ -37,6 +38,7 @@ export async function PillarPage({ pillar }: { pillar: Pillar }) {
       <main id="main">
         <PillarHero pillar={pillar} />
         <PillarIntro pillar={pillar} />
+        {pillar.quote && <PillarQuote quote={pillar.quote} />}
         <OfferingsGrid pillar={pillar} />
         <PillarHowItWorks pillar={pillar} />
         <GalleryStrip pillar={pillar} />

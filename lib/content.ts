@@ -444,6 +444,16 @@ export type Pillar = {
     title: string;
     subtitle: string;
   };
+  /** Optional Sanskrit verse rendered as a quiet contemplative band. */
+  quote?: {
+    /** Devanagari script. */
+    sanskrit: string;
+    /** IAST transliteration. */
+    transliteration: string;
+    translation: string;
+    /** Attribution, e.g. "Patañjali · Yoga Sūtra 1.2". */
+    source: string;
+  };
 };
 
 export const PILLARS: Record<PillarSlug, Pillar> = {
@@ -561,6 +571,15 @@ export const PILLARS: Record<PillarSlug, Pillar> = {
     eyebrow: "STILLNESS",
     title: "Yoga",
     tagline: "Awareness. Breath. Transformation.",
+    quote: {
+      sanskrit:
+        "यथा दीपो निवातस्थो नेङ्गते सोपमा स्मृता।\nयोगिनो यतचित्तस्य युञ्जतो योगमात्मनः॥",
+      transliteration:
+        "yathā dīpo nivāta-stho neṅgate sopamā smṛtā · yogino yata-cittasya yuñjato yogam ātmanaḥ",
+      translation:
+        "As a lamp in a windless place does not flicker, so is the disciplined mind of a yogi absorbed in meditation.",
+      source: "Bhagavad Gītā 6.19 · Dhyāna Yoga",
+    },
     seoDescription:
       "Yoga with Amisha — vinyasa, restorative, yoga nidra, breathwork and sound healing. Studio classes in Bangalore + live online practice for everyone.",
     heroImage: {
