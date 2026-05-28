@@ -65,11 +65,11 @@ export function SiteHeader({
     const isDesktop = window.matchMedia("(min-width: 768px)").matches;
     let top: number;
     if (isDesktop) {
-      // Land the tinted section's top at the viewport top so it sits behind
-      // the translucent (blurred) navbar — the prior section no longer peeks
-      // through. The section's ~96px inner padding keeps the heading clear
-      // of the navbar.
-      top = window.scrollY + section.getBoundingClientRect().top;
+      // Land the tinted section's top right at the navbar's bottom edge
+      // (offset by navbar height) so it touches the navbar without the cream
+      // strip the 121px scroll-margin would leave, and without sliding behind
+      // it.
+      top = window.scrollY + section.getBoundingClientRect().top - headerH;
     } else {
       // Mobile stacks heading above form; scroll to the form fields.
       const form = section.querySelector<HTMLElement>("form") ?? section;
