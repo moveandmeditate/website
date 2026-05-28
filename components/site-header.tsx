@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type MouseEvent } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { LayoutGroup, motion, useReducedMotion } from "motion/react";
@@ -24,7 +24,11 @@ export type HeaderContact = {
  *  scroll to the contact anchor on the home page. */
 function bookHref(pathname: string, calBookingUrl?: string) {
   if (calBookingUrl) return calBookingUrl;
-  return pathname === "/" ? "#contact" : "/#contact";
+  // Absolute (not bare `#contact`): deterministic resolution. On the home
+  // page the click handler scrolls programmatically, because a same-hash
+  // Link is a no-op when the URL already ends in `#contact` (and Next can
+  // double it to `#contact#contact`).
+  return "/#contact";
 }
 
 export function SiteHeader({
@@ -41,6 +45,17 @@ export function SiteHeader({
   // place. Use this flag below to set `target`/`rel` only when needed.
   const discoveryIsExternal = Boolean(contact.calBookingUrl);
   const reducedMotion = useReducedMotion();
+
+  // Scroll to the contact form on the home page rather than relying on the
+  // hash Link (which is a no-op once the URL already ends in `#contact`).
+  const onDiscoveryClick = (e: MouseEvent<HTMLAnchorElement>) => {
+    if (discoveryIsExternal || pathname !== "/") return;
+    const el = document.getElementById("contact");
+    if (!el) return;
+    e.preventDefault();
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (location.hash !== "#contact") history.replaceState(null, "", "/#contact");
+  };
 
   // Sync the rendered header height to --header-h so scroll-margin-top is accurate.
   useEffect(() => {
@@ -133,6 +148,7 @@ export function SiteHeader({
             href={discoveryHref}
             target={discoveryIsExternal ? "_blank" : undefined}
             rel={discoveryIsExternal ? "noopener noreferrer" : undefined}
+            onClick={onDiscoveryClick}
             className="hidden md:inline-flex h-10 items-center px-5 rounded-none bg-ink text-bg tracking-[0.18em] text-[11px] font-medium hover:bg-ink-2 transition-colors"
           >
             BOOK DISCOVERY CALL
@@ -183,7 +199,10 @@ export function SiteHeader({
                   href={discoveryHref}
                   target={discoveryIsExternal ? "_blank" : undefined}
                   rel={discoveryIsExternal ? "noopener noreferrer" : undefined}
-                  onClick={() => setOpen(false)}
+                  onClick={(e) => {
+                    setOpen(false);
+                    onDiscoveryClick(e);
+                  }}
                   className="inline-flex h-12 items-center justify-center bg-ink text-bg tracking-[0.18em] text-[11px] font-medium hover:bg-ink-2 transition-colors"
                 >
                   BOOK DISCOVERY CALL
