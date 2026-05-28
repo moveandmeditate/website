@@ -8,7 +8,7 @@ import { Experiences } from "@/components/sections/experiences";
 import { Founder } from "@/components/sections/founder";
 import { Testimonials } from "@/components/sections/testimonials";
 import { Contact } from "@/components/sections/contact";
-import { buildJsonLd } from "@/lib/seo";
+import { buildJsonLd, jsonLdHtml } from "@/lib/seo";
 import { getEffectiveContact } from "@/sanity/lib/site-data";
 
 export default async function HomePage() {
@@ -17,7 +17,7 @@ export default async function HomePage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildJsonLd()) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdHtml(buildJsonLd()) }}
       />
       <SiteHeader contact={contact} />
       <main id="main">

@@ -20,7 +20,7 @@ import {
   readingTimeFor,
 } from "@/sanity/lib/blog";
 import { getEffectiveContact } from "@/sanity/lib/site-data";
-import { blogPostJsonLd, blogPostMetadata } from "@/lib/seo";
+import { blogPostJsonLd, blogPostMetadata, jsonLdHtml } from "@/lib/seo";
 
 const CATEGORY_LABELS: Record<string, string> = {
   dance: "DANCE",
@@ -75,9 +75,9 @@ export default async function BlogPostPage({ params }: PageProps) {
     <>
       <script
         type="application/ld+json"
-        // JSON-LD goes straight into the doc head; safe to use
-        // dangerouslySetInnerHTML because we control the input.
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        // jsonLdHtml escapes `<` so CMS content containing `</script>`
+        // can't break out of the tag (stored-XSS guard).
+        dangerouslySetInnerHTML={{ __html: jsonLdHtml(jsonLd) }}
       />
       <SiteHeader contact={contact} />
       <main id="main" className="pt-[var(--header-h)]">

@@ -14,6 +14,7 @@ import {
 } from "@/sanity/lib/blog";
 import { getEffectiveContact } from "@/sanity/lib/site-data";
 import { SITE } from "@/lib/content";
+import { jsonLdHtml } from "@/lib/seo";
 
 type PageProps = { params: Promise<{ slug: string }> };
 
@@ -87,7 +88,7 @@ export default async function AuthorProfilePage({ params }: PageProps) {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdHtml(jsonLd) }}
       />
       <SiteHeader contact={contact} />
       <main id="main" className="pt-[var(--header-h)]">

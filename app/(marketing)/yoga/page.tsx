@@ -1,6 +1,6 @@
 import { PillarPage } from "@/components/pillar/pillar-page";
 import { PILLARS } from "@/lib/content";
-import { pillarFaqJsonLd, pillarJsonLd, pillarMetadata } from "@/lib/seo";
+import { jsonLdHtml, pillarFaqJsonLd, pillarJsonLd, pillarMetadata } from "@/lib/seo";
 
 export const metadata = pillarMetadata("yoga");
 
@@ -9,11 +9,11 @@ export default function YogaPage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(pillarJsonLd("yoga")) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdHtml(pillarJsonLd("yoga")) }}
       />
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(pillarFaqJsonLd("yoga")) }}
+        dangerouslySetInnerHTML={{ __html: jsonLdHtml(pillarFaqJsonLd("yoga")) }}
       />
       <PillarPage pillar={PILLARS.yoga} />
     </>

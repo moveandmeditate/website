@@ -234,3 +234,17 @@ export function blogPostJsonLd(post: BlogPostFull, opts: { wordCount?: number } 
 }
 
 
+
+/**
+ * Serialise a JSON-LD object for safe embedding in a
+ * `<script type="application/ld+json" dangerouslySetInnerHTML>`.
+ *
+ * `JSON.stringify` escapes quotes but NOT `<`, so a CMS-driven field
+ * containing the literal string `</script>` (blog title, FAQ answer,
+ * founder bio, etc.) would otherwise break out of the script tag —
+ * a stored-XSS vector. Escaping `<` to its unicode form keeps the
+ * JSON valid while making tag-breakout impossible.
+ */
+export function jsonLdHtml(data: unknown): string {
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}
