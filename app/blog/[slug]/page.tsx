@@ -159,7 +159,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           {/* Body */}
           <div className="bg-bg">
             <div className="container-page max-w-3xl py-10 lg:py-16">
-              <BlogPortableText value={post.body} contactInterest={pillar} />
+              <BlogPortableText value={post.body} />
 
               {post.faq?.length ? (
                 <FaqAccordion items={post.faq} />

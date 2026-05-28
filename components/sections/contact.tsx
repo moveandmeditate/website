@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import { Mail, MessageCircle } from "lucide-react";
 import { MediaFrame } from "@/components/media-frame";
 import { ContactForm } from "@/components/contact-form";
@@ -65,39 +64,9 @@ export async function Contact() {
         </div>
 
         <div>
-          {/* Suspense boundary required: ContactForm reads
-             useSearchParams() to pre-fill the interest dropdown +
-             message from a CTA's `?interest=` param. Without a
-             boundary, the param read would opt the whole homepage
-             out of static rendering. */}
-          <Suspense fallback={<ContactFormFallback />}>
-            <ContactForm />
-          </Suspense>
+          <ContactForm />
         </div>
       </div>
     </section>
-  );
-}
-
-/** Skeleton shown in the static HTML while the client-side
- *  ContactForm (which reads useSearchParams) hydrates. Matches the
- *  form's box shape to keep cumulative layout shift near zero. */
-function ContactFormFallback() {
-  return (
-    <div
-      aria-hidden
-      className="bg-bg p-6 sm:p-7 border border-line-2 space-y-4"
-    >
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="h-[58px] bg-bg-2" />
-        <div className="h-[58px] bg-bg-2" />
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <div className="h-[58px] bg-bg-2" />
-        <div className="h-[58px] bg-bg-2" />
-      </div>
-      <div className="h-[148px] bg-bg-2" />
-      <div className="h-12 w-full sm:w-40 bg-bg-3" />
-    </div>
   );
 }

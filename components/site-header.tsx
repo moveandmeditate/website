@@ -8,7 +8,6 @@ import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Logo } from "@/components/logo";
 import { CONTACT, NAV_ITEMS, SITE } from "@/lib/content";
-import { contactHref, interestSlugForPath } from "@/lib/interest";
 import { cn } from "@/lib/utils";
 
 /** Subset of `EffectiveContact` the header uses. `calBookingUrl` is the
@@ -22,15 +21,10 @@ export type HeaderContact = {
 
 /** Resolve the link href for `BOOK DISCOVERY CALL`. If the CMS has a
  *  `calBookingUrl` set, prefer it (highest-intent action). Otherwise
- *  scroll to the contact anchor — carrying the current pillar as the
- *  pre-fill interest when we're on a pillar page (e.g. on /yoga the
- *  button links to /?interest=yoga#contact). On the home page we keep
- *  the bare `#contact` anchor (no full reload). */
+ *  scroll to the contact anchor on the home page. */
 function bookHref(pathname: string, calBookingUrl?: string) {
   if (calBookingUrl) return calBookingUrl;
-  if (pathname === "/") return "#contact";
-  const slug = interestSlugForPath(pathname);
-  return slug ? contactHref(slug) : "/#contact";
+  return pathname === "/" ? "#contact" : "/#contact";
 }
 
 export function SiteHeader({

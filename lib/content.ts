@@ -191,9 +191,7 @@ export const TILES: Tile[] = [
     eyebrow: "JOURNEYS",
     title: "RETREATS",
     tags: ["NATURE", "REST", "TRANSFORMATION"],
-    // No dedicated retreats page — tile routes to the contact form with
-    // the interest pre-filled (resolves to "Something Else").
-    href: "/?interest=retreats#contact",
+    href: "/#contact",
     image: { src: "/images/tile-retreats.webp", alt: "A wellness retreat at golden hour in the Himalayan foothills" },
   },
 ];
@@ -371,7 +369,7 @@ export const FOOTER = {
         { label: "Destination Weddings", href: "/weddings#offerings" },
         { label: "Corporate Wellness", href: "/corporate" },
         { label: "Team Workshops", href: "/corporate#offerings" },
-        { label: "Retreats", href: "/?interest=retreats#contact" },
+        { label: "Retreats", href: "/#contact" },
       ],
     },
     {

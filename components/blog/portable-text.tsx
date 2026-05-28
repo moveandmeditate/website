@@ -4,7 +4,6 @@ import { Info, AlertTriangle, Lightbulb, ArrowRight } from "lucide-react";
 import { MediaFrame } from "@/components/media-frame";
 import { urlForImage } from "@/sanity/lib/image";
 import type { CmsImage } from "@/sanity/lib/blog";
-import { contactHref, type InterestSlug } from "@/lib/interest";
 
 type LinkMark = { _type: "link"; href: string };
 type InternalLinkMark = { _type: "internalLink"; path: string };
@@ -235,46 +234,6 @@ const components: PortableTextComponents = {
   },
 };
 
-/** True for the bare contact-section anchors a generic ctaCard uses. */
-function isContactAnchor(href: string): boolean {
-  return href === "/#contact" || href === "#contact";
-}
-
-/**
- * Rewrite generic "/#contact" CTA cards to carry the article's pillar
- * as the contact-form pre-fill interest (e.g. /?interest=yoga#contact).
- * Pure data transform — keeps the renderer a Server Component (no
- * client context needed). Author-set ctaCards that already point
- * somewhere specific are left untouched.
- */
-function withContactInterest(
-  value: unknown,
-  interest?: InterestSlug
-): unknown {
-  if (!Array.isArray(value) || !interest) return value;
-  return value.map((block) => {
-    if (
-      block &&
-      typeof block === "object" &&
-      (block as { _type?: string })._type === "ctaCard" &&
-      typeof (block as { ctaHref?: string }).ctaHref === "string" &&
-      isContactAnchor((block as { ctaHref: string }).ctaHref)
-    ) {
-      return { ...block, ctaHref: contactHref(interest) };
-    }
-    return block;
-  });
-}
-
-export function BlogPortableText({
-  value,
-  contactInterest,
-}: {
-  value: unknown;
-  /** Pillar/category of the post — used to pre-fill the contact form
-   *  interest when a ctaCard points at the generic contact anchor. */
-  contactInterest?: InterestSlug;
-}) {
-  const transformed = withContactInterest(value, contactInterest);
-  return <PortableText value={transformed as never} components={components} />;
+export function BlogPortableText({ value }: { value: unknown }) {
+  return <PortableText value={value as never} components={components} />;
 }
