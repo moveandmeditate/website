@@ -4,7 +4,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
 import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
+import { SiteFooterServer } from "@/components/site-footer-server";
 import { MediaFrame } from "@/components/media-frame";
 import { AuthorCard } from "@/components/blog/author-card";
 import { BlogPortableText } from "@/components/blog/portable-text";
@@ -199,7 +199,7 @@ export default async function BlogPostPage({ params }: PageProps) {
           </div>
         </article>
       </main>
-      <SiteFooter contact={contact} />
+      <SiteFooterServer contact={contact} />
     </>
   );
 }

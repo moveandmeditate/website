@@ -172,6 +172,15 @@ export async function getAllBlogPosts(): Promise<BlogPostCard[]> {
   }
 }
 
+/** Latest published posts (title + slug only) for the footer "Writing"
+ *  column. Reuses the cached `getAllBlogPosts` read. */
+export async function getFooterPosts(
+  limit = 4
+): Promise<{ title: string; slug: string }[]> {
+  const posts = await getAllBlogPosts();
+  return posts.slice(0, limit).map((p) => ({ title: p.title, slug: p.slug }));
+}
+
 export async function getBlogPostsByCategory(
   category: BlogCategory
 ): Promise<BlogPostCard[]> {

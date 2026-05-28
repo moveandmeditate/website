@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
+import { SiteFooterServer } from "@/components/site-footer-server";
 import { BlogCard } from "@/components/blog/blog-card";
 import { getAllBlogPosts } from "@/sanity/lib/blog";
 import { SITE } from "@/lib/content";
@@ -140,7 +140,7 @@ export default async function BlogIndexPage({ searchParams }: PageProps) {
           </div>
         </section>
       </main>
-      <SiteFooter contact={contact} />
+      <SiteFooterServer contact={contact} />
     </>
   );
 }

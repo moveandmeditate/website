@@ -1,5 +1,5 @@
 import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
+import { SiteFooterServer } from "@/components/site-footer-server";
 import { Hero } from "@/components/sections/hero";
 import { UpcomingEvents } from "@/components/sections/upcoming-events";
 import { TrustedBy } from "@/components/sections/trusted-by";
@@ -30,7 +30,7 @@ export default async function HomePage() {
         <Testimonials />
         <Contact />
       </main>
-      <SiteFooter contact={contact} />
+      <SiteFooterServer contact={contact} />
     </>
   );
 }

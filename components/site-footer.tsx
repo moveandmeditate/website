@@ -31,8 +31,11 @@ function pathnameOf(href: string): string {
 
 export function SiteFooter({
   contact = CONTACT,
+  journal = [],
 }: {
   contact?: FooterContact;
+  /** Latest blog posts for the "Writing" column. Empty = column hidden. */
+  journal?: { title: string; slug: string }[];
 } = {}) {
   const pathname = usePathname();
   const year = new Date().getFullYear();
@@ -72,9 +75,9 @@ export function SiteFooter({
 
       {/* BRAND + LINK COLUMNS */}
       <div className="container-page py-12 lg:py-16">
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-12 gap-8 lg:gap-10">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-[1.4fr_repeat(5,minmax(0,1fr))] gap-8 lg:gap-10">
           {/* Brand block */}
-          <div className="col-span-2 md:col-span-3 lg:col-span-4 max-w-sm">
+          <div className="col-span-2 md:col-span-3 lg:col-span-1 max-w-sm">
             <Link href="/" aria-label={`${SITE.name} home`} className="inline-block">
               <Logo size={68} />
             </Link>
@@ -103,7 +106,7 @@ export function SiteFooter({
             <nav
               key={col.heading}
               aria-label={col.heading}
-              className="lg:col-span-2"
+              className="lg:col-span-1"
             >
               <h3 className="text-[11px] tracking-[0.22em] font-semibold uppercase text-ink mb-4">
                 {col.heading}
@@ -131,6 +134,35 @@ export function SiteFooter({
               </ul>
             </nav>
           ))}
+
+          {/* WRITING — latest blog posts (dynamic; hidden when none) */}
+          {journal.length > 0 && (
+            <nav aria-label="Writing" className="lg:col-span-1">
+              <h3 className="text-[11px] tracking-[0.22em] font-semibold uppercase text-ink mb-4">
+                Writing
+              </h3>
+              <ul className="flex flex-col gap-2.5 text-[12px] text-ink-2">
+                {journal.map((p) => (
+                  <li key={p.slug}>
+                    <Link
+                      href={`/blog/${p.slug}`}
+                      className="line-clamp-2 leading-[1.5] hover:text-gold-dk transition-colors"
+                    >
+                      {p.title}
+                    </Link>
+                  </li>
+                ))}
+                <li>
+                  <Link
+                    href="/blog"
+                    className="text-muted hover:text-gold-dk transition-colors"
+                  >
+                    All articles &rarr;
+                  </Link>
+                </li>
+              </ul>
+            </nav>
+          )}
         </div>
 
         {/* STUDIO INFO CARD — sits below the columns, full width */}

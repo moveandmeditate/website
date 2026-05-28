@@ -1,5 +1,5 @@
 import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
+import { SiteFooterServer } from "@/components/site-footer-server";
 import { PillarHero } from "@/components/pillar/pillar-hero";
 import { PillarIntro } from "@/components/pillar/pillar-intro";
 import { PillarQuote } from "@/components/pillar/pillar-quote";
@@ -48,7 +48,7 @@ export async function PillarPage({ pillar }: { pillar: Pillar }) {
         <BlogStrip pillar={pillar.slug} />
         <PillarCta pillar={pillar} contact={contact} />
       </main>
-      <SiteFooter contact={contact} />
+      <SiteFooterServer contact={contact} />
     </>
   );
 }

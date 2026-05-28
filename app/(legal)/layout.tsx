@@ -1,5 +1,5 @@
 import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
+import { SiteFooterServer } from "@/components/site-footer-server";
 import { getEffectiveContact } from "@/sanity/lib/site-data";
 
 export default async function LegalLayout({
@@ -16,7 +16,7 @@ export default async function LegalLayout({
           {children}
         </article>
       </main>
-      <SiteFooter contact={contact} />
+      <SiteFooterServer contact={contact} />
     </>
   );
 }

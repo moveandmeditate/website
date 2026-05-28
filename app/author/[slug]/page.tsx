@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 
 import { SiteHeader } from "@/components/site-header";
-import { SiteFooter } from "@/components/site-footer";
+import { SiteFooterServer } from "@/components/site-footer-server";
 import { MediaFrame } from "@/components/media-frame";
 import { BlogCard } from "@/components/blog/blog-card";
 import { BlogPortableText } from "@/components/blog/portable-text";
@@ -182,7 +182,7 @@ export default async function AuthorProfilePage({ params }: PageProps) {
           </div>
         </section>
       </main>
-      <SiteFooter contact={contact} />
+      <SiteFooterServer contact={contact} />
     </>
   );
 }
