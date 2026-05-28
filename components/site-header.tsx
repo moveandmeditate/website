@@ -50,20 +50,25 @@ export function SiteHeader({
   // hash Link (which is a no-op once the URL already ends in `#contact`).
   const onDiscoveryClick = (e: MouseEvent<HTMLAnchorElement>) => {
     if (discoveryIsExternal || pathname !== "/") return;
-    // Scroll to the form itself (not the section heading), offset by the
-    // fixed header so the first input isn't tucked underneath it.
-    const el =
-      document.querySelector<HTMLElement>("#contact form") ??
-      document.getElementById("contact");
-    if (!el) return;
+    const section = document.getElementById("contact");
+    if (!section) return;
     e.preventDefault();
-    const headerH =
-      parseInt(
-        getComputedStyle(document.documentElement).getPropertyValue("--header-h"),
-        10
-      ) || 72;
-    const top = window.scrollY + el.getBoundingClientRect().top - headerH - 16;
-    window.scrollTo({ top, behavior: "smooth" });
+    // Desktop: contact is a 2-column layout (heading | form), so landing on
+    // the section top shows both. Mobile: the form sits below the heading,
+    // so scroll to the form fields (header-offset) to put them in view.
+    const isDesktop = window.matchMedia("(min-width: 768px)").matches;
+    if (isDesktop) {
+      section.scrollIntoView({ behavior: "smooth", block: "start" });
+    } else {
+      const target = section.querySelector<HTMLElement>("form") ?? section;
+      const headerH =
+        parseInt(
+          getComputedStyle(document.documentElement).getPropertyValue("--header-h"),
+          10
+        ) || 72;
+      const top = window.scrollY + target.getBoundingClientRect().top - headerH - 16;
+      window.scrollTo({ top, behavior: "smooth" });
+    }
     if (location.hash !== "#contact") history.replaceState(null, "", "/#contact");
   };
 
