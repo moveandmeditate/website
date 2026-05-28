@@ -16,8 +16,8 @@ export default async function PrivacyPolicyPage() {
       <LastUpdated date="27 May 2026" />
 
       <p>
-        {SITE.name} (&ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;our&rdquo;) is run as a sole
-        proprietorship by {SITE.founderName} from Bangalore, Karnataka, India. This policy
+        {SITE.name}{" "}(&ldquo;we&rdquo;, &ldquo;us&rdquo;, &ldquo;our&rdquo;) is run as a sole
+        proprietorship by {SITE.founderName}{" "}from Bangalore, Karnataka, India. This policy
         explains what personal data this website collects, why we collect it, how we use it,
         and your rights under India&rsquo;s{" "}
         <strong>Digital Personal Data Protection Act, 2023 (DPDP Act)</strong> and the
