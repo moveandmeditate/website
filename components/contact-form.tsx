@@ -133,7 +133,11 @@ export function ContactForm() {
         </Field>
         <Field id="interest" label="I'm interested in" error={errors.interest?.message}>
           <Select
-            value={interest}
+            // Base UI treats `undefined` as uncontrolled; RHF's default for
+            // `interest` is undefined, so coerce to `null` to keep the Select
+            // controlled from first render (avoids the uncontrolled→controlled
+            // warning). `null` renders the placeholder.
+            value={interest ?? null}
             onValueChange={(val) =>
               setValue("interest", val as ContactInput["interest"], { shouldValidate: true })
             }
