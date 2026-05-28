@@ -70,10 +70,20 @@ export function MobileCtaBar({
   const bookHref = "/#contact";
   const onBookClick = (e: MouseEvent<HTMLAnchorElement>) => {
     if (pathname !== "/") return; // off-home: let it navigate to /#contact
-    const el = document.getElementById("contact");
+    // Scroll to the form itself (not the section heading) so the fields are
+    // in view, offset by the fixed header so the first input isn't hidden.
+    const el =
+      document.querySelector<HTMLElement>("#contact form") ??
+      document.getElementById("contact");
     if (!el) return;
     e.preventDefault();
-    el.scrollIntoView({ behavior: "smooth", block: "start" });
+    const headerH =
+      parseInt(
+        getComputedStyle(document.documentElement).getPropertyValue("--header-h"),
+        10
+      ) || 72;
+    const top = window.scrollY + el.getBoundingClientRect().top - headerH - 16;
+    window.scrollTo({ top, behavior: "smooth" });
     if (location.hash !== "#contact") history.replaceState(null, "", "/#contact");
   };
   const show = visible && !nearContact;

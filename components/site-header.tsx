@@ -50,10 +50,20 @@ export function SiteHeader({
   // hash Link (which is a no-op once the URL already ends in `#contact`).
   const onDiscoveryClick = (e: MouseEvent<HTMLAnchorElement>) => {
     if (discoveryIsExternal || pathname !== "/") return;
-    const el = document.getElementById("contact");
+    // Scroll to the form itself (not the section heading), offset by the
+    // fixed header so the first input isn't tucked underneath it.
+    const el =
+      document.querySelector<HTMLElement>("#contact form") ??
+      document.getElementById("contact");
     if (!el) return;
     e.preventDefault();
-    el.scrollIntoView({ behavior: "smooth", block: "start" });
+    const headerH =
+      parseInt(
+        getComputedStyle(document.documentElement).getPropertyValue("--header-h"),
+        10
+      ) || 72;
+    const top = window.scrollY + el.getBoundingClientRect().top - headerH - 16;
+    window.scrollTo({ top, behavior: "smooth" });
     if (location.hash !== "#contact") history.replaceState(null, "", "/#contact");
   };
 
