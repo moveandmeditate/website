@@ -7,12 +7,15 @@ import { getAllBlogPosts } from "@/sanity/lib/blog";
 import { SITE } from "@/lib/content";
 import { getEffectiveContact } from "@/sanity/lib/site-data";
 
+// Document <title>: bare. Root layout template appends `· ${SITE.name}`.
+const PAGE_TITLE = "Blog";
+// OG/Twitter title: branded (NOT run through the template).
 const TITLE = `Blog · ${SITE.name}`;
 const DESCRIPTION = `Honest, practitioner-led writing from ${SITE.founderName} on dance, yoga, breathwork, wedding choreography and corporate wellness.`;
 const URL = `${SITE.url}/blog`;
 
 export const metadata: Metadata = {
-  title: TITLE,
+  title: PAGE_TITLE,
   description: DESCRIPTION,
   alternates: { canonical: URL },
   openGraph: {

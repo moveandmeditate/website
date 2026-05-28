@@ -29,6 +29,10 @@ export async function generateMetadata({
   const { slug } = await params;
   const author = await getAuthorBySlug(slug);
   if (!author) return {};
+  // Document <title>: bare name. The root layout's title template appends
+  // `· ${SITE.name}`, so pre-appending it here double-suffixed it. OG/Twitter
+  // titles are NOT run through the template, so they keep the branded form.
+  const pageTitle = author.name;
   const title = `${author.name} · ${SITE.name}`;
   const description =
     author.bio ||
@@ -36,7 +40,7 @@ export async function generateMetadata({
   const url = `${SITE.url}/author/${author.slug}`;
   const ogImage = authorImageUrl(author.photo);
   return {
-    title,
+    title: pageTitle,
     description,
     alternates: { canonical: url },
     openGraph: {

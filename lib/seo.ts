@@ -112,7 +112,9 @@ export function pillarMetadata(slug: PillarSlug): Metadata {
   const p = PILLARS[slug];
   const url = `${SITE.url}/${p.slug}`;
   return {
-    title: `${p.title} · ${SITE.name}`,
+    // Document <title>: bare. Root layout template appends `· ${SITE.name}`.
+    // OG/Twitter below keep the branded form (not run through the template).
+    title: p.title,
     description: p.seoDescription,
     alternates: { canonical: url },
     openGraph: {
@@ -140,14 +142,25 @@ export function pillarMetadata(slug: PillarSlug): Metadata {
 /** Build the metadata object for a single blog post. */
 export function blogPostMetadata(post: BlogPostFull): Metadata {
   const url = `${SITE.url}/blog/${post.slug}`;
-  const title = post.seo?.title || `${post.title} · ${SITE.name}`;
+  // Document <title>: bare. Root layout template appends `· ${SITE.name}`,
+  // so don't pre-append it here (that double-suffixed). OG/Twitter use the
+  // branded form, which is NOT run through the template.
+  //
+  // Some stored CMS `seo.title` values already include the brand suffix,
+  // so strip a trailing "· ${SITE.name}" before the template re-adds it.
+  const brandSuffix = ` · ${SITE.name}`;
+  const rawTitle = (post.seo?.title || post.title).trim();
+  const pageTitle = rawTitle.endsWith(brandSuffix)
+    ? rawTitle.slice(0, -brandSuffix.length)
+    : rawTitle;
+  const ogTitle = `${pageTitle}${brandSuffix}`;
   const description = post.seo?.description || post.excerpt;
   const ogImageSrc =
     blogHeroImageUrl(post.seo?.ogImage ?? null) ||
     blogHeroImageUrl(post.heroImage);
 
   return {
-    title,
+    title: pageTitle,
     description,
     alternates: { canonical: url },
     ...(post.seo?.noindex ? { robots: { index: false, follow: false } } : {}),
@@ -155,7 +168,7 @@ export function blogPostMetadata(post: BlogPostFull): Metadata {
       type: "article",
       url,
       siteName: SITE.name,
-      title,
+      title: ogTitle,
       description,
       locale: "en_IN",
       publishedTime: post.publishedAt,
@@ -173,7 +186,7 @@ export function blogPostMetadata(post: BlogPostFull): Metadata {
     },
     twitter: {
       card: "summary_large_image",
-      title,
+      title: ogTitle,
       description,
       images: ogImageSrc ? [ogImageSrc] : undefined,
     },
