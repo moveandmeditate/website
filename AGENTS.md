@@ -24,6 +24,9 @@ Brand language clarification — when supporting copy refers to **MOVE**, that m
 - `/blog` — index, category-filterable. `/blog/[slug]` — articles (SSG from Sanity). `/blog/rss.xml` — RSS 2.0 feed for AI crawlers + readers.
 - `/author/[slug]` — author profile (E-E-A-T anchor).
 - `/sitemap.xml` `/robots.txt` `/opengraph-image` — generated
+- `/llms.txt` — AI-crawler-friendly site manifest ([llmstxt.org](https://llmstxt.org) convention). Lists pillars + every published post for Perplexity / ChatGPT / Anthropic citation.
+- `/manifest.webmanifest` — PWA manifest scoped to `/studio` so only the CMS is installable
+- 404 — custom `app/not-found.tsx`: 404 eyebrow + serif headline + Return-home CTA + 4-pillar quick links. `robots: noindex` so it doesn't pollute Search Console.
 
 Static + SSG routes scale with CMS content. Two dynamic: `/studio/[[...tool]]`, `/api/revalidate`. The `/blog` index is also rendered at request time because it reads `searchParams.category`, but its data is still cached via tags.
 
@@ -39,7 +42,8 @@ Static + SSG routes scale with CMS content. Two dynamic: `/studio/[[...tool]]`, 
 | Icons | `lucide-react@1` generic icons + hand-rolled brand SVGs | Lucide 1.x dropped brand glyphs. See `components/social-icons.tsx`. |
 | Motion | `motion` (rebranded Framer Motion) | Used sparingly. Nav indicator uses `layoutId` slide. Hero entry uses CSS keyframes (not Motion — Motion's `whileInView` was unreliable for above-the-fold). |
 | Forms | `react-hook-form` + `zod` + `@hookform/resolvers` | Server Actions in `lib/contact-action.ts` |
-| Analytics | `@next/third-parties` Google Analytics 4 | ID `G-7SGRQR3LE1`, gated to production builds only |
+| Analytics | `@next/third-parties` Google Analytics 4 | ID `G-7SGRQR3LE1`, gated to production builds + cookie consent |
+| Perf telemetry | `@vercel/speed-insights/next` | Real-user Core Web Vitals, production-only via `<SpeedInsights/>` in root layout |
 | Deploy | Vercel | Connected to `moveandmeditate/website` on GitHub, auto-deploy on push to `main`. Public repo (Hobby plan requires public for non-owner pushes). |
 
 ## Commands
@@ -50,6 +54,8 @@ pnpm build        # production build
 pnpm start        # serve production build
 pnpm lint         # eslint
 pnpm typecheck    # strict tsc --noEmit
+pnpm seed:blog    # idempotent blog seed → Sanity (needs SANITY_API_WRITE_TOKEN; revoke after run)
+pnpm seed:blog 01 # seed only files starting with '01' under content/blog/
 ```
 
 ## Project structure
@@ -66,11 +72,16 @@ app/
     layout.tsx                 # shared prose wrapper
     privacy-policy/page.tsx
     terms-and-conditions/page.tsx
-  layout.tsx                   # root: fonts, metadata, skip-link, GA4 in prod
+  layout.tsx                   # root: fonts, metadata, skip-link, GA4 + Speed Insights in prod, mobile CTA bar
   globals.css                  # Tailwind v4 @theme + CSS custom props
   icon.png  apple-icon.png     # browser tab + iOS home-screen favicons
   sitemap.ts  robots.ts        # generated route metadata
   opengraph-image.tsx          # 1200×630 OG image via next/og
+  not-found.tsx                # custom 404 (noindex, 4-pillar quick links)
+  llms.txt/route.ts            # /llms.txt — AI-crawler manifest, blog-tag invalidated, 1h SWR
+  manifest.ts                  # PWA manifest scoped to /studio
+  api/revalidate/route.ts      # Sanity webhook → revalidateTag(tag, { expire: 0 })
+  blog/rss.xml/route.ts        # /blog/rss.xml — RSS 2.0 feed, last 30 posts, 1h cache
 
 components/
   sections/                    # landing-page sections
@@ -95,7 +106,12 @@ components/
     pillar-cta.tsx             # final CTA banner per pillar
   motion/                      # FadeUp + Stagger primitives (kept for future use)
   ui/                          # shadcn primitives — do not edit by hand
-  contact-form.tsx             # client form, RHF + Zod
+  blog/                        # blog UI primitives — author card, blog card, FAQ accordion, related strip, pillar CTA, portable text renderer
+  studio/                      # client helper for Studio PWA install (registers SW, custom install button, iOS A2HS strip)
+  contact-form.tsx             # client form, RHF + Zod, controlled Interest <Select>
+  contact-scroll.tsx           # tiny client helper — centralizes contact-section scroll behavior so every Book/Contact link lands on the form, not the heading
+  cookie-consent.tsx           # GA4-gating banner via useSyncExternalStore + pre-hydration probe (no flash)
+  mobile-cta-bar.tsx           # sticky bottom CTA bar (mobile-only), reads CMS contact for live Cal URL
   media-frame.tsx              # next/image wrapper with placeholder fallback
   logo.tsx                     # renders /mam-logo.png via next/image
   brand-mark.tsx               # trusted-by wordmark recreations
@@ -103,17 +119,32 @@ components/
   legal-prose.tsx              # styled prose wrapper for legal pages
   site-header.tsx              # sticky, usePathname-driven active state, motion layoutId underline
   site-footer.tsx              # 4-row footer: ribbon → brand+columns → studio card → bottom
+  site-footer-server.tsx       # async server wrapper around site-footer — fetches the dynamic Writing column (latest 3 blog posts) before passing to the client footer
 
 lib/
   content.ts                   # SINGLE SOURCE OF TRUTH — every string + every link target
   contact-schema.ts            # Zod schema (phone required)
   contact-action.ts            # Server Action POSTing to Google Apps Script webhook
-  seo.ts                       # JSON-LD builders + per-pillar metadata helper
+  seo.ts                       # JSON-LD builders + per-pillar metadata helper + jsonLdHtml() XSS-escape helper
   utils.ts                     # cn() helper
 
 public/
   mam-logo.png                 # client-supplied transparent logo
   images/                      # 21 Higgsfield-generated WebP photos
+  sw.js                        # minimal service worker for Studio PWA (network-passthrough; satisfies install heuristic)
+  studio-icon-{192,512}.png    # Android maskable + iOS A2HS icons
+
+scripts/
+  seed-blog.ts                 # idempotent blog seeder; reads from content/blog/ → upserts via Sanity write client
+  lib/                         # author / post / portable-text / write-client helpers used by the seeder
+
+content/
+  blog/                        # 10 cornerstone seed articles (TypeScript modules consumed by seed-blog.ts; not bundled to the site)
+
+docs/
+  BLOG-SEO-PLAN.md             # the 10-article keyword + content plan
+
+inspirations/                  # dev-only mood-board: client-supplied logo originals + reference shots. NOT shipped; keep for archival reference only.
 ```
 
 ## Routing model
@@ -214,9 +245,38 @@ SANITY_API_READ_TOKEN            # viewer-scoped token (server-only)
 SANITY_REVALIDATE_SECRET         # matches the Sanity webhook secret
 ```
 
+Local-only (NOT in Vercel; live only in `.env.local`):
+
+```
+SANITY_API_WRITE_TOKEN           # editor-scoped, needed only by `pnpm seed:blog`. REVOKE in Sanity manage UI right after seed runs; do not leave it lying around.
+```
+
 Local dev: copy `.env.example` → `.env.local` (gitignored) and fill the same keys.
 
 Phone number is **required** on the schema. Honeypot field `website` must remain.
+
+### Lead pipeline — Google Apps Script + Sheet (production)
+
+The contact form's full path:
+
+```
+ContactForm (client) → contactAction Server Action (Next 16) → fetch POST → Apps Script Web App `/exec`
+                                                                              ├─ verifies SHARED_SECRET
+                                                                              ├─ honeypot check (`website`)
+                                                                              ├─ appendRow → Sheet1
+                                                                              ├─ GmailApp.sendEmail() to owner   (from: contact@moveandmeditate.in, replyTo: submitter)
+                                                                              └─ GmailApp.sendEmail() to submitter (auto-reply, from: contact@moveandmeditate.in)
+```
+
+Apps Script project owner: `admin@moveandmeditate.in` (Google Workspace super-admin). It sends mail using `contact@moveandmeditate.in` (a verified **Send-As alias** in admin's Gmail Settings → Accounts → Send mail as). `GmailApp.sendEmail` is called in **positional form** — `sendEmail(recipient, subject, body, options)` — because Gmail's `from:` override is honored ONLY there; the single-object overload exists on `MailApp` but not `GmailApp` (calling it with an object as first arg silently coerces to `"[object Object]"` and throws `Invalid email`).
+
+When changing the script:
+1. Save in Apps Script editor
+2. Run any function once (or the `_grantScopes` test) to re-trigger the OAuth consent if scopes changed
+3. **Deploy → Manage deployments → pencil → Version: New version → Deploy**. The same `/exec` URL is reused, so no Vercel env update is needed.
+4. Submit a real form to confirm both mails arrive + the Sheet row lands.
+
+Deliverability: outbound mail from `contact@moveandmeditate.in` requires **SPF + DKIM + DMARC** TXT records at the domain DNS (GoDaddy). Without them, mail to Outlook / Yahoo / custom-domain recipients lands in spam (Gmail-to-Gmail still works because Google trusts itself). Generate the DKIM key in `admin.google.com → Apps → Google Workspace → Gmail → Authenticate email`, paste at GoDaddy, then click **Start authentication**.
 
 ## CMS — Sanity Studio
 
@@ -234,7 +294,7 @@ Schemas live in `sanity/schemas/`:
 - `author` — collection (currently just Amisha; name, slug, role, short bio + long bio, photo, credentials chips, social links — drives the E-E-A-T author block + `/author/[slug]` route)
 
 Reads:
-- `sanity/lib/client.ts` — public read client (CDN-cached, published-only perspective)
+- `sanity/lib/client.ts` — **authenticated** read client. Uses `SANITY_API_READ_TOKEN` (Viewer scope) because some published docs (e.g. the author profile) are not served to anonymous requests on this dataset, and an authenticated read also dodges public rate limits. `useCdn: true` + token still hits the authenticated CDN, so we keep CDN speed. `perspective: "published"` hides drafts. Imported ONLY by server-side data-layer files so the token never reaches the browser bundle.
 - `sanity/lib/image.ts` — `urlForImage(image)` URL builder with `.auto('format')` + width transforms (CDN-served WebP/AVIF)
 - `sanity/lib/queries.ts` — GROQ queries with `defineQuery`. Image fragment keeps the full image object (asset ref, hotspot, crop) so the URL builder can apply transforms — DON'T resolve `asset->url` directly in GROQ
 - `sanity/lib/events.ts` — `getUpcomingEvents()` + `getEventsForPillar()` with cache tags
@@ -310,9 +370,33 @@ When changing PWA behavior:
 - The marketing site is intentionally NOT installable. The PWA install surface lives inside Studio only — there's no "Install" button on `/`.
 - The install strip uses session-storage to remember dismissals within a session; cleared automatically when the browser closes.
 
-## Analytics
+## Analytics + perf telemetry
 
-Google Analytics 4 (`G-7SGRQR3LE1`) wired via `@next/third-parties/google` in `app/layout.tsx`. Only loads when `process.env.NODE_ENV === 'production'` — Vercel preview + production both qualify, local dev does not.
+- **Google Analytics 4** (`G-7SGRQR3LE1`) wired via `@next/third-parties/google` in `app/layout.tsx`. Only loads when `process.env.NODE_ENV === 'production'` AND the cookie-consent banner has been accepted (gated by `useSyncExternalStore` + a pre-hydration probe in `<head>` so the banner never flashes for users with a stored decision).
+- **Vercel Speed Insights** via `<SpeedInsights/>` from `@vercel/speed-insights/next`, mounted in the root layout for production-only real-user Core Web Vitals (LCP / INP / CLS). Anonymous, no cookies, doesn't need consent.
+
+## Security — JSON-LD `</script>` breakout guard
+
+JSON-LD is emitted via `dangerouslySetInnerHTML` on every public page. `JSON.stringify` escapes quotes but NOT `<`, so any CMS-driven string containing `</script>` (a blog title, a FAQ answer, the founder bio) could otherwise break out of the script tag → stored XSS.
+
+The `jsonLdHtml()` helper in `lib/seo.ts` is the only safe path:
+
+```ts
+export function jsonLdHtml(data: unknown): string {
+  return JSON.stringify(data).replace(/</g, "\\u003c");
+}
+```
+
+Use it at every JSON-LD emit site. Pattern:
+
+```tsx
+<script
+  type="application/ld+json"
+  dangerouslySetInnerHTML={{ __html: jsonLdHtml(jsonLd) }}
+/>
+```
+
+Currently applied at: `app/page.tsx`, `app/blog/[slug]/page.tsx`, `app/author/[slug]/page.tsx`, and each of the 4 pillar pages. If you add a new JSON-LD surface, route it through `jsonLdHtml()` — never raw `JSON.stringify(...)`.
 
 ## Legal pages
 
@@ -370,8 +454,8 @@ The site currently lives on `moveandmeditate.vercel.app`. When the real domain `
 4. **Sanity CORS origins** (https://www.sanity.io/manage/project/sis92gxt/api/cors): add the new domain with **Allow credentials = ON**. Keep the Vercel preview URL too so PR previews keep working.
 5. **Sanity webhook URL** (https://www.sanity.io/manage/project/sis92gxt/api/webhooks): edit the webhook, change the URL to `https://<new-domain>/api/revalidate`. Secret stays the same.
 6. **Register the prod Studio**: first visit to `https://<new-domain>/studio` after the domain flips will prompt to register — click "Register this studio" so Sanity treats it as the canonical Studio.
-7. **Contact email** (if moving off Gmail): once MX records for the new domain are live, edit Site settings in Studio → set Public contact email to `hello@<new-domain>`. Publish. The webhook handles propagation.
-8. **DMARC / SPF / DKIM** on the new domain if outbound email is going through it.
+7. **Contact email**: site already serves `contact@moveandmeditate.in` (Google Workspace on `moveandmeditate.in`, alias of `admin@moveandmeditate.in`). The static fallback in `lib/content.ts → CONTACT.email` matches. Once MX records are confirmed live, also set Site settings → Public contact email in Studio to the same value so the CMS path and fallback agree. The webhook handles propagation.
+8. **SPF / DKIM / DMARC** TXT records at GoDaddy DNS. Required for outbound mail from `contact@moveandmeditate.in` to land in non-Gmail inboxes (Outlook / Yahoo / custom). DKIM key comes from `admin.google.com → Apps → Google Workspace → Gmail → Authenticate email`.
 9. **`robots.txt` + `sitemap.xml`**: generated dynamically from `SITE.url`, so step 2 already covers these.
 10. **Submit new sitemap to Google Search Console + Bing Webmaster Tools** under the new property.
 11. **Verify**: hit the new domain in incognito + verify (a) `/studio` loads + auths, (b) publishing in Studio updates the public site within ~10s, (c) `/sitemap.xml` lists the new origin, (d) GA4 realtime shows traffic.
@@ -387,3 +471,6 @@ The site currently lives on `moveandmeditate.vercel.app`. When the real domain `
 - Don't add `'use client'` unless the file actually needs browser APIs / state. Server Components are the default.
 - Don't add Motion `whileInView` on critical above-the-fold content. Use CSS keyframes (see hero pattern) instead.
 - Don't ship a placeholder href (`href="#"`). Either drop the link or wire it.
+- Don't emit JSON-LD via raw `JSON.stringify(...)` in `dangerouslySetInnerHTML`. Route through `jsonLdHtml()` from `lib/seo.ts`.
+- Don't call `GmailApp.sendEmail({...})` in the Apps Script with a single object — that overload is `MailApp` only. Use positional: `GmailApp.sendEmail(recipient, subject, body, options)`, with `from:` inside `options`.
+- Don't commit `SANITY_API_WRITE_TOKEN` to Vercel env or to source — local-only, and revoke at sanity.io/manage right after `pnpm seed:blog`.

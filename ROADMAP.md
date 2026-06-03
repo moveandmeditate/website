@@ -2,7 +2,7 @@
 
 > Living document. Any agent (or human) completing an item must flip `- [ ]` → `- [x]` in the same commit that ships the change. Add notes after the checkbox where useful.
 
-Last updated: 2026-05-27
+Last updated: 2026-06-04
 
 ---
 
@@ -58,10 +58,10 @@ Last updated: 2026-05-27
 
 - [ ] `JOIN WHATSAPP COMMUNITY` button — confirm + set real invite URL in `CONTACT.whatsappCommunityUrl`
 - [ ] Direct WhatsApp chat link (`https://wa.me/<phone>?text=...`) — add once phone is confirmed
-- [ ] Email link `hello@moveandmeditate.in` — confirm final inbox + set up SPF / DKIM / DMARC
+- [x] Email link `contact@moveandmeditate.in` — wired in `CONTACT.email`; SPF / DKIM / DMARC TXT records pending at GoDaddy DNS
 - [ ] Optional phone link — confirm + add to `CONTACT.phone`
-- [ ] Server Action stub in `lib/contact-action.ts` — wire to a real handler (see §2.A)
-- [ ] Auto-reply email to submitter (Resend template)
+- [x] Server Action in `lib/contact-action.ts` — wired to Google Apps Script Web App (Workspace `admin@moveandmeditate.in` owner; sends as `contact@` Send-As alias; appends to Google Sheet)
+- [x] Auto-reply email to submitter — sent from the same Apps Script (branded HTML + plain-text fallback). Resend not needed; staying on Apps Script keeps the lead pipeline on one billable surface.
 
 ### Footer
 
@@ -108,8 +108,8 @@ Last updated: 2026-05-27
 
 ### C. Inbound + lead capture
 
-- [ ] Contact form → Google Apps Script + Sheet (free) OR Resend transactional API
-- [ ] Auto-reply email to the submitter
+- [x] Contact form → Google Apps Script + Sheet (production live). Architecture documented in **AGENTS.md → Lead pipeline**.
+- [x] Auto-reply email to the submitter — branded HTML, from `contact@moveandmeditate.in` via Send-As alias.
 - [ ] Newsletter subscribe (footer) → Resend Audiences / Mailerlite / Beehiiv free tier
 - [ ] WhatsApp community real invite URL
 - [ ] Click-to-WhatsApp 1:1 chat link
@@ -139,13 +139,13 @@ Last updated: 2026-05-27
 ### G. Analytics + observability
 
 - [ ] Vercel Web Analytics (free, GDPR-friendly)
-- [ ] Vercel Speed Insights
+- [x] Vercel Speed Insights — `<SpeedInsights/>` mounted in root layout (production-only RUM CWV)
 - [ ] Form conversion tracking (submits, drop-off)
 - [ ] Sentry free tier for error monitoring
 
 ### H. Polish + compliance
 
-- [ ] DMARC / SPF / DKIM on outbound email
+- [ ] DMARC / SPF / DKIM TXT records at GoDaddy DNS — required so mail from `contact@moveandmeditate.in` lands in non-Gmail inboxes. Generate DKIM key in `admin.google.com → Apps → Google Workspace → Gmail → Authenticate email`.
 - [x] PWA manifest + iOS apple-touch-icon + Android install prompt — Studio at `/studio` is now installable from any modern mobile browser. See AGENTS.md → Studio PWA section.
 - [x] Cookie consent banner — gated GA4 via useSyncExternalStore
 - [x] Bug: cookie banner flashes for a frame on every load after Accept. Fixed via inline pre-hydration probe in `<head>` that stamps `.mam-consent-set` on `<html>` when a decision exists in localStorage; CSS hides the banner element via `display: none` so it never paints during the hydration window.
@@ -166,8 +166,8 @@ Last updated: 2026-05-27
 ### Phase A — Wire the basics (~1 day, no new infra)
 
 - [x] Fix mobile WhatsApp button bug
-- [ ] Hook contact form to Google Apps Script + Sheet
-- [ ] Set real domain + email + DNS
+- [x] Hook contact form to Google Apps Script + Sheet (production live; see **AGENTS.md → Lead pipeline**)
+- [~] Set real domain + email + DNS — Workspace email live (`contact@moveandmeditate.in`); domain `moveandmeditate.in` waiting on NIXI serverHold clearance; SPF / DKIM / DMARC still pending
 - [ ] Real WhatsApp invite + social URLs
 - [ ] Real founder + testimonial photos (or remove until ready)
 
@@ -181,8 +181,8 @@ Last updated: 2026-05-27
 ### Phase C — Growth surface (~1 week)
 
 - [x] Blog scaffold — schemas, routes, Portable Text renderer, FAQ accordion, related strip, pillar CTA card, author profile, RSS feed, sitemap inclusion, BlogPosting + BreadcrumbList + FAQPage JSON-LD, pillar BlogStrip integration, webhook tag map. See **`docs/BLOG-SEO-PLAN.md`** for the 10-article content plan + keyword strategy.
-- [ ] Write + publish the 10 cornerstone articles (paced 2/week, see plan)
-- [ ] Vercel Analytics + Speed Insights
+- [x] Seed the 10 cornerstone articles via `pnpm seed:blog` (idempotent; reads `content/blog/*`)
+- [~] Vercel Analytics + Speed Insights — Speed Insights live; Web Analytics still optional
 - [ ] Newsletter wiring (Resend Audiences)
 - [ ] Cal.com embed for discovery call
 
@@ -223,3 +223,9 @@ For posterity, here's what's done as of the initial build. **Do not re-do.**
 - [x] Sticky mobile CTA bar + custom 404 + loading skeleton
 - [x] Cookie consent banner (GA4 consent-gated, useSyncExternalStore, pre-hydration flash fix)
 - [x] Sanity CMS — 5 schemas, embedded Studio, GROQ + image transforms, async server components with CMS-first/static-fallback adapters, signature-verified webhook with `revalidateTag(tag, { expire: 0 })`
+- [x] Blog system — `blogPost` + `author` schemas, `/blog`, `/blog/[slug]`, `/author/[slug]`, RSS, JSON-LD, pillar BlogStrip, footer "Writing" column, seed pipeline (`pnpm seed:blog`)
+- [x] AI surfaces — `/llms.txt` (llmstxt.org convention), RSS 2.0 feed at `/blog/rss.xml`
+- [x] Studio PWA — installable from any modern mobile browser, scoped to `/studio`
+- [x] Lead pipeline — Google Apps Script web app (admin@moveandmeditate.in), Send-As alias `contact@moveandmeditate.in`, branded HTML notifications + auto-reply, Sheet append, honeypot + shared-secret guards
+- [x] JSON-LD `</script>` XSS guard via `jsonLdHtml()` helper — applied at every `dangerouslySetInnerHTML` JSON-LD emit site
+- [x] Sanity read client authenticated (Viewer token) — fixes author profile resolving

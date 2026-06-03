@@ -25,9 +25,8 @@ export const SITE = {
 } as const;
 
 export const CONTACT = {
-  // TODO: swap to `hello@moveandmeditate.in` once the domain MX records
-  // are live. Using the Gmail address until then so the mailto: link works.
-  email: "moveandmeditate.infra@gmail.com",
+  // Live Workspace inbox on the moveandmeditate.in domain.
+  email: "contact@moveandmeditate.in",
   phone: "", // TODO: optional
   whatsappCommunityUrl: "https://chat.whatsapp.com/F9tYK0m8Nwx0y9wBhJd8Am?mode=gi_t",
   whatsappDirectUrl: "https://wa.me/", // TODO: client phone number for direct chat
