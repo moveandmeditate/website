@@ -56,7 +56,7 @@ Last updated: 2026-06-04
 
 ### Contact section
 
-- [ ] `JOIN WHATSAPP COMMUNITY` button — confirm + set real invite URL in `CONTACT.whatsappCommunityUrl`
+- [x] `JOIN WHATSAPP COMMUNITY` button — real invite URL set in `CONTACT.whatsappCommunityUrl` (client-confirmed)
 - [ ] Direct WhatsApp chat link (`https://wa.me/<phone>?text=...`) — add once phone is confirmed
 - [x] Email link `contact@moveandmeditate.in` — wired in `CONTACT.email`; SPF / DKIM / DMARC TXT records pending at GoDaddy DNS
 - [ ] Optional phone link — confirm + add to `CONTACT.phone`
@@ -74,8 +74,8 @@ Last updated: 2026-06-04
 ### Legal pages
 
 - [x] Data-concerns contact in `app/(legal)/privacy-policy/page.tsx` (sole-prop site is below the SDF threshold, so a formally appointed Grievance Officer isn't legally mandatory — contact info reads from CMS Site settings and points at Amisha + Bangalore + the published email).
-- [ ] Business registration details when Amisha registers a legal entity
-- [ ] Lawyer review of all three legal templates before launch
+- [x] Business registration details — handled by client
+- [x] Lawyer review of all three legal templates before launch — handled by client
 
 ---
 
@@ -134,7 +134,7 @@ Last updated: 2026-06-04
 - [ ] City pages (`/bangalore`, `/online`) if she serves multiple regions
 - [ ] Hindi locale via `next-intl` (`en` + `hi`)
 - [ ] Rich snippets — Event schema with real dates, Course schema, FAQ schema
-- [ ] Real domain `moveandmeditate.in` + DNS records. Full migration checklist documented in **AGENTS.md → Domain migration** (Vercel domain add, `SITE.url` update, GA4 stream URL, Sanity CORS + webhook URL, Studio re-register, contact email switch, DMARC/SPF/DKIM, GSC + Bing sitemap submission). Miss any step → partial-cutover bug.
+- [x] Real domain `moveandmeditate.in` + DNS records — NIXI serverHold cleared; domain live. Full migration steps in **AGENTS.md → Domain migration**.
 
 ### G. Analytics + observability
 
@@ -145,7 +145,7 @@ Last updated: 2026-06-04
 
 ### H. Polish + compliance
 
-- [ ] DMARC / SPF / DKIM TXT records at GoDaddy DNS — required so mail from `contact@moveandmeditate.in` lands in non-Gmail inboxes. Generate DKIM key in `admin.google.com → Apps → Google Workspace → Gmail → Authenticate email`.
+- [x] DMARC / SPF / DKIM TXT records at GoDaddy DNS — added; outbound mail from `contact@moveandmeditate.in` authenticated.
 - [x] PWA manifest + iOS apple-touch-icon + Android install prompt — Studio at `/studio` is now installable from any modern mobile browser. See AGENTS.md → Studio PWA section.
 - [x] Cookie consent banner — gated GA4 via useSyncExternalStore
 - [x] Bug: cookie banner flashes for a frame on every load after Accept. Fixed via inline pre-hydration probe in `<head>` that stamps `.mam-consent-set` on `<html>` when a decision exists in localStorage; CSS hides the banner element via `display: none` so it never paints during the hydration window.
@@ -167,7 +167,7 @@ Last updated: 2026-06-04
 
 - [x] Fix mobile WhatsApp button bug
 - [x] Hook contact form to Google Apps Script + Sheet (production live; see **AGENTS.md → Lead pipeline**)
-- [~] Set real domain + email + DNS — Workspace email live (`contact@moveandmeditate.in`); domain `moveandmeditate.in` waiting on NIXI serverHold clearance; SPF / DKIM / DMARC still pending
+- [x] Set real domain + email + DNS — `moveandmeditate.in` live; Workspace email live (`contact@moveandmeditate.in`); SPF / DKIM / DMARC TXT records in place
 - [ ] Real WhatsApp invite + social URLs
 - [ ] Real founder + testimonial photos (or remove until ready)
 
