@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { MediaFrame } from "@/components/media-frame";
 import { getUpcomingEvents } from "@/sanity/lib/events";
@@ -22,12 +23,12 @@ export async function UpcomingEvents() {
               Events &amp; Workshops
             </h2>
           </div>
-          <a
+          <Link
             href="/#contact"
             className="hidden sm:inline-flex items-center gap-2 text-[11px] tracking-[0.24em] font-medium border-b border-ink pb-1 hover:text-gold-dk hover:border-gold-dk transition-colors"
           >
             VIEW ALL <ArrowRight className="size-3" aria-hidden />
-          </a>
+          </Link>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -75,12 +76,12 @@ export async function UpcomingEvents() {
         </div>
 
         <div className="sm:hidden mt-6">
-          <a
+          <Link
             href="/#contact"
             className="inline-flex items-center gap-2 text-[11px] tracking-[0.24em] font-medium border-b border-ink pb-1"
           >
             VIEW ALL <ArrowRight className="size-3" aria-hidden />
-          </a>
+          </Link>
         </div>
       </div>
     </section>
