@@ -3,6 +3,7 @@ import { SiteFooterServer } from "@/components/site-footer-server";
 import { PillarHero } from "@/components/pillar/pillar-hero";
 import { PillarIntro } from "@/components/pillar/pillar-intro";
 import { PillarQuote } from "@/components/pillar/pillar-quote";
+import { PillarDeepSections } from "@/components/pillar/pillar-deep-sections";
 import { OfferingsGrid } from "@/components/pillar/offerings-grid";
 import { PillarHowItWorks } from "@/components/pillar/pillar-how-it-works";
 import { GalleryStrip } from "@/components/pillar/gallery-strip";
@@ -11,6 +12,7 @@ import { PillarEvents } from "@/components/pillar/pillar-events";
 import { PillarFaq } from "@/components/pillar/pillar-faq";
 import { PillarCta } from "@/components/pillar/pillar-cta";
 import { BlogStrip } from "@/components/blog/blog-strip";
+import { TrustedBy } from "@/components/sections/trusted-by";
 import type { Pillar } from "@/lib/content";
 import { getEffectiveContact } from "@/sanity/lib/site-data";
 
@@ -30,6 +32,9 @@ import { getEffectiveContact } from "@/sanity/lib/site-data";
  */
 export async function PillarPage({ pillar }: { pillar: Pillar }) {
   const showEvents = pillar.slug === "dance" || pillar.slug === "yoga";
+  // Corporate is the only pillar where the "trusted by" logo strip earns its
+  // weight — those brands are exactly the audience the page is selling to.
+  const showTrustedBy = pillar.slug === "corporate";
   const contact = await getEffectiveContact();
 
   return (
@@ -39,6 +44,7 @@ export async function PillarPage({ pillar }: { pillar: Pillar }) {
         <PillarHero pillar={pillar} />
         <PillarIntro pillar={pillar} />
         {pillar.quote && <PillarQuote quote={pillar.quote} />}
+        <PillarDeepSections pillar={pillar} />
         <OfferingsGrid pillar={pillar} />
         <PillarHowItWorks pillar={pillar} />
         <GalleryStrip pillar={pillar} />
@@ -46,6 +52,7 @@ export async function PillarPage({ pillar }: { pillar: Pillar }) {
         {showEvents && <PillarEvents pillar={pillar.slug} />}
         <PillarFaq pillar={pillar} />
         <BlogStrip pillar={pillar.slug} />
+        {showTrustedBy && <TrustedBy />}
         <PillarCta pillar={pillar} contact={contact} />
       </main>
       <SiteFooterServer contact={contact} />

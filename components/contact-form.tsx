@@ -98,6 +98,10 @@ export function ContactForm() {
         </label>
       </div>
 
+      <p className="text-[11px] tracking-[0.16em] uppercase text-muted">
+        Share an email <span aria-hidden>·</span> or a phone number <span aria-hidden>·</span> we&apos;ll use whichever you prefer.
+      </p>
+
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field id="name" label="Name" error={errors.name?.message}>
           <Input
@@ -108,7 +112,7 @@ export function ContactForm() {
             {...register("name")}
           />
         </Field>
-        <Field id="email" label="Email" error={errors.email?.message}>
+        <Field id="email" label="Email" hint="Optional" error={errors.email?.message}>
           <Input
             id="email"
             type="email"
@@ -121,7 +125,7 @@ export function ContactForm() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <Field id="phone" label="Phone" error={errors.phone?.message}>
+        <Field id="phone" label="Phone" hint="Optional" error={errors.phone?.message}>
           <Input
             id="phone"
             type="tel"
@@ -160,7 +164,7 @@ export function ContactForm() {
         </Field>
       </div>
 
-      <Field id="message" label="Message" error={errors.message?.message}>
+      <Field id="message" label="Message" hint="Optional" error={errors.message?.message}>
         <Textarea
           id="message"
           rows={4}
@@ -203,19 +207,31 @@ export function ContactForm() {
 function Field({
   id,
   label,
+  hint,
   error,
   children,
 }: {
   id: string;
   label: string;
+  /** Subtle helper rendered next to the label — used to mark fields that
+   *  are optional now that the schema enforces "email OR phone" instead of
+   *  requiring everything. */
+  hint?: string;
   error?: string;
   children: React.ReactNode;
 }) {
   return (
     <div>
-      <Label htmlFor={id} className="text-[10px] tracking-[0.22em] uppercase text-muted font-medium">
-        {label}
-      </Label>
+      <div className="flex items-baseline justify-between gap-2">
+        <Label htmlFor={id} className="text-[10px] tracking-[0.22em] uppercase text-muted font-medium">
+          {label}
+        </Label>
+        {hint && (
+          <span className="text-[9px] tracking-[0.18em] uppercase text-muted/80">
+            {hint}
+          </span>
+        )}
+      </div>
       <div className="mt-1">{children}</div>
       {error && (
         <p

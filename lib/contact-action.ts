@@ -52,10 +52,13 @@ export async function submitContact(data: unknown): Promise<ContactResult> {
       body: JSON.stringify({
         secret,
         name: parsed.data.name,
-        email: parsed.data.email,
+        // Email + phone + message are individually optional now (at least
+        // one of email/phone is enforced by the schema). Normalise undefined
+        // to "" so downstream sheet/email rendering stays predictable.
+        email: parsed.data.email || "",
         phone: parsed.data.phone || "",
         interest: parsed.data.interest,
-        message: parsed.data.message,
+        message: parsed.data.message || "",
         // Honeypot passthrough — the Apps Script also short-circuits on this
         // so we have two layers of bot defence.
         website: parsed.data.website || "",

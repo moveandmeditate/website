@@ -2,6 +2,17 @@ import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import type { Pillar } from "@/lib/content";
 
+/** Slugify an offering title into a stable URL fragment. Strips punctuation,
+ *  collapses whitespace + symbols ("+", "&", "/") to single hyphens, and
+ *  lower-cases. Used as the deep-link target from the home Experiences tile
+ *  (`/yoga#offering-breathwork-sound-healing` etc). */
+function offeringSlug(title: string) {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+}
+
 export function OfferingsGrid({ pillar }: { pillar: Pillar }) {
   return (
     <section
@@ -33,7 +44,9 @@ export function OfferingsGrid({ pillar }: { pillar: Pillar }) {
           {pillar.offerings.map((offer) => (
             <li
               key={offer.title}
-              className="group relative bg-bg p-6 border border-line-2 flex flex-col h-full"
+              id={`offering-${offeringSlug(offer.title)}`}
+              data-section
+              className="group relative bg-bg p-6 border border-line-2 flex flex-col h-full scroll-mt-[var(--header-h)] target:ring-2 target:ring-gold-dk"
             >
               <h3 className="font-serif text-[1.4rem] leading-tight tracking-[0.02em] text-ink pb-3 relative">
                 {offer.title}

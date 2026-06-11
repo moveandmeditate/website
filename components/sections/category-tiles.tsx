@@ -1,8 +1,9 @@
-import { ArrowUpRight } from "lucide-react";
+"use client";
+
+import { useEffect, useRef, useState } from "react";
+import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react";
 import { MediaFrame } from "@/components/media-frame";
 import { TILES, type Tile } from "@/lib/content";
-
-const MARQUEE_DURATION = "60s"; // slow drift; pauses on hover via CSS
 
 type TileCardProps = {
   tile: Tile;
@@ -29,6 +30,7 @@ function TileCard({ tile, ariaHidden, variant }: TileCardProps) {
       <a
         href={tile.href}
         tabIndex={ariaHidden ? -1 : 0}
+        draggable={false}
         className={`group relative block h-[280px] md:h-[320px] ${anchorWidth} overflow-hidden focus-visible:outline-2 focus-visible:outline-ink bg-bg-2`}
       >
         <MediaFrame
@@ -73,10 +75,161 @@ function TileCard({ tile, ariaHidden, variant }: TileCardProps) {
   );
 }
 
-export function CategoryTiles() {
-  // Duplicate the tile list so the marquee -50% translate lines up seamlessly.
-  const marqueeSets = [TILES, TILES] as const;
+/** Approx pixel width of one tile (incl. the 4px `px-1` gutter). Used for
+ *  the keyboard / arrow-click step amount. */
+const TILE_STEP_PX = 468;
+/** Auto-scroll speed in px/frame. ~24 px/s at 60 fps — same languid pace as
+ *  the previous CSS marquee (60 s / full lap). */
+const AUTO_SCROLL_PX_PER_FRAME = 0.4;
 
+function DesktopMarquee() {
+  const scrollerRef = useRef<HTMLUListElement>(null);
+  const hoveredRef = useRef(false);
+  const [showArrows, setShowArrows] = useState(false);
+
+  // Auto-scroll loop. Pauses while the user is hovering (so the prev/next
+  // buttons feel responsive) and seamlessly wraps when scrollLeft hits the
+  // half-way mark — the second TILE copy below lines up exactly with the
+  // first, so the user never sees the seam.
+  //
+  // We keep an internal float `offset` because `scrollLeft` rounds writes
+  // to integer pixels; a 0.4 px-per-frame increment would otherwise be
+  // truncated to zero and the marquee would never start. Each frame we add
+  // the float delta, then floor it onto the actual `scrollLeft`.
+  useEffect(() => {
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    if (prefersReducedMotion) return;
+
+    let raf = 0;
+    let offset = scroller.scrollLeft;
+    let lastObservedScrollLeft = scroller.scrollLeft;
+
+    const tick = () => {
+      // Re-sync `offset` whenever an external scroll (arrow click, user
+      // wheel) has moved the scrollLeft away from our last write. This
+      // prevents the loop from snapping back to its own internal value.
+      if (Math.abs(scroller.scrollLeft - lastObservedScrollLeft) > 1) {
+        offset = scroller.scrollLeft;
+      }
+
+      if (!hoveredRef.current) {
+        const half = scroller.scrollWidth / 2;
+        if (half > 0) {
+          offset += AUTO_SCROLL_PX_PER_FRAME;
+          if (offset >= half) offset -= half;
+          scroller.scrollLeft = offset;
+          lastObservedScrollLeft = scroller.scrollLeft;
+        }
+      } else {
+        lastObservedScrollLeft = scroller.scrollLeft;
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
+  const step = (dir: 1 | -1) => {
+    const scroller = scrollerRef.current;
+    if (!scroller) return;
+    scroller.scrollBy({ left: dir * TILE_STEP_PX, behavior: "smooth" });
+  };
+
+  // Duplicate the tile list so the wrap-around in the rAF loop is seamless.
+  const sets = [TILES, TILES] as const;
+
+  return (
+    <div
+      className="relative hidden md:block"
+      onMouseEnter={() => {
+        hoveredRef.current = true;
+        setShowArrows(true);
+      }}
+      onMouseLeave={() => {
+        hoveredRef.current = false;
+        setShowArrows(false);
+      }}
+      onFocusCapture={() => {
+        hoveredRef.current = true;
+        setShowArrows(true);
+      }}
+      onBlurCapture={(e) => {
+        // Only collapse when focus is moving OUTSIDE the carousel.
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+          hoveredRef.current = false;
+          setShowArrows(false);
+        }
+      }}
+    >
+      <ul
+        ref={scrollerRef}
+        aria-label="Pillars"
+        // No `scroll-smooth` or `snap-x` here:
+        //  - `scroll-smooth` would treat every rAF `scrollLeft +=` as a
+        //    queued tween, so the scroller never actually advances.
+        //  - `snap-x` snaps the scrollLeft back to the nearest card after
+        //    every tiny rAF step, so the marquee can't drift smoothly.
+        // Arrow clicks call `scrollBy({behavior:"smooth"})` explicitly when
+        // a smooth animation is wanted.
+        className="relative z-0 flex overflow-x-auto [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {sets.map((set, setIdx) =>
+          set.map((tile) => (
+            <TileCard
+              key={`${setIdx}-${tile.id}`}
+              tile={tile}
+              variant="marquee"
+              ariaHidden={setIdx > 0}
+            />
+          ))
+        )}
+      </ul>
+
+      {/* Manual step controls. Sit ABOVE the tile cards (z-20) so the click
+          lands on the button, not the underlying link. The transparent
+          gutter container catches no events (`pointer-events-none`) so the
+          mouseleave on the parent still fires correctly when the cursor
+          drifts off the marquee. Buttons themselves re-enable pointer
+          events. */}
+      <div
+        aria-hidden={!showArrows}
+        className={`pointer-events-none absolute inset-y-0 left-0 right-0 z-20 flex items-center justify-between px-4 transition-opacity duration-200 ${
+          showArrows ? "opacity-100" : "opacity-0"
+        }`}
+      >
+        <button
+          type="button"
+          onClick={() => step(-1)}
+          tabIndex={showArrows ? 0 : -1}
+          aria-label="Previous pillar"
+          className={`pointer-events-auto grid size-11 place-items-center rounded-full bg-bg/95 text-ink border border-line shadow-[0_8px_20px_-10px_rgba(26,26,26,0.4)] hover:bg-ink hover:text-bg transition-colors ${
+            showArrows ? "" : "pointer-events-none"
+          }`}
+        >
+          <ChevronLeft className="size-5" aria-hidden />
+        </button>
+        <button
+          type="button"
+          onClick={() => step(1)}
+          tabIndex={showArrows ? 0 : -1}
+          aria-label="Next pillar"
+          className={`pointer-events-auto grid size-11 place-items-center rounded-full bg-bg/95 text-ink border border-line shadow-[0_8px_20px_-10px_rgba(26,26,26,0.4)] hover:bg-ink hover:text-bg transition-colors ${
+            showArrows ? "" : "pointer-events-none"
+          }`}
+        >
+          <ChevronRight className="size-5" aria-hidden />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+export function CategoryTiles() {
   return (
     <section aria-label="Our pillars" className="bg-bg-2 py-1">
       {/* Anchor targets for the #move and #meditate nav links live on the section,
@@ -91,28 +244,7 @@ export function CategoryTiles() {
         ))}
       </ul>
 
-      {/* md+ : seamless infinite marquee, pause on hover.
-         NOTE: do NOT add `group` to this wrapper. Pause-on-hover is handled
-         by CSS (`marquee-mask:hover .marquee-track`), and a stray `group`
-         scope here makes every tile's `group-hover:` arrow respond to a
-         hover on ANY tile. Per-tile `group` lives on each <a>. */}
-      <div
-        className="hidden md:block marquee-mask"
-        style={{ ["--marquee-duration" as string]: MARQUEE_DURATION } as React.CSSProperties}
-      >
-        <ul className="marquee-track">
-          {marqueeSets.map((set, setIdx) =>
-            set.map((tile) => (
-              <TileCard
-                key={`${setIdx}-${tile.id}`}
-                tile={tile}
-                variant="marquee"
-                ariaHidden={setIdx > 0}
-              />
-            ))
-          )}
-        </ul>
-      </div>
+      <DesktopMarquee />
     </section>
   );
 }

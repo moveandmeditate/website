@@ -32,9 +32,9 @@ export const CONTACT = {
   whatsappDirectUrl: "https://wa.me/", // TODO: client phone number for direct chat
   city: "Bangalore",
   socials: {
-    instagram: "https://instagram.com/moveandmeditate",
-    youtube: "https://youtube.com/@moveandmeditate",
-    facebook: "https://facebook.com/moveandmeditate",
+    instagram: "https://www.instagram.com/movemeditate.co?igsh=MWs5NWl2OGxndXhwYg==",
+    youtube: "https://youtube.com/@moveandmeditate-q8s?si=Ase5HzDuviM8aMx-",
+    facebook: "https://www.facebook.com/profile.php?id=61590710942123",
   },
 };
 
@@ -44,6 +44,7 @@ export const NAV_ITEMS = [
   { label: "YOGA", href: "/yoga" },
   { label: "WEDDINGS", href: "/weddings" },
   { label: "CORPORATE", href: "/corporate" },
+  { label: "TESTIMONIALS", href: "/#testimonials" },
 ] as const;
 
 export type HeroSlide = {
@@ -202,10 +203,13 @@ export type Experience = {
     | "yoga"
     | "breath"
     | "bowl"
-    | "case"
-    | "screen";
+    | "case";
   title: string;
   body: string;
+  /** Pillar-page deep link the tile clicks through to. Anchors map to ids
+   *  rendered by `OfferingsGrid` (`#offering-<slugified-title>`) so the
+   *  scroll lands on the matching offering card. */
+  href: string;
 };
 
 export const EXPERIENCES: Experience[] = [
@@ -214,36 +218,35 @@ export const EXPERIENCES: Experience[] = [
     icon: "dance",
     title: "Dance & Folk",
     body: "Classical, contemporary, Bollywood and folk — celebrate culture through movement.",
+    href: "/dance#dance-folk",
   },
   {
     id: "yoga",
     icon: "yoga",
     title: "Yoga & Movement",
     body: "Strength, flexibility and balance built through mindful, breath-led practice.",
+    href: "/yoga#yoga-movement",
   },
   {
     id: "breathwork",
     icon: "breath",
     title: "Breathwork",
     body: "Use the breath as a bridge between body and mind to unlock stored tension.",
+    href: "/yoga#breathwork",
   },
   {
     id: "sound-healing",
     icon: "bowl",
     title: "Sound Healing",
     body: "Vibrational therapy with singing bowls to realign energy and find harmony.",
+    href: "/yoga#sound-healing",
   },
   {
     id: "corporate",
     icon: "case",
     title: "Corporate",
     body: "Wellness programs that inspire focus, resilience and team chemistry.",
-  },
-  {
-    id: "online",
-    icon: "screen",
-    title: "Online Sessions",
-    body: "Live and recorded practice — transform anywhere, on your schedule.",
+    href: "/corporate",
   },
 ];
 
@@ -263,6 +266,70 @@ export const FOUNDER = {
     { icon: "globe", number: "50+", label: "CITIES IMPACTED" },
     { icon: "heart", number: "10+", label: "YEARS OF PRACTICE" },
   ] as const,
+};
+
+export type WhyUsHighlight = {
+  id: string;
+  icon: "compass" | "globe" | "heart" | "spark";
+  label: string;
+  body: string;
+};
+
+export const WHY_US: {
+  eyebrow: string;
+  title: string;
+  paragraphs: string[];
+  /** Asymmetric photo collage shown beside the copy. First entry is the
+   *  large/lead image; the next two are stacked thumbnails. */
+  collage: { src: string; alt: string }[];
+  highlights: WhyUsHighlight[];
+} = {
+  eyebrow: "WHY MOVE & MEDITATE",
+  title: "A studio that holds the whole picture.",
+  paragraphs: [
+    "Move & Meditate is a Bangalore-rooted practice led by Amisha — ten years across dance, yoga, breathwork and sound healing, and the work behind hundreds of weddings, corporate offsites and quiet personal turning points.",
+    "We're built on a simple belief: movement is medicine, and stillness is power. Every class, sangeet and team retreat begins with a real conversation — your body, your timeline, the day you're actually having — never a template.",
+  ],
+  collage: [
+    {
+      src: "/images/section-yoga-movement.webp",
+      alt: "Woman in a flowing yoga shape against tall studio windows",
+    },
+    {
+      src: "/images/section-dance-folk.webp",
+      alt: "A folk dance celebration in motion",
+    },
+    {
+      src: "/images/section-sound-healing.webp",
+      alt: "A bronze singing bowl with mallet on a cream linen cloth",
+    },
+  ],
+  highlights: [
+    {
+      id: "founder-led",
+      icon: "compass",
+      label: "Founder-led",
+      body: "Most days, taught by Amisha herself.",
+    },
+    {
+      id: "bangalore-online",
+      icon: "globe",
+      label: "Bangalore + online",
+      body: "In-studio in Bangalore, live online worldwide.",
+    },
+    {
+      id: "tailored",
+      icon: "heart",
+      label: "Built for your body",
+      body: "Private, group, couple, family or team.",
+    },
+    {
+      id: "trust",
+      icon: "spark",
+      label: "1,000+ lives",
+      body: "Beginners + seasoned movers, judgement-free.",
+    },
+  ],
 };
 
 export type Testimonial = {
@@ -376,7 +443,7 @@ export const FOOTER = {
       links: [
         { label: "About Amisha", href: "/#founder" },
         { label: "Upcoming Events", href: "/#events" },
-        { label: "Reviews", href: "/#testimonials" },
+        { label: "Testimonials", href: "/#testimonials" },
         { label: "Blog", href: "/blog" },
         { label: "Dance FAQ", href: "/dance#pillar-faq-heading" },
         { label: "Yoga FAQ", href: "/yoga#pillar-faq-heading" },
@@ -416,6 +483,24 @@ export type Faq = {
   answer: string;
 };
 
+/** Deep-link section embedded inside a pillar page. Each entry surfaces as
+ *  a full-bleed half-and-half strip with an image and supporting copy.
+ *  Targeted by anchor (`/dance#dance-folk`, `/yoga#breathwork`, etc.) from
+ *  the home Experiences tiles so a single click takes the visitor straight
+ *  to the matching deep dive. */
+export type PillarDeepSection = {
+  /** URL fragment — must be unique within the pillar page. */
+  id: string;
+  eyebrow: string;
+  title: string;
+  paragraphs: string[];
+  bullets: string[];
+  image: { src: string; alt: string };
+  /** Optional layout side for the image. Defaults to alternating per slot. */
+  imageSide?: "left" | "right";
+  cta?: { label: string; href: string };
+};
+
 export type Pillar = {
   slug: PillarSlug;
   nav: string;
@@ -431,6 +516,9 @@ export type Pillar = {
     paragraphs: string[];
     bullets: string[];
   };
+  /** Optional deep-link sections targeted from the home Experiences tiles.
+   *  Rendered between the intro and the offerings grid in DOM order. */
+  deepSections?: PillarDeepSection[];
   offerings: Offering[];
   /** 3-step customer journey shown as a horizontal strip. */
   howItWorks: { title: string; steps: ProcessStep[] };
@@ -481,6 +569,28 @@ export const PILLARS: Record<PillarSlug, Pillar> = {
         "Online sessions for dancers outside Bangalore",
       ],
     },
+    deepSections: [
+      {
+        id: "dance-folk",
+        eyebrow: "STYLES WE TEACH",
+        title: "Dance & Folk — every body has a rhythm.",
+        paragraphs: [
+          "We move between classical foundations, contemporary expression, Bollywood storytelling and folk celebration — so the practice meets the song, not the other way around.",
+          "Every class begins with a warm-up that respects the body that walked in and ends with a routine you'll catch yourself humming in the elevator.",
+        ],
+        bullets: [
+          "Bharatanatyam + Kathak foundations for posture, abhinaya and rhythm",
+          "Bollywood + film choreography across hook steps and full routines",
+          "Folk forms — Garba, Bhangra, Kalbelia — danced the way the community danced them",
+          "Contemporary + lyrical sequences for storytelling and stage",
+        ],
+        image: {
+          src: "/images/section-dance-folk.webp",
+          alt: "A folk dance celebration in motion",
+        },
+        cta: { label: "See class formats", href: "/dance#offerings" },
+      },
+    ],
     offerings: [
       {
         title: "Private Lessons",
@@ -598,6 +708,65 @@ export const PILLARS: Record<PillarSlug, Pillar> = {
         "Available on the mat in Bangalore or online from anywhere",
       ],
     },
+    deepSections: [
+      {
+        id: "yoga-movement",
+        eyebrow: "ASANA",
+        title: "Yoga & Movement — a practice for every kind of day.",
+        paragraphs: [
+          "We weave vinyasa, hatha and restorative shapes around how your nervous system is actually showing up. Some days you'll flow, some days you'll fold — both are real practice.",
+          "Foundations stay classical: alignment first, breath always, no choreography for its own sake.",
+        ],
+        bullets: [
+          "Vinyasa flows for energy, focus and circulation",
+          "Hatha holds for strength, alignment and patience",
+          "Restorative + Yin to release what the week pulled tight",
+        ],
+        image: {
+          src: "/images/section-yoga-movement.webp",
+          alt: "Woman in a flowing yoga shape against tall studio windows",
+        },
+        cta: { label: "See class formats", href: "/yoga#offerings" },
+      },
+      {
+        id: "breathwork",
+        eyebrow: "PRANAYAMA",
+        title: "Breathwork — the body's fastest reset.",
+        paragraphs: [
+          "A guided breathwork circle moves stuck energy in a way no podcast can. We work with classical pranayama (Nāḍī Śodhana, Bhrāmarī, Kapālabhāti) and modern conscious-connected breathing — chosen for the room, not a recipe.",
+          "Expect to leave lighter, clearer and a little surprised by what the breath made room for.",
+        ],
+        bullets: [
+          "Monthly in-studio circles — 60 to 75 minutes, props provided",
+          "Private 1:1 breathwork for stress, sleep and creative blocks",
+          "Online sessions for distributed clients (recording inside 24 h)",
+        ],
+        image: {
+          src: "/images/section-breathwork.webp",
+          alt: "Breathwork circle in session",
+        },
+        cta: { label: "Reserve a circle", href: "/#contact" },
+      },
+      {
+        id: "sound-healing",
+        eyebrow: "VIBRATION",
+        title: "Sound Healing — bronze bowls, full nervous system reset.",
+        paragraphs: [
+          "Bronze singing bowls, gongs and tuned chimes layered into a guided journey. You lie down, we tune the room, and the body does the rest — a measurable drop in heart rate and a quiet head most people forgot was possible.",
+          "Held monthly in the Bangalore studio and as private bookings for couples, families and small teams.",
+        ],
+        bullets: [
+          "Group sound baths — 60-min full-body resonance, 8–14 mats per session",
+          "Private + couple sessions for sleep, anxiety and major-life transitions",
+          "Corporate add-on for offsites and end-of-quarter resets",
+        ],
+        image: {
+          src: "/images/section-sound-healing.webp",
+          alt: "A bronze singing bowl with mallet on a cream linen cloth",
+        },
+        cta: { label: "Book a session", href: "/#contact" },
+      },
+    ],
     offerings: [
       {
         title: "Group Yoga Classes",

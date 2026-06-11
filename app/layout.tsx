@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Jost } from "next/font/google";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { AgentationDev } from "@/components/agentation-dev";
 import { CookieConsent } from "@/components/cookie-consent";
 import { MobileCtaBar } from "@/components/mobile-cta-bar";
 import { SITE } from "@/lib/content";
@@ -110,6 +111,7 @@ export default async function RootLayout({
            cookie-consent gate. Auto-noops in dev + on preview
            deployments. */}
         {isProd && <SpeedInsights />}
+        {!isProd && <AgentationDev />}
       </body>
     </html>
   );

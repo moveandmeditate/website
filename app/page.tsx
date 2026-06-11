@@ -6,6 +6,7 @@ import { TrustedBy } from "@/components/sections/trusted-by";
 import { CategoryTiles } from "@/components/sections/category-tiles";
 import { Experiences } from "@/components/sections/experiences";
 import { Founder } from "@/components/sections/founder";
+import { WhyUs } from "@/components/sections/why-us";
 import { Testimonials } from "@/components/sections/testimonials";
 import { Contact } from "@/components/sections/contact";
 import { buildJsonLd, jsonLdHtml } from "@/lib/seo";
@@ -23,11 +24,12 @@ export default async function HomePage() {
       <main id="main">
         <Hero />
         <UpcomingEvents />
-        <TrustedBy />
         <CategoryTiles />
         <Experiences />
         <Founder />
+        <WhyUs />
         <Testimonials />
+        <TrustedBy />
         <Contact />
       </main>
       <SiteFooterServer contact={contact} />

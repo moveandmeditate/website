@@ -1,10 +1,10 @@
+import Link from "next/link";
 import {
   Music2,
   Flower2,
   Wind,
   Hand,
   Briefcase,
-  Monitor,
   type LucideIcon,
 } from "lucide-react";
 import { EXPERIENCES, type Experience } from "@/lib/content";
@@ -15,7 +15,6 @@ const ICONS: Record<Experience["icon"], LucideIcon> = {
   breath: Wind,
   bowl: Hand,
   case: Briefcase,
-  screen: Monitor,
 };
 
 export function Experiences() {
@@ -36,23 +35,31 @@ export function Experiences() {
           <p className="mt-5 max-w-[28ch] text-[13px] leading-[1.85] text-muted">
             Holistic experiences designed to move your body, calm your mind and elevate your everyday life.
           </p>
+          <p className="mt-4 max-w-[32ch] text-[11px] tracking-[0.18em] uppercase text-ink-2 font-medium">
+            Offline in Bangalore · Online sessions worldwide
+          </p>
         </div>
 
-        <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 lg:border-l lg:border-line">
+        <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 lg:border-l lg:border-line">
           {EXPERIENCES.map((exp) => {
             const Icon = ICONS[exp.icon];
             return (
               <li
                 key={exp.id}
-                className="border-b lg:border-b-0 lg:border-r border-line p-5 lg:px-5 lg:py-2 text-center"
+                className="border-b lg:border-b-0 lg:border-r border-line"
               >
-                <div className="h-16 flex items-center justify-center mb-4">
-                  <Icon className="size-9 stroke-[1.4] text-ink" aria-hidden />
-                </div>
-                <h3 className="text-[12px] font-semibold tracking-[0.22em] uppercase text-ink mb-3">
-                  {exp.title}
-                </h3>
-                <p className="text-[12px] leading-[1.7] text-muted">{exp.body}</p>
+                <Link
+                  href={exp.href}
+                  className="group block h-full p-5 lg:px-5 lg:py-6 text-center transition-colors hover:bg-bg-2 focus-visible:bg-bg-2 focus-visible:outline-none"
+                >
+                  <div className="h-16 flex items-center justify-center mb-4">
+                    <Icon className="size-9 stroke-[1.4] text-ink" aria-hidden />
+                  </div>
+                  <h3 className="text-[12px] font-semibold tracking-[0.22em] uppercase text-ink mb-3 group-hover:text-gold-dk group-focus-visible:text-gold-dk transition-colors">
+                    {exp.title}
+                  </h3>
+                  <p className="text-[12px] leading-[1.7] text-muted">{exp.body}</p>
+                </Link>
               </li>
             );
           })}

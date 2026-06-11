@@ -7,8 +7,14 @@ import { LayoutGroup, motion, useReducedMotion } from "motion/react";
 import { Menu } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Logo } from "@/components/logo";
+import { WhatsAppIcon } from "@/components/social-icons";
 import { CONTACT, NAV_ITEMS, SITE } from "@/lib/content";
 import { cn } from "@/lib/utils";
+
+// Hrefs from NAV_ITEMS that should also appear OUTSIDE the hamburger on
+// mobile so weddings + corporate (high-intent commercial pages) are one tap
+// away even before the user opens the sheet menu.
+const MOBILE_PINNED_HREFS = new Set<string>(["/weddings", "/corporate"]);
 
 /** Subset of `EffectiveContact` the header uses. `calBookingUrl` is the
  *  optional Cal.com / Calendly link — when set, the Book Discovery CTA
@@ -89,17 +95,42 @@ export function SiteHeader({
           : "bg-transparent border-transparent"
       )}
     >
-      <div className="container-page flex items-center gap-4 py-3 lg:py-4">
+      <div className="container-page flex items-center gap-3 lg:gap-4 py-3 lg:py-4">
         <Link
           href="/"
           aria-label={`${SITE.name} home`}
-          className="flex items-center gap-3"
+          className="flex items-center gap-3 shrink-0"
         >
           <Logo size={48} className="lg:hidden" />
           <Logo size={56} className="hidden lg:block" />
         </Link>
 
-        <nav aria-label="Primary" className="hidden lg:flex flex-1 justify-center gap-9">
+        {/* Mobile-only pinned nav. Surfaces the highest-intent commercial
+            pages (weddings + corporate) outside the hamburger so they're
+            one tap away. Desktop has the full nav below. */}
+        <nav
+          aria-label="Mobile primary"
+          className="flex lg:hidden items-center gap-3 sm:gap-4 ml-1"
+        >
+          {NAV_ITEMS.filter((i) => MOBILE_PINNED_HREFS.has(i.href)).map((item) => {
+            const isActive = pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                aria-current={isActive ? "page" : undefined}
+                className={cn(
+                  "text-[10px] font-medium tracking-[0.18em] transition-colors",
+                  isActive ? "text-ink" : "text-ink-2 hover:text-ink"
+                )}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
+        </nav>
+
+        <nav aria-label="Primary" className="hidden lg:flex flex-1 justify-center gap-7 xl:gap-9">
           <LayoutGroup id="primary-nav">
             {NAV_ITEMS.map((item) => {
               const isActive = pathname === item.href;
@@ -133,6 +164,15 @@ export function SiteHeader({
         </nav>
 
         <div className="ml-auto flex items-center gap-2">
+          <a
+            href={contact.whatsappCommunityUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Join WhatsApp community"
+            className="inline-flex size-10 items-center justify-center border border-ink text-ink hover:bg-ink hover:text-bg transition-colors"
+          >
+            <WhatsAppIcon className="size-[18px]" aria-hidden />
+          </a>
           <Link
             href={discoveryHref}
             target={discoveryIsExternal ? "_blank" : undefined}
