@@ -129,19 +129,76 @@ export type EventItem = {
 
 export type Brand = {
   name: string;
-  // SVG markup or short text label. We render with custom typography rather than fetched logos
-  // to keep the page lightweight and trademark-safe until client supplies licensed assets.
-  render: "google" | "infosys" | "mckinsey" | "wework" | "puma" | "adobe" | "deloitte";
+  /** Optional hand-styled wordmark variant in `BrandMark`. Used for clients
+   *  whose distinctive letterforms read better as styled text than as a
+   *  raster favicon (most of Amisha's smaller production / academy /
+   *  school clients fall here). */
+  render?:
+    | "kpmg"
+    | "pwc"
+    | "dxc"
+    | "ralphlauren"
+    | "divyasree"
+    | "mgoindia"
+    | "smallworld"
+    | "khoyeraaste"
+    | "mello"
+    | "dmentors"
+    | "sukoonqawalli"
+    | "vagdevi"
+    | "vmsentertainments"
+    | "knspartners"
+    | "godigit"
+    | "colt"
+    | "plain";
+  /** Local SVG/PNG/WebP under `public/`. Wins over `render` when set —
+   *  use it for clients who provide a redistributable press-kit asset. */
+  logoSrc?: string;
+  /** Optional external website to link the logo to. */
+  websiteUrl?: string;
+  /** Per-brand height tweak for the rendered logo. Defaults to `h-7` in
+   *  `BrandMark`. Useful when one mark visually reads smaller / larger
+   *  than the rest at the shared default size (e.g. Lenovo's tight
+   *  red-box wordmark wants a bit more height to feel balanced). */
+  logoHeightClass?: string;
 };
 
+/**
+ * Real "Trusted by" list confirmed by Amisha (June 2026).
+ *
+ * Where the brand publishes a freely redistributable mark (SVG via the
+ * Simple Icons CDN / GitHub mirror) we self-host it under
+ * `public/images/brands/`. Everything else falls back to a hand-styled
+ * wordmark in `BrandMark` until the client supplies an official press-kit
+ * asset — at which point an editor can drop the file into the same folder
+ * and switch `logoSrc` in Sanity Studio or here.
+ */
 export const TRUSTED_BRANDS: Brand[] = [
-  { name: "Google", render: "google" },
-  { name: "Infosys", render: "infosys" },
-  { name: "McKinsey & Company", render: "mckinsey" },
-  { name: "WeWork", render: "wework" },
-  { name: "Puma", render: "puma" },
-  { name: "Adobe", render: "adobe" },
-  { name: "Deloitte", render: "deloitte" },
+  // Marks fetched from each company's official public source (corporate
+  // site or Wikipedia commons) and self-hosted under `public/images/brands/`.
+  // Trademarks remain owned by their respective companies — used here for
+  // client-attribution display in a "Trusted by" strip.
+  { name: "KPMG", logoSrc: "/images/brands/kpmg.svg", render: "kpmg" },
+  { name: "PwC", logoSrc: "/images/brands/pwc.svg", render: "pwc" },
+  { name: "Lenovo", logoSrc: "/images/brands/lenovo.webp" },
+  { name: "Bosch", logoSrc: "/images/brands/bosch.svg" },
+  { name: "DXC Technology", logoSrc: "/images/brands/dxc.webp", render: "dxc" },
+  { name: "Colt Technologies", logoSrc: "/images/brands/colt.svg", render: "colt" },
+  { name: "Go Digit", logoSrc: "/images/brands/godigit.svg", render: "godigit" },
+  { name: "K&S Partners", logoSrc: "/images/brands/knspartners.webp", render: "knspartners" },
+  { name: "Divyasree", logoSrc: "/images/brands/divyasree.svg", render: "divyasree" },
+
+  // Brands without a redistributable / publicly fetchable mark — stay on
+  // the typographic fallback until the client supplies a press-kit asset.
+  { name: "Ralph Lauren", render: "ralphlauren" },
+  { name: "MGO India Pvt Ltd", render: "mgoindia" },
+  { name: "Small World", render: "smallworld" },
+  { name: "Khoye Raaste", render: "khoyeraaste" },
+  { name: "Mello", render: "mello" },
+  { name: "Dmentors Dance Academy", render: "dmentors" },
+  { name: "Sukoon Wali Qawwali", render: "sukoonqawalli" },
+  { name: "Vagdevi Vilas School", render: "vagdevi" },
+  { name: "VMS Entertainments", render: "vmsentertainments" },
 ];
 
 export type Tile = {
@@ -203,7 +260,8 @@ export type Experience = {
     | "yoga"
     | "breath"
     | "bowl"
-    | "case";
+    | "case"
+    | "school";
   title: string;
   body: string;
   /** Pillar-page deep link the tile clicks through to. Anchors map to ids
@@ -216,9 +274,9 @@ export const EXPERIENCES: Experience[] = [
   {
     id: "dance",
     icon: "dance",
-    title: "Dance & Folk",
-    body: "Classical, contemporary, Bollywood and folk — celebrate culture through movement.",
-    href: "/dance#dance-folk",
+    title: "Garba & Folk",
+    body: "Garba, Dandiya, Bhangra and Bollywood — celebrate culture through movement.",
+    href: "/dance#garba-folk",
   },
   {
     id: "yoga",
@@ -248,6 +306,13 @@ export const EXPERIENCES: Experience[] = [
     body: "Wellness programs that inspire focus, resilience and team chemistry.",
     href: "/corporate",
   },
+  {
+    id: "schools",
+    icon: "school",
+    title: "Schools & Campuses",
+    body: "Annual-day choreography, weekly electives and teacher wellness programmes.",
+    href: "/#schools",
+  },
 ];
 
 export const FOUNDER = {
@@ -267,6 +332,38 @@ export const FOUNDER = {
     { icon: "heart", number: "10+", label: "YEARS OF PRACTICE" },
   ] as const,
 };
+
+export const SCHOOL_PROGRAMS = {
+  eyebrow: "SCHOOLS & CAMPUSES",
+  title: "Bring movement, music and mindfulness into your school.",
+  paragraphs: [
+    "We design termly programmes for schools, pre-schools and colleges across Bangalore — dance for annual days, yoga and breathwork for student wellbeing, choreography for inter-school competitions, and quiet teacher resets for the staff room.",
+    "Every engagement starts with a free planning call with the academic team — so the work fits the calendar, not the other way around.",
+  ],
+  offerings: [
+    "Annual-day choreography + stage direction",
+    "Weekly dance, yoga or mindfulness electives",
+    "Sports-day and cultural-festival sets",
+    "Inter-school competition prep + judging panels",
+    "Teacher + staff wellness workshops",
+  ],
+  image: {
+    src: "/images/section-schools.webp",
+    alt: "Students rehearsing a folk dance routine in a sunlit school hall",
+  },
+  cta: { label: "Plan a school programme", href: "/#contact" },
+} as const;
+
+export const INVITE_HOST = {
+  eyebrow: "INVITE AMISHA",
+  title: "Need a judge, host or guest artist?",
+  body:
+    "Amisha is open to judging dance competitions and showcases, headlining wellness panels and retreats, and joining corporate or community events as a guest artist or speaker. Tell us the date, the room, and what you'd like the audience to walk away with.",
+  cta: { label: "Send an invitation", href: "/#contact" },
+  // Quick badges underneath the body to make the offer concrete without a
+  // separate paragraph. Keep the list short — three is the sweet spot.
+  badges: ["Judging panels", "Hosting + emcee", "Guest performance"],
+} as const;
 
 export type WhyUsHighlight = {
   id: string;
@@ -339,6 +436,24 @@ export type Testimonial = {
   context: string;
   avatar: { src: string; alt: string };
 };
+
+export type VideoTestimonial = {
+  id: string;
+  name: string;
+  context: string;
+  /** Direct MP4 URL or HLS / DASH manifest hosted on a video CDN. Vertical
+   *  9:16 only; anything wider gets letterboxed by the renderer. */
+  videoUrl: string;
+  poster: { src: string; alt: string };
+};
+
+/**
+ * Static fallback for the vertical video-testimonials strip. Sanity's
+ * `videoTestimonial` doc is the source of truth in production — keep this
+ * empty so a site with no published video docs hides the section rather
+ * than rendering placeholders. Renderer caps the list at 4 entries.
+ */
+export const VIDEO_TESTIMONIALS: VideoTestimonial[] = [];
 
 export const TESTIMONIALS: Testimonial[] = [
   {
@@ -571,24 +686,84 @@ export const PILLARS: Record<PillarSlug, Pillar> = {
     },
     deepSections: [
       {
-        id: "dance-folk",
-        eyebrow: "STYLES WE TEACH",
-        title: "Dance & Folk — every body has a rhythm.",
+        id: "garba-folk",
+        eyebrow: "GARBA + FOLK",
+        title: "Garba & Folk — every body has a rhythm.",
         paragraphs: [
-          "We move between classical foundations, contemporary expression, Bollywood storytelling and folk celebration — so the practice meets the song, not the other way around.",
-          "Every class begins with a warm-up that respects the body that walked in and ends with a routine you'll catch yourself humming in the elevator.",
+          "Garba leads — circle dance, sticks, claps, big-room energy — and we layer in the folk vocabulary it belongs to: Dandiya, Bhangra, Lavani, Kalbelia. Forms taught the way the communities danced them, not the way an aerobics class would package them.",
+          "Each class starts with a warm-up that respects the body that walked in and ends with a routine you'll catch yourself humming in the elevator.",
         ],
         bullets: [
-          "Bharatanatyam + Kathak foundations for posture, abhinaya and rhythm",
-          "Bollywood + film choreography across hook steps and full routines",
-          "Folk forms — Garba, Bhangra, Kalbelia — danced the way the community danced them",
-          "Contemporary + lyrical sequences for storytelling and stage",
+          "Garba + Dandiya sets ready for Navratri nights and sangeets",
+          "Folk crossovers — Bhangra hook steps, Lavani footwork, Kalbelia spins",
+          "Bollywood + film choreography stitched onto the folk base",
+          "Classical roots (Kathak / Bharatanatyam) for posture, rhythm and abhinaya",
         ],
         image: {
           src: "/images/section-dance-folk.webp",
-          alt: "A folk dance celebration in motion",
+          alt: "A garba and folk dance celebration in motion",
         },
         cta: { label: "See class formats", href: "/dance#offerings" },
+      },
+      {
+        id: "couple-dance",
+        eyebrow: "COUPLE DANCE",
+        title: "Couple Dance — choreographed for the way you actually move together.",
+        paragraphs: [
+          "First dance, sangeet centrepiece, anniversary surprise, or just because — we choreograph around the couple in the room, not a template. Song, story and comfort level decide the steps before the steps decide anything.",
+          "Most couples wrap a polished routine in 6–8 sessions. We rehearse in studio in Bangalore, on-location at your venue, or hybrid with video reviews between in-person calls.",
+        ],
+        bullets: [
+          "Sangeet + first-dance choreography, fully bespoke to your song",
+          "Anniversary, milestone and surprise reveals",
+          "On-location rehearsals + run-throughs for destination events",
+          "Filming + framing guidance so the highlight reel actually catches it",
+        ],
+        image: {
+          src: "/images/section-couple-dance.webp",
+          alt: "A couple rehearsing a contemporary routine in a sunlit studio",
+        },
+        cta: { label: "Plan our first session", href: "/#contact" },
+      },
+      {
+        id: "kids-pro",
+        eyebrow: "KIDS PRO TRACK",
+        title: "Kids Pro Track — practice with progression, not just play.",
+        paragraphs: [
+          "A serious-but-joyful programme for young dancers who want more than a weekly class. Structured curriculum across classical, Bollywood and folk; monthly assessments by Amisha and visiting faculty; certificates that mean something at the next audition.",
+          "Age groups are kept small (5–9, 10–13, 14–17) so peers stay close in skill and rehearsal energy stays focused.",
+        ],
+        bullets: [
+          "Monthly skill assessments with a written report and footage",
+          "Term-end certification tied to a public showcase performance",
+          "Inter-school, state and national competition preparation",
+          "Parent debriefs each term — strengths, focus areas, what's next",
+        ],
+        image: {
+          src: "/images/section-kids-pro.webp",
+          alt: "A small group of young dancers in a focused rehearsal",
+        },
+        cta: { label: "Book an audition slot", href: "/#contact" },
+      },
+      {
+        id: "ladies-only",
+        eyebrow: "LADIES ONLY",
+        title: "Ladies-Only Classes — a room that's yours.",
+        paragraphs: [
+          "Closed-door studio sessions for women who want to move freely — beginners welcome, no audience, no comparison. Bollywood for the joy, fusion for the fitness, folk for the roots, breath-led cool-downs to close.",
+          "Friday evening and Sunday morning slots, with private one-off sessions for friend groups, bachelorettes and family-week celebrations.",
+        ],
+        bullets: [
+          "Closed studio, women-only floor and changing space",
+          "Beginner-friendly format — zero dance background needed",
+          "Bollywood, dance fitness and folk fusion across the term",
+          "Private group bookings for bachelorettes + friend circles",
+        ],
+        image: {
+          src: "/images/section-ladies-only.webp",
+          alt: "A group of women mid-routine in a sunlit dance studio",
+        },
+        cta: { label: "Reserve a class", href: "/#contact" },
       },
     ],
     offerings: [
@@ -680,15 +855,6 @@ export const PILLARS: Record<PillarSlug, Pillar> = {
     eyebrow: "STILLNESS",
     title: "Yoga",
     tagline: "Awareness. Breath. Transformation.",
-    quote: {
-      sanskrit:
-        "यथा दीपो निवातस्थो नेङ्गते सोपमा स्मृता।\nयोगिनो यतचित्तस्य युञ्जतो योगमात्मनः॥",
-      transliteration:
-        "yathā dīpo nivāta-stho neṅgate sopamā smṛtā · yogino yata-cittasya yuñjato yogam ātmanaḥ",
-      translation:
-        "As a lamp in a windless place does not flicker, so is the disciplined mind of a yogi absorbed in meditation.",
-      source: "Bhagavad Gītā 6.19 · Dhyāna Yoga",
-    },
     seoDescription:
       "Yoga with Amisha — vinyasa, restorative, yoga nidra, breathwork and sound healing. Studio classes in Bangalore + live online practice for everyone.",
     heroImage: {
@@ -769,9 +935,9 @@ export const PILLARS: Record<PillarSlug, Pillar> = {
     ],
     offerings: [
       {
-        title: "Group Yoga Classes",
+        title: "Yoga Classes for Females",
         blurb:
-          "Weekly small-group practice. Vinyasa for energy, hatha for grounding, restorative for repair.",
+          "Closed-door studio sessions for women — asana, breath and a room with no audience. Beginner-friendly, no experience needed.",
       },
       {
         title: "Private 1:1 Sessions",
@@ -779,14 +945,34 @@ export const PILLARS: Record<PillarSlug, Pillar> = {
           "Built around your goals — recovery, flexibility, stress, focus, or returning after a break.",
       },
       {
-        title: "Breathwork + Sound Healing",
+        title: "Pranayama + Breathwork",
         blurb:
-          "Guided breath circles and bronze-bowl sound baths held monthly.",
+          "Classical Nāḍī Śodhana, Bhrāmarī and Kapālabhāti circles, plus modern conscious-connected breathing for stuck energy.",
       },
       {
-        title: "Yoga Nidra (Online)",
+        title: "Sound Healing",
         blurb:
-          "45-minute deep-rest sessions live online. Recording available within 24 hours.",
+          "Bronze bowls, gongs and tuned chimes layered into a guided journey. Group sound baths held monthly in the Bangalore studio.",
+      },
+      {
+        title: "Trataka + Yog Nidra",
+        blurb:
+          "Candle-flame gazing for steady attention, followed by a 45-minute deep-rest yoga nidra. Live online with recording inside 24 hours.",
+      },
+      {
+        title: "Full Moon Meditation",
+        blurb:
+          "Monthly evening circles to mark the lunar cycle. Breath, intention, mantra and silence — held together.",
+      },
+      {
+        title: "Mandala + Art Meditation",
+        blurb:
+          "Dot mandala and intuitive art treated as moving meditation. Materials provided, zero artistic background required.",
+      },
+      {
+        title: "Group Yoga Sessions",
+        blurb:
+          "Weekly small-group practice. Vinyasa for energy, hatha for grounding, restorative for repair.",
       },
     ],
     gallery: [

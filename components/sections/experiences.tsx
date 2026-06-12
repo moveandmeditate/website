@@ -5,6 +5,7 @@ import {
   Wind,
   Hand,
   Briefcase,
+  GraduationCap,
   type LucideIcon,
 } from "lucide-react";
 import { EXPERIENCES, type Experience } from "@/lib/content";
@@ -15,6 +16,7 @@ const ICONS: Record<Experience["icon"], LucideIcon> = {
   breath: Wind,
   bowl: Hand,
   case: Briefcase,
+  school: GraduationCap,
 };
 
 export function Experiences() {
@@ -40,7 +42,7 @@ export function Experiences() {
           </p>
         </div>
 
-        <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 lg:border-l lg:border-line">
+        <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 lg:border-l lg:border-line">
           {EXPERIENCES.map((exp) => {
             const Icon = ICONS[exp.icon];
             return (

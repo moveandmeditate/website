@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Mail, MapPin, Clock, MessageCircle } from "lucide-react";
+import { Mail, MapPin, MessageCircle } from "lucide-react";
 import { Logo } from "@/components/logo";
 import {
   FacebookIcon,
@@ -166,8 +166,8 @@ export function SiteFooter({
         </div>
 
         {/* STUDIO INFO CARD — sits below the columns, full width */}
-        <div className="mt-12 lg:mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-6 pt-10 border-t border-line">
-          <h2 className="lg:col-span-4 text-eyebrow text-muted">
+        <div className="mt-12 lg:mt-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-6 pt-10 border-t border-line">
+          <h2 className="lg:col-span-3 text-eyebrow text-muted">
             {FOOTER.studio.heading}
           </h2>
 
@@ -212,15 +212,6 @@ export function SiteFooter({
             </div>
           </div>
 
-          <div className="flex items-start gap-3">
-            <Clock className="size-4 mt-0.5 text-gold-dk shrink-0" aria-hidden />
-            <div>
-              <p className="text-[10px] tracking-[0.22em] uppercase text-muted">Hours</p>
-              <p className="text-[13px] text-ink-2 mt-1 leading-[1.6]">
-                {FOOTER.studio.hours}
-              </p>
-            </div>
-          </div>
         </div>
       </div>
 

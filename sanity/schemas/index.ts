@@ -4,6 +4,7 @@ import { blogPostSchema } from "./blogPost";
 import { brandSchema } from "./brand";
 import { eventSchema } from "./event";
 import { testimonialSchema } from "./testimonial";
+import { videoTestimonialSchema } from "./videoTestimonial";
 import { founderProfileSchema } from "./founderProfile";
 import { siteSettingsSchema } from "./siteSettings";
 
@@ -14,6 +15,7 @@ export const schemaTypes: SchemaTypeDefinition[] = [
   // Collections.
   eventSchema,
   testimonialSchema,
+  videoTestimonialSchema,
   brandSchema,
   blogPostSchema,
   authorSchema,

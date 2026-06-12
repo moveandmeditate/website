@@ -134,10 +134,33 @@ function DesktopMarquee() {
     return () => cancelAnimationFrame(raf);
   }, []);
 
+  // Step the carousel one tile in either direction. The TILES list is
+  // duplicated below so the scroller's `scrollWidth` is exactly twice the
+  // visible track length; the "halfway" point is therefore the first frame
+  // of the duplicate set. To keep the scroll feeling infinite when the user
+  // clicks an arrow near a boundary, we instant-teleport across the half
+  // mark and then smooth-scroll the requested step from the mirror frame —
+  // the duplicate is pixel-identical, so the user never sees the jump.
   const step = (dir: 1 | -1) => {
     const scroller = scrollerRef.current;
     if (!scroller) return;
-    scroller.scrollBy({ left: dir * TILE_STEP_PX, behavior: "smooth" });
+    const half = scroller.scrollWidth / 2;
+    if (half <= 0) {
+      scroller.scrollBy({ left: dir * TILE_STEP_PX, behavior: "smooth" });
+      return;
+    }
+    const current = scroller.scrollLeft;
+    const next = current + dir * TILE_STEP_PX;
+
+    if (dir > 0 && next >= half) {
+      scroller.scrollLeft = current - half;
+      scroller.scrollBy({ left: TILE_STEP_PX, behavior: "smooth" });
+    } else if (dir < 0 && next < 0) {
+      scroller.scrollLeft = current + half;
+      scroller.scrollBy({ left: -TILE_STEP_PX, behavior: "smooth" });
+    } else {
+      scroller.scrollBy({ left: dir * TILE_STEP_PX, behavior: "smooth" });
+    }
   };
 
   // Duplicate the tile list so the wrap-around in the rAF loop is seamless.

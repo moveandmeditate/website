@@ -13,6 +13,7 @@ import { urlForImage } from "@/sanity/lib/image";
 import {
   allBrandsQuery,
   allTestimonialsQuery,
+  allVideoTestimonialsQuery,
   founderProfileQuery,
   siteSettingsQuery,
   testimonialForPillarQuery,
@@ -25,6 +26,8 @@ import {
   TESTIMONIALS,
   TRUSTED_BRANDS,
   type Brand,
+  VIDEO_TESTIMONIALS,
+  type VideoTestimonial,
 } from "@/lib/content";
 
 // In dev we want CMS edits to show up on the next page refresh so we
@@ -244,6 +247,9 @@ export type EffectiveBrand = {
   logoSrc?: string;
   logoAlt?: string;
   websiteUrl?: string;
+  /** Optical-weight override carried through from the static fallback so
+   *  Lenovo / Bosch don't shrink back to `h-7` once the CMS list lands. */
+  logoHeightClass?: string;
 };
 
 export async function getEffectiveBrands(): Promise<EffectiveBrand[]> {
@@ -297,4 +303,52 @@ export async function getEffectiveTestimonialForPillar(
     // fall through to static
   }
   return TESTIMONIALS.find((t) => t.id === fallbackId) ?? null;
+}
+
+// ────────────────────────────────────────────────────────────────────────
+// Effective video testimonials
+// ────────────────────────────────────────────────────────────────────────
+
+type SanityVideoTestimonial = {
+  _id: string;
+  name: string;
+  context: string;
+  videoUrl: string;
+  poster: SanityImageField | null;
+};
+
+/** Hard cap mirrored from the section renderer — keeps the cap in one
+ *  place and lets the GROQ query stay simple. */
+const VIDEO_TESTIMONIAL_LIMIT = 4;
+
+export async function getEffectiveVideoTestimonials(): Promise<
+  VideoTestimonial[]
+> {
+  try {
+    const docs = await sanityClient.fetch<SanityVideoTestimonial[]>(
+      allVideoTestimonialsQuery,
+      {},
+      {
+        next: {
+          revalidate: REVALIDATE_SECONDS,
+          tags: ["videoTestimonials"],
+        },
+      }
+    );
+    if (!docs?.length) return VIDEO_TESTIMONIALS.slice(0, VIDEO_TESTIMONIAL_LIMIT);
+    return docs.slice(0, VIDEO_TESTIMONIAL_LIMIT).map<VideoTestimonial>((doc) => ({
+      id: doc._id,
+      name: doc.name,
+      context: doc.context,
+      videoUrl: doc.videoUrl,
+      poster: {
+        src: doc.poster?.asset
+          ? urlForImage(doc.poster).width(720).auto("format").url()
+          : "",
+        alt: doc.poster?.alt || `${doc.name} testimonial poster`,
+      },
+    }));
+  } catch {
+    return VIDEO_TESTIMONIALS.slice(0, VIDEO_TESTIMONIAL_LIMIT);
+  }
 }

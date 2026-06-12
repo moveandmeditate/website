@@ -85,6 +85,24 @@ export const allTestimonialsQuery = defineQuery(`
   }
 `);
 
+/**
+ * Vertical video testimonials. Published-only, sorted by displayOrder then
+ * name. The renderer caps the visible list at 4 — anything further down
+ * the order is discarded client-side.
+ */
+export const allVideoTestimonialsQuery = defineQuery(`
+  *[
+    _type == "videoTestimonial"
+    && published == true
+  ] | order(coalesce(displayOrder, 9999) asc, name asc) {
+    _id,
+    name,
+    context,
+    videoUrl,
+    poster{ ${IMAGE_FRAGMENT} }
+  }
+`);
+
 /** Pillar-specific testimonial. Returns first match, or null. */
 export const testimonialForPillarQuery = defineQuery(`
   *[

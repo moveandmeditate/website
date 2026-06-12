@@ -145,10 +145,23 @@ export default async function PrivacyPolicyPage() {
 
       <h2>8. Children</h2>
       <p>
-        This website is not directed at children under 18 and we do not knowingly collect
-        their personal data without verifiable parental or guardian consent. If you become
-        aware that a minor has submitted personal data through the contact form, please
-        contact us and we will delete it.
+        Younger movers are welcome at {SITE.name}. The website itself is intended for adult
+        visitors, so we only collect a minor&rsquo;s personal data when a parent or legal
+        guardian submits the enquiry on their behalf, or when the minor submits it with
+        verifiable parental or guardian consent in line with the DPDP Act.
+      </p>
+      <p>
+        Where consent is in place, we use the data only to plan and deliver the requested
+        sessions, communicate logistics, and meet any safeguarding or legal obligations.
+        We do not use children&rsquo;s data for analytics profiling, tracking, behavioural
+        advertising or any automated decision-making, and we apply the same retention and
+        deletion policies described in section 5.
+      </p>
+      <p>
+        A parent or guardian can withdraw consent, request access to, or ask us to delete
+        their child&rsquo;s data at any time by writing to the contact in section 9 below.
+        If you become aware that a minor has submitted personal data through this website
+        without a guardian&rsquo;s consent, please tell us and we will delete it.
       </p>
 
       <h2 id="data-concerns">9. Data-concerns contact</h2>
