@@ -317,20 +317,143 @@ export const EXPERIENCES: Experience[] = [
 
 export const FOUNDER = {
   eyebrow: "FOUNDER",
-  title: "The journey behind\nthe movement",
+  title: "Movement is medicine.\nStillness is power.",
   paragraphs: [
-    "Move & Meditate was born from a simple belief — that movement can heal, and stillness can transform. Amisha’s journey has carried her from stage to studio, from dance floors to mindful spaces.",
-    "Today, the mission is to create experiences that help you reconnect with your body, your breath and your truest self — whether through a single workshop or a lifelong practice.",
+    "Amisha started in dance — over ten years of instruction and professional choreography, students across every age group, workshops in multiple cities, weddings and special events shaped on stages and screens across India. The practice taught her how a body learns; the rest of the work taught her why.",
+    "An M.Sc. in Yoga (Master's degree) anchors the second half of the studio. Today she teaches yoga, meditation and wellness for individuals, small groups and corporate teams — a blend of movement, mental well-being and personal growth designed to outlive the class itself.",
+    "As an entrepreneur, she also runs the engine room behind Move & Meditate — programme design, event planning, client relationships, team coordination and community building. The vision stays simple: make dance, yoga and wellness genuinely accessible, engaging and transformative for people from every walk of life.",
   ],
   signature: "Amisha",
-  signatureLabel: "FOUNDER · MOVE & MEDITATE",
+  signatureLabel: "FOUNDER · DANCE + YOGA EDUCATOR",
   portrait: { src: "/images/founder.webp", alt: "Portrait of Amisha, founder of Move & Meditate" },
   stats: [
-    { icon: "users", number: "1000+", label: "TRANSFORMED LIVES" },
+    { icon: "users", number: "1000+", label: "STUDENTS TAUGHT" },
     { icon: "cal", number: "500+", label: "EVENTS & WORKSHOPS" },
-    { icon: "globe", number: "50+", label: "CITIES IMPACTED" },
+    { icon: "globe", number: "50+", label: "CITIES + ONLINE" },
     { icon: "heart", number: "10+", label: "YEARS OF PRACTICE" },
   ] as const,
+};
+
+export type CareerRole = {
+  id: string;
+  title: string;
+  /** Employment shape the role is open to. "both" = freelance OR full-time. */
+  type: "both" | "full-time" | "freelance";
+  /** Coarse grouping used to colour-code the card in the careers grid. */
+  category: "creative" | "teaching" | "operations";
+  blurb: string;
+};
+
+export const CAREERS: {
+  eyebrow: string;
+  title: string;
+  intro: string[];
+  whatWeOffer: { label: string; body: string }[];
+  rolesTitle: string;
+  rolesBody: string;
+  roles: CareerRole[];
+  cta: { title: string; subtitle: string; ctaLabel: string; emailSubject: string };
+} = {
+  eyebrow: "CAREERS",
+  title: "Join the studio.",
+  intro: [
+    "Move & Meditate is a small, founder-led practice in Bangalore that takes movement, breath and craft seriously — and doesn't take itself too seriously the rest of the time. Most of what we ship together happens in the studio; some of it travels for weddings, school programmes and corporate retreats across India.",
+    "If a role below sounds like yours, we'd love to talk. If it doesn't quite fit, write to us anyway — we hire for taste, curiosity and care more than for résumés.",
+  ],
+  whatWeOffer: [
+    {
+      label: "Practitioner-led culture",
+      body: "Decisions stay close to the floor. No brand templates, no scripts — your craft drives the work.",
+    },
+    {
+      label: "Honest pay, honest hours",
+      body: "Project-based or monthly. We share the rate card up front and respect the calendar we agree on.",
+    },
+    {
+      label: "Studio access",
+      body: "Full access to the practice space for your own classes, rehearsals and personal practice.",
+    },
+    {
+      label: "Room to grow",
+      body: "Cross-skill into adjacent roles, lead a programme, or shape a new offering as the studio expands.",
+    },
+  ],
+  rolesTitle: "We're hiring across eight roles.",
+  rolesBody:
+    "Every role below is open to full-time or freelance — tell us which one fits your life. Bangalore-based or hybrid-friendly where the work allows.",
+  roles: [
+    {
+      id: "videographer",
+      title: "Videographer",
+      type: "both",
+      category: "creative",
+      blurb:
+        "Frame studio sessions, sangeets, retreats and behind-the-scenes for the social cut and the long-form archive. Comfortable in low and natural light, fluent with your own kit.",
+    },
+    {
+      id: "photographer",
+      title: "Photographer",
+      type: "both",
+      category: "creative",
+      blurb:
+        "Editorial portraits, candid practice frames and event documentation. Quiet on the floor, sharp on the edit. Strong natural-light instinct preferred.",
+    },
+    {
+      id: "video-editor",
+      title: "Video Editor",
+      type: "both",
+      category: "creative",
+      blurb:
+        "Cut reels, longer features and ongoing brand content from rehearsal raw and event footage. Premiere or DaVinci fluent; sound, colour and pace matter as much as the edit.",
+    },
+    {
+      id: "social-media",
+      title: "Social Media Manager",
+      type: "both",
+      category: "creative",
+      blurb:
+        "Own Instagram, Reels and YouTube growth across the studio brand. Write captions that sound like Amisha, not a brand template; plan calendars that respect the practice.",
+    },
+    {
+      id: "yoga-teacher",
+      title: "Yoga Teacher",
+      type: "both",
+      category: "teaching",
+      blurb:
+        "Lead group, private and corporate sessions across vinyasa, hatha and restorative formats. Alignment-first, certification expected, beginner-friendly tone essential.",
+    },
+    {
+      id: "dance-teacher",
+      title: "Dance Teacher",
+      type: "both",
+      category: "teaching",
+      blurb:
+        "Teach across Garba, Bollywood, folk and contemporary. Comfortable holding the room for kids, adults and wedding choreography clients alike.",
+    },
+    {
+      id: "sound-healing",
+      title: "Sound Healing Teacher",
+      type: "both",
+      category: "teaching",
+      blurb:
+        "Trained in bronze bowls, gongs and vocal toning. Lead monthly studio circles, retreat journeys, private sessions and corporate offsites.",
+    },
+    {
+      id: "event-planner",
+      title: "Event Planner",
+      type: "both",
+      category: "operations",
+      blurb:
+        "Run weddings, corporate retreats and studio events end-to-end — vendors, schedule, run-of-show and the kind of on-day calm that lets the performers focus.",
+    },
+  ],
+  cta: {
+    title: "Don't see your role?",
+    subtitle:
+      "Write to us anyway — we hire for fit, taste and curiosity first. Send a short note, links to your work and one thing you'd want to learn here.",
+    ctaLabel: "Send a hello",
+    emailSubject: "Open application — Move & Meditate",
+  },
 };
 
 export const SCHOOL_PROGRAMS = {
@@ -559,6 +682,7 @@ export const FOOTER = {
         { label: "About Amisha", href: "/#founder" },
         { label: "Upcoming Events", href: "/#events" },
         { label: "Testimonials", href: "/#testimonials" },
+        { label: "Careers", href: "/careers" },
         { label: "Blog", href: "/blog" },
         { label: "Dance FAQ", href: "/dance#pillar-faq-heading" },
         { label: "Yoga FAQ", href: "/yoga#pillar-faq-heading" },
@@ -970,9 +1094,9 @@ export const PILLARS: Record<PillarSlug, Pillar> = {
           "Dot mandala and intuitive art treated as moving meditation. Materials provided, zero artistic background required.",
       },
       {
-        title: "Group Yoga Sessions",
+        title: "Yoga Therapy",
         blurb:
-          "Weekly small-group practice. Vinyasa for energy, hatha for grounding, restorative for repair.",
+          "Therapeutic, breath-led practice for recovery, pain management and nervous-system reset. Vinyasa for energy, hatha for grounding, restorative for repair — chosen for the body in the room.",
       },
     ],
     gallery: [

@@ -15,6 +15,7 @@ const staticRoutes: RouteEntry[] = [
   { path: "/weddings", priority: 0.8, changeFrequency: "monthly" },
   { path: "/corporate", priority: 0.8, changeFrequency: "monthly" },
   { path: "/blog", priority: 0.7, changeFrequency: "weekly" },
+  { path: "/careers", priority: 0.6, changeFrequency: "weekly" },
   { path: "/privacy-policy", priority: 0.3, changeFrequency: "yearly" },
   { path: "/terms-and-conditions", priority: 0.3, changeFrequency: "yearly" },
 ];
