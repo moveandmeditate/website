@@ -51,6 +51,7 @@ export function PillarHero({ pillar }: { pillar: Pillar }) {
           <MediaFrame
             src={pillar.heroImage.src}
             alt={pillar.heroImage.alt}
+            imageClassName={pillar.heroImage.imageClassName}
             className="absolute inset-0"
             sizes="(min-width: 1024px) 45vw, 100vw"
             priority

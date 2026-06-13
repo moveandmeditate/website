@@ -749,7 +749,7 @@ export type Pillar = {
   tagline: string;
   /** Long description for `<meta name=description>` + JSON-LD `description`. */
   seoDescription: string;
-  heroImage: { src: string; alt: string };
+  heroImage: { src: string; alt: string; imageClassName?: string };
   intro: {
     title: string;
     paragraphs: string[];
@@ -982,8 +982,9 @@ export const PILLARS: Record<PillarSlug, Pillar> = {
     seoDescription:
       "Yoga with Amisha — vinyasa, restorative, yoga nidra, breathwork and sound healing. Studio classes in Bangalore + live online practice for everyone.",
     heroImage: {
-      src: "/images/hero-meditator-tall.webp",
+      src: "/images/hero-meditator.webp",
       alt: "A woman seated in quiet meditation by a sunlit studio window",
+      imageClassName: "object-right",
     },
     intro: {
       title: "Practice that meets you where you are.",
