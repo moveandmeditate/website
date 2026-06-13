@@ -222,11 +222,39 @@ Every string + every link lives in `lib/content.ts`. Major exports:
 
 ## Images
 
-21 WebP images live in `public/images/` — generated via the `higgsfield-generate` skill (Nano Banana Pro 2) during the Phase 1 + Phase 2 builds. Mix of hero shots, tiles, event cards, testimonial avatars, founder portrait, contact background.
+WebP images live in `public/images/`, rendered via `<MediaFrame src=... alt=... watermark={false} sizes="..." />` (wraps `next/image`, falls back to a brand-toned placeholder when the asset is missing). Paths + alt text are mapped in `lib/content.ts`.
 
-When real client photos arrive, drop them in at the same paths and the site picks them up automatically.
+**Mixed source.** The studio's real photoshoot covered **yoga / meditation / sound healing** only — those slots now hold real photos. Dance, weddings, corporate, retreats, school and testimonial avatars are still **AI placeholders** (`higgsfield-generate`, Nano Banana Pro 2) awaiting a real shoot. Original photoshoot frames: `inspirations/real-pic/IMG_05xx.JPG`.
 
-Use `<MediaFrame src=... alt=... watermark={false} sizes="..." />` everywhere photos render. It wraps `next/image` and falls back to a brand-toned placeholder when an asset is missing.
+### Real photos (from the photoshoot)
+| File | Source frame | Subject |
+|---|---|---|
+| `founder.webp` | IMG_0507 | Amisha — founder portrait |
+| `hero-meditator.webp` | IMG_0511 | seated meditation at window — **home** hero |
+| `hero-meditator-tall.webp` | IMG_0511 (portrait crop) | **/yoga** hero only (landscape was clipping her) |
+| `hero-sound.webp` | IMG_0504 | singing-bowl sound bath in session |
+| `section-yoga-movement.webp` | IMG_0509 | extended side-angle pose |
+| `section-sound-healing.webp` | IMG_0502 | two bronze singing bowls |
+| `section-breathwork.webp` | IMG_0505 | group meditation circle |
+| `tile-meditate.webp` | IMG_0503 | Buddha figurine |
+| `contact-bg.webp` | IMG_0508 | cobra pose (subtle darkened bg) |
+
+### Still AI placeholder — need real photos
+- **Hero:** `hero-dancer.webp` · `hero-corporate.webp` · `hero-sangeet.webp`
+- **Tiles:** `tile-move.webp` · `tile-weddings.webp` · `tile-corporate.webp` · `tile-retreats.webp`
+- **Sections:** `section-dance-folk.webp` · `section-couple-dance.webp` · `section-kids-pro.webp` · `section-ladies-only.webp` · `section-schools.webp`
+- **Events:** `event-garba.webp` · `event-couple-dance.webp` · `event-breathwork.webp` · `event-yoga-nidra.webp`
+- **Avatars:** `avatar-priya.webp` · `avatar-couple.webp` · `avatar-rohit.webp` · `avatar-neha.webp`
+
+Real brand assets (not placeholders, leave alone): `images/brands/*`, `mam-logo.png`, `studio-icon-*.png`.
+
+### Replacing a placeholder with a real photo
+1. Bake EXIF orientation + encode: `sips -s format jpeg src.JPG --out /tmp/x.jpg` then `cwebp -q 82 -m 6 -mt /tmp/x.jpg -o public/images/<name>.webp` (resize ~1600–1800px long edge; founder/portrait heroes ~1280×1600).
+2. Keep the **same filename** → zero code change. New filename → update `src` in `lib/content.ts`.
+3. Update the `alt` in `lib/content.ts` to describe the real photo.
+4. CMS-driven images (real events, blog heroes, testimonial avatars/videos) are uploaded in Sanity Studio, not here.
+
+Spare photoshoot frame available: `IMG_0510` (mudra hand close-up). `IMG_0506` is a behind-the-scenes shot — **do not use**.
 
 ## Forms + leads
 

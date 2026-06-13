@@ -71,7 +71,7 @@ components/pillar/    pillar-page composition + section parts
 components/ui/        shadcn primitives (do not edit by hand)
 lib/                  content.ts (static fallback), schemas, SEO helpers, server-side helpers
 sanity/               Studio config, schemas, GROQ queries, fetch wrappers (CMS-first + static fallback)
-public/images/        Higgsfield-generated WebP photography
+public/images/        site photography — real photoshoot + AI placeholders (full inventory: AGENTS.md › Images)
 public/mam-logo.png   client-supplied brand mark
 ```
 

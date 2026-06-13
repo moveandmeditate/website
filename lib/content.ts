@@ -67,7 +67,7 @@ export const HERO_SLIDES: HeroSlide[] = [
   {
     id: "meditator",
     src: "/images/hero-meditator.webp",
-    alt: "A woman seated in meditation in soft natural light",
+    alt: "A woman seated in quiet meditation by a sunlit studio window",
   },
   {
     id: "corporate",
@@ -82,7 +82,7 @@ export const HERO_SLIDES: HeroSlide[] = [
   {
     id: "sound",
     src: "/images/hero-sound.webp",
-    alt: "A practitioner playing a bronze singing bowl for sound healing",
+    alt: "A sound healer guiding a singing-bowl bath over a resting participant",
   },
 ];
 
@@ -225,7 +225,7 @@ export const TILES: Tile[] = [
     title: "MEDITATE",
     tags: ["STILLNESS", "AWARENESS", "TRANSFORMATION"],
     href: "/yoga",
-    image: { src: "/images/tile-meditate.webp", alt: "A woman in seated meditation" },
+    image: { src: "/images/tile-meditate.webp", alt: "A small Buddha figurine held in the palm, a cue for stillness" },
   },
   {
     id: "weddings",
@@ -325,7 +325,7 @@ export const FOUNDER = {
   ],
   signature: "Amisha",
   signatureLabel: "FOUNDER · DANCE + YOGA EDUCATOR",
-  portrait: { src: "/images/founder.webp", alt: "Portrait of Amisha, founder of Move & Meditate" },
+  portrait: { src: "/images/founder.webp", alt: "Amisha, founder of Move & Meditate, in the studio" },
   stats: [
     { icon: "users", number: "1000+", label: "STUDENTS TAUGHT" },
     { icon: "cal", number: "500+", label: "EVENTS & WORKSHOPS" },
@@ -513,7 +513,7 @@ export const WHY_US: {
   collage: [
     {
       src: "/images/section-yoga-movement.webp",
-      alt: "Woman in a flowing yoga shape against tall studio windows",
+      alt: "A woman holding an extended side-angle yoga pose on a studio mat",
     },
     {
       src: "/images/section-dance-folk.webp",
@@ -521,7 +521,7 @@ export const WHY_US: {
     },
     {
       src: "/images/section-sound-healing.webp",
-      alt: "A bronze singing bowl with mallet on a cream linen cloth",
+      alt: "Two bronze singing bowls with wooden mallets on a studio mat",
     },
   ],
   highlights: [
@@ -982,8 +982,8 @@ export const PILLARS: Record<PillarSlug, Pillar> = {
     seoDescription:
       "Yoga with Amisha — vinyasa, restorative, yoga nidra, breathwork and sound healing. Studio classes in Bangalore + live online practice for everyone.",
     heroImage: {
-      src: "/images/hero-meditator.webp",
-      alt: "A woman seated in meditation in soft natural light",
+      src: "/images/hero-meditator-tall.webp",
+      alt: "A woman seated in quiet meditation by a sunlit studio window",
     },
     intro: {
       title: "Practice that meets you where you are.",
@@ -1014,7 +1014,7 @@ export const PILLARS: Record<PillarSlug, Pillar> = {
         ],
         image: {
           src: "/images/section-yoga-movement.webp",
-          alt: "Woman in a flowing yoga shape against tall studio windows",
+          alt: "A woman holding an extended side-angle yoga pose on a studio mat",
         },
         cta: { label: "See class formats", href: "/yoga#offerings" },
       },
@@ -1033,7 +1033,7 @@ export const PILLARS: Record<PillarSlug, Pillar> = {
         ],
         image: {
           src: "/images/section-breathwork.webp",
-          alt: "Breathwork circle in session",
+          alt: "A small group seated together in a guided meditation circle",
         },
         cta: { label: "Reserve a circle", href: "/#contact" },
       },
@@ -1052,7 +1052,7 @@ export const PILLARS: Record<PillarSlug, Pillar> = {
         ],
         image: {
           src: "/images/section-sound-healing.webp",
-          alt: "A bronze singing bowl with mallet on a cream linen cloth",
+          alt: "Two bronze singing bowls with wooden mallets on a studio mat",
         },
         cta: { label: "Book a session", href: "/#contact" },
       },
@@ -1100,8 +1100,8 @@ export const PILLARS: Record<PillarSlug, Pillar> = {
       },
     ],
     gallery: [
-      { src: "/images/tile-meditate.webp", alt: "Seated meditation in a cream studio" },
-      { src: "/images/hero-sound.webp", alt: "Sound healing with a bronze singing bowl" },
+      { src: "/images/tile-meditate.webp", alt: "A hand-held Buddha figurine in the studio" },
+      { src: "/images/hero-sound.webp", alt: "A guided singing-bowl sound bath in the studio" },
       { src: "/images/event-breathwork.webp", alt: "Breathwork circle in session" },
       { src: "/images/event-yoga-nidra.webp", alt: "Participants in yoga nidra rest" },
     ],
