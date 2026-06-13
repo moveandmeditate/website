@@ -24,6 +24,7 @@ export function Hero() {
         <MediaFrame
           src={HERO.images.right.src}
           alt={HERO.images.right.alt}
+          imageClassName="object-[70%_50%]"
           className="absolute inset-y-0 right-0 hidden md:block md:w-[38%] lg:w-[36%]"
           sizes="(min-width: 768px) 38vw, 0px"
           priority
@@ -39,6 +40,7 @@ export function Hero() {
         <MediaFrame
           src={HERO.images.right.src}
           alt=""
+          imageClassName="object-[70%_50%]"
           className="absolute inset-0 opacity-30"
           sizes="100vw"
           priority
